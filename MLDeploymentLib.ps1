@@ -299,27 +299,23 @@ function GetWorkSpace()
 	    [Parameter(Mandatory=$true, Position=1)]
 	    [string]$workspaceId
 	)
-        $endpoint = "https://management.core.windows.net/"
+	$endpoint = "https://management.core.windows.net/"
 	$subscription = Get-AzureSubscription -Current
 	$environment = Get-AzureEnvironment $subscription.Environment
 	return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $endpoint, $subscription.SubscriptionId, $name, $workspaceId )  $endpoint
 }
 
-function CreateWebService()
+function GetWorkspaceId()
 {
   	param
 	(
 	    [Parameter(Mandatory=$true, Position=0)]
-	    [string]$workspaceId,
-	    [Parameter(Mandatory=$true, Position=1)]
-	    [string]$key,
-	    [Parameter(Mandatory=$true, Position=2)]
-	    [string]$webServiceId
+	    [string]$name
 	)
-        $endpoint = "https://management.azureml.net/"
-        $uri = "{0}workspaces/{1}/webservices/{2}/endpoints/default" -f $endpoint, $workspaceId, $webServiceId
-        $header = "Bearer {0}" -f $key
-        $result = Invoke-RestMethod -Method "PUT" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"}
+	$endpoint = "https://management.core.windows.net/"
+	$subscription = Get-AzureSubscription -Current
+	$environment = Get-AzureEnvironment $subscription.Environment
+	return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $endpoint, $subscription.SubscriptionId, $name)  $endpoint | ?{$_.Name -eq $name}
 }
 
 function GetWebService()
@@ -333,8 +329,114 @@ function GetWebService()
 	    [Parameter(Mandatory=$true, Position=2)]
 	    [string]$webServiceId
 	)
-        $endpoint = "https://management.azureml.net/"
-        $uri = "{0}workspaces/{1}/webservices/{2}/endpoints/default" -f $endpoint, $workspaceId, $webServiceId
-        $header = "Bearer {0}" -f $key
-        $result = Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"}
+	$endpoint = "https://management.azureml.net/"
+	$uri = "{0}workspaces/{1}/webservices/{2}/endpoints/default" -f $endpoint, $workspaceId, $webServiceId
+	$header = "Bearer {0}" -f $key
+	return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"}
+}
+
+function CopyExperimentToWorkspace()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$packageUri
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/packages?api-version=2.0&packageUri={2}" -f $endpoint, $workspaceId, $packageUri
+	Write-Verbose $uri
+	return Invoke-RestMethod -Method "PUT" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetExperimentCopyResult()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$activityId
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/packages?unpackActivityId={2}" -f $endpoint, $workspaceId, $activityId
+	return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function CreateProject()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$trainingId,
+	    [Parameter(Mandatory=$true, Position=3)]
+	    [string]$scoringId
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/projects" -f $endpoint, $workspaceId, $activityId
+	$trainingExperiment = GetExperiment $workspaceId $key $trainingId
+	$scoringExperiment = GetExperiment $workspaceId $key $scoringId
+	$body = "{{""Experiments"":[{{""ProjectExperiment"":{{""ExperimentId"":""{0}"",""Role"":""Training"",""Experiment"":{2}}}}},{{""ProjectExperiment"":{{""ExperimentId"":""{1}"",""Role"":""Scoring"",""Experiment"":{3}}}}}]}}" -f $trainingId, $scoringId, $trainingExperiment, $scoringExperiment
+	Write-Verbose $body
+	return Invoke-RestMethod -Method "POST" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key} -Body $body
+}
+
+function CreateWebService()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$scoringExperimentId
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/experiments/{2}/webservice" -f $endpoint, $workspaceId, $scoringExperimentId
+	Write-Verbose $uri
+	return Invoke-RestMethod -Method "POST" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetWebServiceCreateResult()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$activityId
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/experiments/{2}/webservice" -f $endpoint, $workspaceId, $activityId
+	Write-Verbose $uri
+	return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetExperiment()
+{
+  	param
+	(
+	    [Parameter(Mandatory=$true, Position=0)]
+	    [string]$workspaceId,
+	    [Parameter(Mandatory=$true, Position=1)]
+	    [string]$key,
+	    [Parameter(Mandatory=$true, Position=2)]
+	    [string]$experimentId
+	)
+	$endpoint = "https://studioapi.azureml.net/"
+	$uri = "{0}api/workspaces/{1}/experiments/{2}" -f $endpoint, $workspaceId, $experimentId
+	Write-Verbose $uri
+	return  (Invoke-WebRequest -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}).Content
 }
