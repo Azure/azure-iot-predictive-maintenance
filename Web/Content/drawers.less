@@ -1,0 +1,45 @@
+﻿@import "variables.less";
+
+.drawer {
+    border-left: 1px solid @layout-border-color;
+    border-right: 1px solid @layout-border-color;
+    background-color: @secondary-color;
+}
+
+.drawer-header {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    font-size: 1.1em;
+    background-image: url("/Content/img/icon_deviceExplorer_details_close.svg");
+    background-repeat: no-repeat;
+    white-space: nowrap;
+    font-weight: bold;
+    
+}
+
+.drawer-open {
+    width: 370px;
+
+    .drawer-header {
+        background-position: left center;
+        background-size: auto 30%;
+        padding: 15px 20px;
+        margin-left: 20px;
+    }
+}
+
+.drawer-closed {
+    width: 30px;
+    overflow: hidden;
+
+    .drawer-header {
+        background-position: center;
+        background-size: 30% auto;
+        padding-left: 30px;
+        margin-top: 10px;
+        transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+    }
+}

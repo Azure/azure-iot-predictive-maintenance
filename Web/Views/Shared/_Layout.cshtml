@@ -1,0 +1,70 @@
+﻿@using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_Code.App_GlobalResources
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    @*<title>@Resources.PageTitle</title>*@
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="~/Content/img/favicon.ico" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/app.less" />
+
+    @Scripts.Render("~/bundles/powerbi")
+    @Scripts.Render("~/bundles/knockout")
+
+    <script src="~/Scripts/app.js"></script>
+</head>
+<body class="layout layout-expand">
+    <div class="layout-row">
+        <header>
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Microsoft Azure IoT Suite</a>
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse pull-right">
+                        <ul class="nav navbar-nav ">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Alexander Zaslonov <span class="caret"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+    <div class="layout-row">
+        <div class="layout-cell layout-expand">
+            <div class="layout">
+                <div class="layout-row">
+                    <div class="layout-cell">
+                        <div class="layout-cell-content aside-nav">
+                            <nav>
+                                <a class="nav_dashboard selected" href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+                                <a class="nav_devices" href="@Url.Action("Index", "Devices")">Devices</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="layout-cell layout-expand">
+                        <div class="layout-cell-content">
+                            <main class="layout-cell-content-fit">
+                                @RenderBody()
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

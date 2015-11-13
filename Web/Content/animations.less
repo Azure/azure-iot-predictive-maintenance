@@ -1,0 +1,20 @@
+﻿@import "variables.less";
+@import "bootstrap/variables.less";
+
+@keyframes loading {
+    0% {
+        background-position: top, 0 0;
+    }
+
+    100% {
+        background-position: top, 50px 0;
+    }
+}
+
+.animation-running-stripes {
+    background-color: @brand-success;
+    background-image: linear-gradient( to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 12%, rgba(255,255,255,.15) 15%, rgba(255,255,255,.15) 30%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 50%, rgba(255,255,255,.15) 70%, rgba(255,255,255,.15) 88%, rgba(255,255,255,0) 88% ), linear-gradient( 135deg, transparent 0%, transparent 25%, #B9D709 25%, #B9D709 50%, transparent 50%, transparent 75%, #B9D709 75%, #B9D709 100% );
+    background-size: cover, 50px 50px;
+    background-position: top, 0 0;
+    animation: loading 1s infinite linear;
+}
