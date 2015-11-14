@@ -6,7 +6,6 @@
     )
 
 # Initialize library
-$environmentName = $environmentName.ToLowerInvariant()
 . "$(Split-Path $MyInvocation.MyCommand.Path)\DeploymentLib.ps1"
 Switch-AzureMode AzureResourceManager
 Clear-DnsClientCache
@@ -37,6 +36,13 @@ $storageAccount = GetAzureStorageAccount $suiteName $resourceGroupName
 $iotHubName = GetAzureIotHubName $suitename $resourceGroupName
 $simulatorDataContainer = "simulatordata"
 $simulatorDataFileName = "data.csv"
+
+# Provision Machine Learning workspace
+$experimentName = "Remaining Useful Life [Predictive Exp.]"
+$machineLearningService = ProvisionML $suiteName $resourceGroupName $experimentName
+UpdateEnvSetting "MLApiUrl" $machineLearningService.ApiLocation
+UpdateEnvSetting "MLApiKey" $machineLearningService.PrimaryKey
+UpdateEnvSetting "MLHelpUrl" $machineLearningService.HelpLocation
 
 # Deploy via Template
 UpdateResourceGroupState $resourceGroupName ProvisionAzure

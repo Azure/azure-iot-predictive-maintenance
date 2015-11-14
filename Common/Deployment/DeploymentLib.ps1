@@ -96,10 +96,32 @@ function GetAuthenticationResult()
     return $authResult
 }
 
+function SendRequest()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$method,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$uri,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$application,
+        [Parameter(Mandatory=$false, Position=3)]
+        $payload = $null,
+        [Parameter(Mandatory=$false)]
+        [string]$xmsversion = "2014-10-01"
+    )
+    $subscription = Get-AzureSubscription -Current
+    $authResult = GetAuthenticationResult $subscription.TenantId $global:aadLoginUrl $application $subscription.DefaultAccount
+    $header = $authResult.CreateAuthorizationHeader()
+    write-verbose ("Sending request to: {0} {1}" -f $method, $uri)
+    write-verbose ("body: {0}" -f $payload)
+    return Invoke-RestMethod -Method $method -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json";"x-ms-version"=$xmsversion} -Body $payload
+}
+
 function GetSuiteLocation()
 {
     $command = "Read-Host 'Enter Region to deploy resources (eg. East US)'"
-    $global:locations = @("East US", "North Europe", "East Asia")
     Write-Host
     Write-Host "Available Locations:";
     foreach ($loc in $locations)
@@ -254,11 +276,11 @@ function GetAzureStorageAccount()
         [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName
     )
     $storageTempName = $storageBaseName.ToLowerInvariant().Replace('-','')
-    $storageAccountName = ValidateResourceName $storageTempName.Substring(0, [System.Math]::Min(24, $storageTempName.Length)) Microsoft.Storage/storageAccounts $resourceGroupName
+    $storageAccountName = ValidateResourceName $storageTempName.Substring(0, [System.Math]::Min(19, $storageTempName.Length)) Microsoft.Storage/storageAccounts $resourceGroupName
     $storage = Get-AzureStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -ErrorAction SilentlyContinue
     if ($storage -eq $null)
     {
-        Write-Host "Creating new storage account: $storageAccountName"
+        Write-Host "$(Get-Date –f $timeStampFormat) - Creating new storage account: $storageAccountName"
         $storage = New-AzureStorageAccount -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -Location $global:AllocationRegion -Type Standard_GRS
     }
     return $storage
@@ -301,7 +323,7 @@ function StopExistingStreamAnalyticsJobs()
     {
         return $false
     }
-    Write-Host "Stopping existing Stream Analytics jobs..."
+    Write-Host "$(Get-Date –f $timeStampFormat) - Stopping existing Stream Analytics jobs..."
     foreach ($sasJob in $sasJobs)
     {
         $null = Stop-AzureStreamAnalyticsJob -Name $sasJob.ResourceName -ResourceGroupName $resourceGroupName
@@ -326,7 +348,7 @@ function UploadFile()
     $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
     if (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
     {
-        Write-Host "Waiting for storage account url to resolve." -NoNewline
+        Write-Host "$(Get-Date –f $timeStampFormat) - Waiting for storage account url to resolve." -NoNewline
         while (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
         {
             Write-Host "." -NoNewline
@@ -342,7 +364,7 @@ function UploadFile()
     $storageAccount = [Microsoft.WindowsAzure.Storage.CloudStorageAccount]::Parse(("DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}" -f $storageAccountName, $storageAccountKey))
     $blobClient = $storageAccount.CreateCloudBlobClient()
     $container = $blobClient.GetContainerReference($containerName)
-    Write-Host ("Checking container '{0}'." -f $containerName) -NoNewline
+    Write-Host ("$(Get-Date –f $timeStampFormat) - Checking container '{0}'." -f $containerName) -NoNewline
     while (!$container.Exists())
     {
         Write-Host "." -NoNewline
@@ -353,7 +375,7 @@ function UploadFile()
         }
     }
     Write-Host
-    Write-Host ("Checking blob '{0}'." -f $fileName) -NoNewline
+    Write-Host ("$(Get-Date –f $timeStampFormat) - Checking blob '{0}'." -f $fileName) -NoNewline
     $blob = $container.GetBlobReference($fileName)
     while (!$blob.Exists())
     {
@@ -374,6 +396,258 @@ function UploadFile()
         $sasToken = $blob.GetSharedAccessSignature($sasPolicy)
     }
     return $blob.Uri.ToString() + $sasToken
+}
+
+function CreateWorkSpace()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$name,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$resourceGroup
+    )
+    $mlLocation = "South Central US"
+    switch($global:AllocationRegion)
+    {
+        "North Europe"{$mlLocation = "West Europe"}
+        "East Asia"{$mlLocation = "Southeast Asia"}
+    }
+    $subscription = Get-AzureSubscription -Current
+    $environment = Get-AzureEnvironment $subscription.Environment
+    $storageAccount = GetAzureStorageAccount $("ml" + $suiteName) $resourceGroupName
+    $storageAccountKey = (Get-AzureStorageAccountKey -StorageAccountName $storageAccount.Name -ResourceGroupName $resourceGroupName).Key1
+    $liveId = (Get-AzureSubscription -Current).DefaultAccount
+    $endpointId = [System.Guid]::NewGuid()
+    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""OwnerId"":""{4}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.Name, $storageAccountKey, $liveId 
+    return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $endpointId )  $global:azureUrl $body
+}
+
+function GetWorkSpace()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$name,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$workspaceId
+    )
+    $subscription = Get-AzureSubscription -Current
+    $environment = Get-AzureEnvironment $subscription.Environment
+    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $workspaceId )  $global:azureUrl
+}
+
+function GetWorkspaceByName()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$name
+    )
+    $subscription = Get-AzureSubscription -Current
+    $environment = Get-AzureEnvironment $subscription.Environment
+    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl | ?{$_.Name -eq $name}
+}
+
+function CopyExperiment()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$packageUri
+    )
+    $maxReties = 20
+    $copyResult = CopyExperimentToWorkspace $workspaceId $key $packageUri
+    while ($copyResult.ExperimentId -eq $null)
+    {
+        sleep 10
+        try
+        {
+            $copyResult = GetExperimentCopyResult $workspaceId $key $copyResult.ActivityId
+        }
+        catch
+        {
+            Write-Debug "Copy exception - try again"
+            $copyResult = CopyExperimentToWorkspace $workspaceId $key $packageUri
+        }
+        if ($maxReties-- -le 0)
+        {
+            Write-Host $copyResult
+            throw "Unable to copy experiment"
+        }
+    }
+    return $copyResult
+}
+
+function CopyExperimentToWorkspace()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$packageUri
+    )
+    $uri = "{0}api/workspaces/{1}/packages?api-version=2.0&packageUri={2}" -f $global:studioApiUrl, $workspaceId, $packageUri
+    return Invoke-RestMethod -Method "PUT" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetExperimentCopyResult()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$activityId
+    )
+    $uri = "{0}api/workspaces/{1}/packages?unpackActivityId={2}" -f $global:studioApiUrl, $workspaceId, $activityId
+    return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function CreateWebService()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$scoringExperimentId
+    )
+    $uri = "{0}api/workspaces/{1}/experiments/{2}/webservice" -f $global:studioApiUrl, $workspaceId, $scoringExperimentId
+    return Invoke-RestMethod -Method "POST" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetWebServiceCreateResult()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$activityId
+    )
+    $uri = "{0}api/workspaces/{1}/experiments/{2}/webservice" -f $global:studioApiUrl, $workspaceId, $activityId
+    return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
+}
+
+function GetWebServiceByName()
+{
+        param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$name
+    )
+    $uri = "https://management.azureml.net/workspaces/{1}/webservices/" -f $endpoint, $workspaceId
+    $header = "Bearer {0}" -f $key
+    return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"} | ?{$_.Name -eq $name}
+}
+
+function GetWebService()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$workspaceId,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$key,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$webServiceId
+    )
+    $uri = "https://management.azureml.net/workspaces/{1}/webservices/{2}/endpoints/default" -f $endpoint, $workspaceId, $webServiceId
+    $header = "Bearer {0}" -f $key
+    return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"}
+}
+
+function ProvisionML()
+{
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$name,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$resourceGroupName,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string]$experimentName
+    )
+    $trainingUri ="https%3a%2f%2fstorage.azureml.net%2fdirectories%2f6931bbef1f08495e9f9f1596719eb3ea%2fitems&communityUri=http%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2fba56b9805e484fd8b5b3e1096edabc4d"
+    $scoringUri = "https%3a%2f%2fstorage.azureml.net%2fdirectories%2f5d8bb3d2946742f1900f9c492ea6582f%2fitems&communityUri=http%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2f79494084daca4f42ab759986fa645df7"
+
+    # Check for workspace
+    $workspace = GetWorkspaceByName $name
+    if ($workspace -eq $null)
+    {
+        Write-Host ("$(Get-Date –f $timeStampFormat) - Creating ML workspace: {0}" -f $name)
+        $workspace = CreateWorkSpace $name $resourceGroupName
+        if ($workspace.Id -eq $null)
+        {
+            Write-Host $workspace
+            throw ("Unable to create workspace '{0}'" -f $name)
+        }
+        $workspace = $workspace
+    }
+    $workspaceId = $workspace.Id
+
+    # Get workspace
+    $maxRetry = 10
+    $resolvedWorkspace = GetWorkSpace $name $workspaceId
+    while ($resolvedWorkspace.AuthorizationToken -eq $null)
+    {
+        sleep 10
+        $resolvedWorkspace = GetWorkSpace $name $workspaceId
+        if ($maxRetry-- -le 0)
+        {
+            Write-Host $resolvedWorkspace
+            throw "Timed out waiting for workspace to create"
+        }
+    }
+    $workspaceId = $resolvedWorkspace.Id
+    $tokenKey = $resolvedWorkspace.AuthorizationToken.PrimaryToken
+
+    # Check if webservice already exists, if so return it
+    $webService = GetWebServiceByName $workspaceId $tokenKey $experimentName
+    if ($webService -ne $null)
+    {
+        Write-Host "$(Get-Date –f $timeStampFormat) - Found existing ML Webservice"
+        return GetWebService $workspaceId $tokenKey $webService.Id
+    }
+
+    # Copy experiments from gallery
+    Write-Host "$(Get-Date –f $timeStampFormat) - Copying ML Experiments"
+    $trainingId = (CopyExperiment $workspaceId $tokenKey $trainingUri).ExperimentId
+    $scoringId =  (CopyExperiment $workspaceId $tokenKey $scoringUri).ExperimentId
+
+    # Create WebService
+    Write-Host "$(Get-Date –f $timeStampFormat) - Creating ML Webservice"
+    $webResult = CreateWebService $workspaceId $tokenKey $scoringId
+    while ($webResult.Status -eq "pending")
+    {
+        sleep 10
+        $webResult = GetWebServiceCreateResult $workspaceId $tokenKey $webResult.ActivityId
+    }
+    if ($webResult.Status -ne "Completed")
+    {
+        Write-Host $webResult
+        throw "Failed to create WebService"
+    }
+    Write-Host "$(Get-Date –f $timeStampFormat) - ML Webservice created"
+    return GetWebService $workspaceId $tokenKey $webResult.WebServiceGroupId
 }
 
 function EnvSettingExists()
@@ -537,7 +811,7 @@ function GetAADTenant()
         foreach ($tenant in $tenants)
         {
             $uri = "https://graph.windows.net/{0}/me?api-version=1.6" -f $tenant
-            $authResult = GetAuthenticationResult $tenant "https://login.windows.net/" "https://graph.windows.net/" $global:AzureAccountName -Prompt "Auto"
+            $authResult = GetAuthenticationResult $tenant $global:aadLoginUrl "https://graph.windows.net/" $global:AzureAccountName -Prompt "Auto"
             $header = $authResult.CreateAuthorizationHeader()
             $result = Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"}
             if ($result -ne $null)
@@ -561,7 +835,7 @@ function GetAADTenant()
     # Configure Application
     $uri = "https://graph.windows.net/{0}/applications?api-version=1.6" -f $tenantId
     $searchUri = "{0}&`$filter=identifierUris/any(uri:uri%20eq%20'{1}{2}')" -f $uri, [System.Web.HttpUtility]::UrlEncode($global:site), $global:appName
-    $authResult = GetAuthenticationResult $tenantId "https://login.windows.net/" "https://graph.windows.net/" $global:AzureAccountName
+    $authResult = GetAuthenticationResult $tenantId $global:aadLoginUrl "https://graph.windows.net/" $global:AzureAccountName
     $header = $authResult.CreateAuthorizationHeader()
 
     # Check for application
@@ -749,7 +1023,11 @@ $global:timeStampFormat = "o"
 $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
-$global:version = "0.9"
+$global:version = "v1.0.0"
+$global:aadLoginUrl = "https://login.windows.net/"
+$global:azureUrl = "https://management.core.windows.net/"
+$global:studioApiUrl = "https://studioapi.azureml.net/"
+$global:locations = @("East US", "North Europe", "East Asia")
 
 # Load System.Web
 Add-Type -AssemblyName System.Web
