@@ -1,0 +1,192 @@
+﻿@import "variables.less";
+
+
+.header_page {
+    background-color: #212528;
+    color: #f1f1f1;
+    width: 100%;
+    height: 50px;
+}
+
+.header_page_head {
+    float: left;
+    margin: 0;
+    padding-left: 10px;
+    padding-right: 5px;
+    font-size: 1.4em;
+    line-height: 50px;
+}
+
+.header_solution_name {
+    border-left: 2px solid #373B3D;
+    padding-left: 20px;
+    float: left;
+    font-size: .85em;
+    line-height: 50px;
+}
+
+.header_page_subhead {
+    float: right;
+    clear: both;
+    margin: 0;
+    font-size: .85em;
+    text-transform: uppercase;
+    color: #808080;
+}
+
+img#infoLinkImg {
+    width: 17px;
+    height: 17px;
+    padding-right: 20px;
+    position: relative;
+    top: 18px;
+    left: 7px;
+    opacity: 1.0;
+}
+
+.account {
+    height: 50px;
+    overflow: auto;
+    font-size: .85em;
+    position: absolute;
+    right: 20px;
+}
+
+.account_login {
+    float: right;
+    padding-right: 80px;
+}
+
+.account_login_username {
+    color: #f1f1f1;
+    line-height: 2em;
+}
+
+.link_account {
+    color: #1c9dd7;
+    font-size: 1em;
+    text-decoration: none;
+    position: absolute;
+    top: 14px;
+    right: 0;
+}
+
+.link_account:hover {
+    color: #0077b3;
+}
+
+
+
+.navbar {
+    border-radius: 0px;
+    margin-bottom: 0px;
+    border-bottom: none;
+    font-weight: lighter;
+
+    .navbar-brand {
+        width: 380px;
+    }
+
+    &.navbar-inverse .navbar-brand {
+        color: #fff;
+    }
+}
+
+
+.aside-nav {
+    background-color: @primary-color;
+    height: 100%;
+    width: 95px;
+
+    a {
+        display: block;
+        height: 77px;
+        font-size: .6em;
+        color: @text-secondary-color;
+        text-align: center;
+        line-height: 110px;
+        text-decoration: none;
+        text-transform: uppercase;
+        background-repeat: no-repeat;
+        background-position: center 17px;
+
+        &:hover {
+            color: @anchor-nav-hover-color;
+            background-color: @anchor-nav-hover-background-color;
+            text-decoration: none;
+        }
+    }
+
+    .selected {
+        background-color: @anchor-nav-background-color;
+    }
+}
+
+nav {
+    z-index: 300;
+}
+
+.nav_dashboard {
+    background-image: url(img/icon_dashboard.svg);
+    background-size: 30px 30px;
+}
+
+.nav_devices {
+    background-image: url(img/icon_devices.svg);
+    background-size: 30px 30px;
+}
+
+.nav_actions {
+    background-image: url(img/icon_actions.svg);
+    background-size: 30px 30px;
+}
+
+
+.nav_add_device {
+    position: absolute;
+    bottom: 60px;
+    z-index: 200;
+    background-image: url(img/icon_add.svg);
+    background-size: 20px 20px;
+}
+
+.nav_view_rules {
+    background-image: url(img/icon_rules.svg);
+    background-size: 30px 30px;
+}
+
+.search_container_closed {
+    position: relative;
+    float: left;
+    width: 30px;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    background-color: @secondary-color;
+    cursor: pointer;
+
+    .pane_subhead {
+        position: relative;
+        top: 130px;
+        background-image: url(img/icon_deviceExplorer_details_close.svg);
+        background-repeat: no-repeat;
+        background-size: 7px 11px;
+        background-position: 0;
+        .transform(rotate(270deg));
+        white-space: nowrap;
+        padding: 0 0 0 12px;
+        font-size: 1.1em;
+        font-weight: normal;
+    }
+}
+
+
+img#infoLinkImg {
+    width: 17px;
+    height: 17px;
+    padding-right: 20px;
+    position: relative;
+    top: 18px;
+    left: 7px;
+    opacity: 1.0;
+}

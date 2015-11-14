@@ -1,0 +1,141 @@
+﻿@using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_Code.App_GlobalResources
+@{
+//ViewBag.Title = Resources.PageTitleDashboard;
+}
+
+<div class="layout-flex layout-expand layout-space tiles">
+    <div class="layout-flex-row">
+        <div class="layout-flex-cell layout-flex-cell-half">
+            <div class="layout">
+                <div class="layout-row">
+                    <div class="layout-cell tile">
+                        <div class="tile-header">
+                            <h3>
+                                Aircraft map
+                            </h3>
+                        </div>
+                        <select>
+                            <option>N2163MS</option>
+                        </select>
+                        <!--ko if: dashboard.simulationState() == 'stopped'-->
+                        <button class="btn btn-primary tile-button" data-bind="click: dashboard.startSimulation">
+                            Start simulation
+                        </button>
+                        <div class="indicator indicator-bar indicator-bar-inactive">
+                            Simulation stopped
+                        </div>
+                        <!--/ko-->
+                        <!--ko if: dashboard.simulationState() == 'running'-->
+                        <button class="btn btn-primary tile-button" data-bind="click: dashboard.stopSimulation">
+                            Stop simulation
+                        </button>
+                        <div class="indicator indicator-bar indicator-bar-progress">
+                            Simulation in progress
+                        </div>
+                        <!--/ko-->
+                        <div class="chart chart-airplane ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layout-flex-cell layout-flex-cell-half">
+            <div class="layout">
+                <div class="layout-row">
+                    <div class="layout-cell tile">
+                        <div class="tile-header">
+                            <h3>
+                                Sensor history
+                            </h3>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6 chart-container">
+                                    <h4>Sensor 1</h4>
+                                    <div class="chart chart-linechart" data-bind="lineChart: dashboard.sensor1Data">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 chart-container">
+                                    <h4>Sensor 2</h4>
+                                    <div class="chart chart-linechart" data-bind="lineChart: dashboard.sensor2Data">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 chart-container">
+                                    <h4>Sensor 3</h4>
+                                    <div class="chart chart-linechart" data-bind="lineChart: dashboard.sensor3Data">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 chart-container">
+                                    <h4>Sensor 4</h4>
+                                    <div class="chart chart-linechart" data-bind="lineChart: dashboard.sensor4Data">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layout-row">
+                    <div class="layout">
+                        <div class="layout-row">
+                            <div class="layout-cell layout-cell-half tile">
+                                <div class="tile-header">
+                                    <h3>
+                                        Remaining Useful Life (RUL)
+                                        <sub>In days</sub>
+                                    </h3>
+                                </div>
+                                <div class="tile-body">
+                                    <div class="tile-metric">
+                                        <div class="tile-metric-value" data-bind="text: dashboard.engine1Rul()"></div>
+                                        <div class="tile-metric-unit">#1 Engine</div>
+                                    </div>
+                                    <div class="tile-metric">
+                                        <div class="tile-metric-value" data-bind="text: dashboard.engine2Rul()"></div>
+                                        <div class="tile-metric-unit">#2 Engine</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="layout-cell layout-cell-half tile">
+                                <div class="tile-header">
+                                    <h3>
+                                        Cycles
+                                        <sub>In days</sub>
+                                    </h3>
+                                </div>
+                                <div class="tile-body">
+                                    <div class="tile-metric">
+                                        <div class="tile-metric-value tile-metric-value-warning" data-bind="text: dashboard.engine1Cycles()"></div>
+                                        <div class="tile-metric-unit">#1 Engine</div>
+                                    </div>
+                                    <div class="tile-metric">
+                                        <div class="tile-metric-value  tile-metric-value-warning" data-bind="text: dashboard.engine2Cycles()"></div>
+                                        <div class="tile-metric-unit">#2 Engine</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="layout-row">
+                    <div class="layout-cell tile">
+                        <div class="tile-header">
+                            <h3>
+                                Remaining Useful Life (RUL) history
+                                <sub>In days</sub>
+                            </h3>
+                        </div>
+                        <div class="chart chart-linechart" data-bind="lineChart: dashboard.rulData">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

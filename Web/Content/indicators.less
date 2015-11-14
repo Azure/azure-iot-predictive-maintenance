@@ -1,0 +1,25 @@
+﻿@import "variables.less";
+@import "bootstrap/variables.less";
+@import "animations.less";
+
+
+.indicator-bar {
+    text-align: center;
+    line-height: 2em;
+    margin: 0 -10px;
+}
+
+.indicator-bar-progress {
+    .animation-running-stripes();
+    color: @brand-success-invert;
+}
+
+.indicator-bar-inactive {
+    background-color: @brand-inactive;
+    color: @brand-inactive-invert;
+}
+
+.indicator-bar-success {
+    background-color: @brand-success;
+    color: @brand-success-invert;
+}
