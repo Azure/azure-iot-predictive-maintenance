@@ -15,7 +15,7 @@ Clear-DnsClientCache
 InitializeEnvironment $environmentName
 
 # Set environment specific variables 
-$suitename = "LocalPredictiveMaintenance"
+$suitename = "LocalPM"
 $suiteType = "LocalPredictiveMaintenance"
 $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\LocalPredictiveMaintenance.json"
 $global:site = "https://localhost:44305/"
