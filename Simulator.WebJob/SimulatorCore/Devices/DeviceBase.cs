@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Factory;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
@@ -17,6 +16,8 @@ using Microsoft.Azure.Devices.Common.Exceptions;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices
 {
+    using Configurations;
+
     /// <summary>
     /// Simulates a single IoT device that sends and recieves data from a transport
     /// </summary>

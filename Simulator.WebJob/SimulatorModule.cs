@@ -1,10 +1,11 @@
 ﻿using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
 {
+    using Configurations;
+
     public sealed class SimulatorModule : Module
     {
         protected override void Load(ContainerBuilder builder)

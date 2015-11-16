@@ -2,13 +2,14 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Repository
 {
+    using Configurations;
+
     /// <summary>
     /// Sample repository that pulls the initial device config from the app.config file
     /// </summary>

@@ -7,7 +7,7 @@
     <ProjectGuid>{5959C109-5369-4FF7-8B55-605A79FDF200}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Azure.Devices.Applications.RemoteMonitoring.Common</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Devices.Applications.PredictiveMaintenance</RootNamespace>
     <AssemblyName>Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

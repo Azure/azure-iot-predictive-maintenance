@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
+﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices.Factory;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
@@ -8,6 +7,8 @@ using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJo
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices.Factory
 {
+    using Configurations;
+
     public class EngineDeviceFactory : IDeviceFactory
     {
         public IDevice CreateDevice(ILogger logger, ITransportFactory transportFactory,

@@ -17,11 +17,10 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressSSLPort>44305</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -52,6 +51,10 @@
     </Reference>
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc">
+      <HintPath>..\packages\Autofac.Mvc5.3.3.4\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Autofac.Integration.Mvc.Owin">
@@ -257,48 +260,48 @@
     <Compile Include="App_Start\Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\app.less" />
-    <Content Include="Content\buttons.less" />
-    <Content Include="Content\animations.less" />
-    <None Include="Content\datatables.less" />
-    <Content Include="Content\img\button_back.svg" />
-    <Content Include="Content\img\button_copy.svg" />
-    <Content Include="Content\img\button_page_next.svg" />
-    <Content Include="Content\img\button_page_prev.svg" />
-    <Content Include="Content\img\chart-airplane.svg" />
-    <Content Include="Content\img\favicon.ico" />
-    <Content Include="Content\img\icon_actions.svg" />
-    <Content Include="Content\img\icon_add.svg" />
-    <Content Include="Content\img\icon_advanced.svg" />
-    <Content Include="Content\img\icon_confirmed.svg" />
-    <Content Include="Content\img\icon_dashboard.svg" />
-    <Content Include="Content\img\icon_deviceExplorer_details_close.svg" />
-    <Content Include="Content\img\icon_deviceExplorer_details_open.svg" />
-    <Content Include="Content\img\icon_devices.svg" />
-    <Content Include="Content\img\icon_error.svg" />
-    <Content Include="Content\img\icon_info_gray.svg" />
-    <Content Include="Content\img\icon_info_white.svg" />
-    <Content Include="Content\img\icon_mysolutions.svg" />
-    <Content Include="Content\img\icon_rules.svg" />
-    <Content Include="Content\img\icon_status_alarm.svg" />
-    <Content Include="Content\img\icon_status_all_clear.svg" />
-    <Content Include="Content\img\icon_status_caution.svg" />
-    <Content Include="Content\img\icon_status_critical.svg" />
-    <Content Include="Content\img\icon_status_disabled.svg" />
-    <Content Include="Content\img\icon_status_enabled.svg" />
-    <Content Include="Content\img\icon_status_information.svg" />
-    <Content Include="Content\img\icon_status_null.svg" />
-    <Content Include="Content\img\icon_warning.svg" />
-    <Content Include="Content\img\logo.svg" />
-    <Content Include="Content\img\map_addrs.png" />
-    <Content Include="Content\img\map_copyrights.png" />
-    <Content Include="Content\img\sort_asc.png" />
-    <Content Include="Content\img\sort_asc_disabled.png" />
-    <Content Include="Content\img\sort_both.png" />
-    <Content Include="Content\img\sort_desc.png" />
-    <Content Include="Content\img\sort_desc_disabled.png" />
-    <Content Include="Content\telemetries.less" />
-    <Content Include="Content\visuals.less" />
+    <Content Include="Styles\app.less" />
+    <Content Include="Styles\buttons.less" />
+    <Content Include="Styles\animations.less" />
+    <None Include="Styles\datatables.less" />
+    <Content Include="Styles\img\button_back.svg" />
+    <Content Include="Styles\img\button_copy.svg" />
+    <Content Include="Styles\img\button_page_next.svg" />
+    <Content Include="Styles\img\button_page_prev.svg" />
+    <Content Include="Styles\img\chart-airplane.svg" />
+    <Content Include="Styles\img\favicon.ico" />
+    <Content Include="Styles\img\icon_actions.svg" />
+    <Content Include="Styles\img\icon_add.svg" />
+    <Content Include="Styles\img\icon_advanced.svg" />
+    <Content Include="Styles\img\icon_confirmed.svg" />
+    <Content Include="Styles\img\icon_dashboard.svg" />
+    <Content Include="Styles\img\icon_deviceExplorer_details_close.svg" />
+    <Content Include="Styles\img\icon_deviceExplorer_details_open.svg" />
+    <Content Include="Styles\img\icon_devices.svg" />
+    <Content Include="Styles\img\icon_error.svg" />
+    <Content Include="Styles\img\icon_info_gray.svg" />
+    <Content Include="Styles\img\icon_info_white.svg" />
+    <Content Include="Styles\img\icon_mysolutions.svg" />
+    <Content Include="Styles\img\icon_rules.svg" />
+    <Content Include="Styles\img\icon_status_alarm.svg" />
+    <Content Include="Styles\img\icon_status_all_clear.svg" />
+    <Content Include="Styles\img\icon_status_caution.svg" />
+    <Content Include="Styles\img\icon_status_critical.svg" />
+    <Content Include="Styles\img\icon_status_disabled.svg" />
+    <Content Include="Styles\img\icon_status_enabled.svg" />
+    <Content Include="Styles\img\icon_status_information.svg" />
+    <Content Include="Styles\img\icon_status_null.svg" />
+    <Content Include="Styles\img\icon_warning.svg" />
+    <Content Include="Styles\img\logo.svg" />
+    <Content Include="Styles\img\map_addrs.png" />
+    <Content Include="Styles\img\map_copyrights.png" />
+    <Content Include="Styles\img\sort_asc.png" />
+    <Content Include="Styles\img\sort_asc_disabled.png" />
+    <Content Include="Styles\img\sort_both.png" />
+    <Content Include="Styles\img\sort_desc.png" />
+    <Content Include="Styles\img\sort_desc_disabled.png" />
+    <Content Include="Styles\telemetries.less" />
+    <Content Include="Styles\visuals.less" />
     <Content Include="Scripts\vendor\knockout.js" />
     <Content Include="Global.asax" />
     <TypeScriptCompile Include="Scripts\contracts\IPrediction.ts" />
@@ -311,71 +314,73 @@
     <TypeScriptCompile Include="Scripts\pages\dashboard.ts" />
     <TypeScriptCompile Include="Scripts\models\simulationStates.ts" />
     <TypeScriptCompile Include="Scripts\extensions.ts" />
-    <Content Include="Content\spinners.less" />
+    <Content Include="Styles\spinners.less" />
     <Content Include="Scripts\vendor\jquery-1.11.2.js" />
     <Content Include="Properties\webjobs-list.json" />
-    <Content Include="Content\navbars.less" />
-    <Content Include="Content\variables.less" />
-    <Content Include="Content\typography.less" />
-    <Content Include="Content\layouts.less" />
-    <Content Include="Content\bootstrap\.csscomb.json" />
-    <Content Include="Content\bootstrap\.csslintrc" />
-    <Content Include="Content\bootstrap\alerts.less" />
-    <Content Include="Content\bootstrap\badges.less" />
-    <Content Include="Content\bootstrap\bootstrap.less" />
-    <Content Include="Content\bootstrap\breadcrumbs.less" />
-    <Content Include="Content\bootstrap\button-groups.less" />
-    <Content Include="Content\bootstrap\buttons.less" />
-    <Content Include="Content\bootstrap\carousel.less" />
-    <Content Include="Content\bootstrap\close.less" />
-    <Content Include="Content\bootstrap\code.less" />
-    <Content Include="Content\bootstrap\component-animations.less" />
-    <Content Include="Content\bootstrap\dropdowns.less" />
-    <Content Include="Content\bootstrap\forms.less" />
-    <Content Include="Content\bootstrap\glyphicons.less" />
-    <Content Include="Content\bootstrap\grid.less" />
-    <Content Include="Content\bootstrap\input-groups.less" />
-    <Content Include="Content\bootstrap\jumbotron.less" />
-    <Content Include="Content\bootstrap\labels.less" />
-    <Content Include="Content\bootstrap\list-group.less" />
-    <Content Include="Content\bootstrap\media.less" />
-    <Content Include="Content\bootstrap\mixins.less" />
-    <Content Include="Content\bootstrap\modals.less" />
-    <Content Include="Content\bootstrap\navbar.less" />
-    <Content Include="Content\bootstrap\navs.less" />
-    <Content Include="Content\bootstrap\normalize.less" />
-    <Content Include="Content\bootstrap\pager.less" />
-    <Content Include="Content\bootstrap\pagination.less" />
-    <Content Include="Content\bootstrap\panels.less" />
-    <Content Include="Content\bootstrap\popovers.less" />
-    <Content Include="Content\bootstrap\print.less" />
-    <Content Include="Content\bootstrap\progress-bars.less" />
-    <Content Include="Content\bootstrap\responsive-embed.less" />
-    <Content Include="Content\bootstrap\responsive-utilities.less" />
-    <Content Include="Content\bootstrap\scaffolding.less" />
-    <Content Include="Content\bootstrap\tables.less" />
-    <Content Include="Content\bootstrap\theme.less" />
-    <Content Include="Content\bootstrap\thumbnails.less" />
-    <Content Include="Content\bootstrap\tooltip.less" />
-    <Content Include="Content\bootstrap\type.less" />
-    <Content Include="Content\bootstrap\utilities.less" />
-    <Content Include="Content\bootstrap\variables.less" />
-    <Content Include="Content\bootstrap\wells.less" />
-    <Content Include="Content\charts.less" />
-    <Content Include="Content\device_details_block.less" />
-    <Content Include="Content\drawers.less" />
-    <None Include="Content\forms.less" />
-    <Content Include="Content\indicators.less" />
-    <Content Include="Content\tiles.less" />
-    <Content Include="Content\loader_block.less" />
-    <Content Include="Content\navigation_block.less" />
-    <Content Include="Content\root_containers_block.less" />
-    <Content Include="Content\root_grid_block.less" />
-    <Content Include="Content\root_style_values_block.less" />
-    <Content Include="Content\text_copy_block.less" />
+    <Content Include="Styles\navbars.less" />
+    <Content Include="Styles\variables.less" />
+    <Content Include="Styles\typography.less" />
+    <Content Include="Styles\layouts.less" />
+    <Content Include="Styles\bootstrap\.csscomb.json" />
+    <Content Include="Styles\bootstrap\.csslintrc" />
+    <Content Include="Styles\bootstrap\alerts.less" />
+    <Content Include="Styles\bootstrap\badges.less" />
+    <Content Include="Styles\bootstrap\bootstrap.less" />
+    <Content Include="Styles\bootstrap\breadcrumbs.less" />
+    <Content Include="Styles\bootstrap\button-groups.less" />
+    <Content Include="Styles\bootstrap\buttons.less" />
+    <Content Include="Styles\bootstrap\carousel.less" />
+    <Content Include="Styles\bootstrap\close.less" />
+    <Content Include="Styles\bootstrap\code.less" />
+    <Content Include="Styles\bootstrap\component-animations.less" />
+    <Content Include="Styles\bootstrap\dropdowns.less" />
+    <Content Include="Styles\bootstrap\forms.less" />
+    <Content Include="Styles\bootstrap\glyphicons.less" />
+    <Content Include="Styles\bootstrap\grid.less" />
+    <Content Include="Styles\bootstrap\input-groups.less" />
+    <Content Include="Styles\bootstrap\jumbotron.less" />
+    <Content Include="Styles\bootstrap\labels.less" />
+    <Content Include="Styles\bootstrap\list-group.less" />
+    <Content Include="Styles\bootstrap\media.less" />
+    <Content Include="Styles\bootstrap\mixins.less" />
+    <Content Include="Styles\bootstrap\modals.less" />
+    <Content Include="Styles\bootstrap\navbar.less" />
+    <Content Include="Styles\bootstrap\navs.less" />
+    <Content Include="Styles\bootstrap\normalize.less" />
+    <Content Include="Styles\bootstrap\pager.less" />
+    <Content Include="Styles\bootstrap\pagination.less" />
+    <Content Include="Styles\bootstrap\panels.less" />
+    <Content Include="Styles\bootstrap\popovers.less" />
+    <Content Include="Styles\bootstrap\print.less" />
+    <Content Include="Styles\bootstrap\progress-bars.less" />
+    <Content Include="Styles\bootstrap\responsive-embed.less" />
+    <Content Include="Styles\bootstrap\responsive-utilities.less" />
+    <Content Include="Styles\bootstrap\scaffolding.less" />
+    <Content Include="Styles\bootstrap\tables.less" />
+    <Content Include="Styles\bootstrap\theme.less" />
+    <Content Include="Styles\bootstrap\thumbnails.less" />
+    <Content Include="Styles\bootstrap\tooltip.less" />
+    <Content Include="Styles\bootstrap\type.less" />
+    <Content Include="Styles\bootstrap\utilities.less" />
+    <Content Include="Styles\bootstrap\variables.less" />
+    <Content Include="Styles\bootstrap\wells.less" />
+    <Content Include="Styles\charts.less" />
+    <Content Include="Styles\device_details_block.less" />
+    <Content Include="Styles\drawers.less" />
+    <None Include="Styles\forms.less" />
+    <Content Include="Styles\indicators.less" />
+    <Content Include="Styles\tiles.less" />
+    <Content Include="Styles\loader_block.less" />
+    <Content Include="Styles\navigation_block.less" />
+    <Content Include="Styles\root_containers_block.less" />
+    <Content Include="Styles\root_grid_block.less" />
+    <Content Include="Styles\root_style_values_block.less" />
+    <Content Include="Styles\text_copy_block.less" />
     <None Include="Properties\PublishProfiles\Package.pubxml" />
     <Content Include="Scripts\vendor\powerbi-visuals.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -390,7 +395,7 @@
     <TypeScriptCompile Include="Scripts\typings\underscore.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\bootstrap\mixins\" />
+    <Folder Include="Styles\bootstrap\mixins\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -398,6 +403,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{5959c109-5369-4ff7-8b55-605a79fdf200}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simulator\Simulator.WebJob.csproj">
       <Project>{394f6c73-80db-4a64-9092-703985c2e536}</Project>
       <Name>Simulator.WebJob</Name>
@@ -481,7 +490,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>30454</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:44305</IISUrl>
+          <IISUrl>https://localhost:44305</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

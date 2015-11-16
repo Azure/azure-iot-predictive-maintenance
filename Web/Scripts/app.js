@@ -377,6 +377,18 @@ var Microsoft;
                             this.devices = new PredictiveMaintenance.Devices(httpClient);
                             this.dashboard = new PredictiveMaintenance.Dashboard(httpClient);
                         }
+                        App.prototype.onUnhandledError = function (errorMessage, url, lineNumber, columnNumber, errorObject) {
+                            var errorContent;
+                            if (errorObject && errorObject.message !== undefined) {
+                                errorContent = errorObject.message;
+                            }
+                            else if (errorObject !== undefined) {
+                                errorContent = errorObject;
+                            }
+                            else {
+                                errorContent = errorMessage;
+                            }
+                        };
                         return App;
                     })();
                     PredictiveMaintenance.App = App;

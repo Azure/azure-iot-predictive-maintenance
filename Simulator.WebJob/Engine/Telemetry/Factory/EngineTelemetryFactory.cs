@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
@@ -14,6 +13,8 @@ using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJo
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry.Factory
 {
+    using Configurations;
+
     public class EngineTelemetryFactory : ITelemetryFactory
     {
         private readonly ILogger _logger;

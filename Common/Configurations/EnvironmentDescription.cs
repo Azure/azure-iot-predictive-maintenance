@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Xml.XPath;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Extensions;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurations
 {
+    using System;
+    using System.IO;
+    using System.Xml;
+    using System.Xml.XPath;
+    using Common.Extensions;
+
     public class EnvironmentDescription : IDisposable
     {
         bool isDisposed = false;
