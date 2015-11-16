@@ -9,7 +9,7 @@
     <ProjectGuid>{8F0FF371-2306-4210-9C22-0D0657B595DC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob</RootNamespace>
     <AssemblyName>Simulator.WebJob</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -37,7 +37,6 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <CodeAnalysisRuleSet>..\PredictiveMaintenance.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
