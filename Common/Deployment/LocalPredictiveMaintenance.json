@@ -147,12 +147,39 @@
                                 "Type": "Csv"
                             }
                         }
+                    },
+                    {
+                        "Name": "TelemetrySummary",
+                        "Properties": {
+                            "DataSource": {
+                                "Properties": {
+                                    "Container": "devicetelemetry",
+                                    "DateFormat": "yyyy/MM/dd",
+                                    "TimeFormat": "HH",
+                                    "PathPattern": "devicetelemetry-summary/{date}/{time}",
+                                    "StorageAccounts": [
+                                        {
+                                            "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
+                                            "AccountName": "[parameters('storageName')]"
+                                        }
+                                    ]
+                                },
+                                "Type": "Microsoft.Storage/Blob"
+                            },
+                            "Serialization": {
+                                "Properties": {
+                                    "Encoding": "UTF8",
+                                    "FieldDelimiter": ","
+                                },
+                                "Type": "Csv"
+                            }
+                        }
                     }
                 ],
                 "Transformation": {
                     "Name": "AllToBlob",
                     "Properties": {
-                        "Query": "WITH \r\n    [StreamData]\r\nAS (\r\n    SELECT\r\n        *\r\n    FROM \r\n      [IoTHubStream] \r\n    WHERE\r\n        [ObjectType] IS NULL -- Filter out device info and command responses\r\n) \r\n\r\nSELECT\r\n    *\r\nINTO\r\n    [Telemetry]\r\nFROM\r\n    [StreamData]",
+                        "Query": "WITH\r\n    [StreamData] AS (\r\n        SELECT\r\n            *\r\n        FROM\r\n            [IoTHubStream]\r\n        WHERE\r\n            [ObjectType] IS NULL -- Filter out device info and command responses\r\n    )\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    Sensor9,\r\n    Sensor11,\r\n    Sensor14,\r\n    Sensor15\r\nINTO\r\n    [Telemetry]\r\nFROM\r\n    [StreamData]\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    AVG(Sensor9) AS Sensor9,\r\n    AVG(Sensor11) AS Sensor11,\r\n    AVG(Sensor14) AS Sensor14,\r\n    AVG(Sensor15) AS Sensor15\r\nINTO\r\n    [TelemetrySummary]\r\nFROM\r\n    [StreamData]\r\nGROUP BY\r\n    DeviceId,\r\n    Cycle,\r\n    SLIDINGWINDOW(minute, 2) -- Duration must cover the longest possible cycle\r\nHAVING\r\n    SUM(EndOfCycle) = 0 -- Sum when EndOfCycle contains both start (-1) and end (1) events",
                         "StreamingUnits": 1
                     }
                 }
