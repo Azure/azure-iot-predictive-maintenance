@@ -1,31 +1,36 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory;
+﻿// ---------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+// ---------------------------------------------------------------
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
 {
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Autofac;
+    using Common.Repository;
+    using Configurations;
+    using WebJob;
+    using WebJob.DataInitialization;
+    using WebJob.Engine.Devices.Factory;
+    using WebJob.Engine.Telemetry.Factory;
+    using WebJob.SimulatorCore.Devices.Factory;
+    using WebJob.SimulatorCore.Logging;
+    using WebJob.SimulatorCore.Repository;
+    using WebJob.SimulatorCore.Serialization;
+    using WebJob.SimulatorCore.Transport.Factory;
+
     public static class Program
     {
-        static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         static IContainer simulatorContainer;
 
-        private const string SHUTDOWN_FILE_ENV_VAR = "WEBJOBS_SHUTDOWN_FILE";
-        private static string _shutdownFile;
-        private static Timer _timer;
+        const string ShutdownFileEnvVar = "WEBJOBS_SHUTDOWN_FILE";
+        static string shutdownFile;
+        static Timer timer;
 
         static void Main(string[] args)
         {
@@ -36,14 +41,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
                 // to start initializing data if we have already gotten the shutdown message, so we'll 
                 // monitor it. This environment variable is reliable
                 // http://blog.amitapple.com/post/2014/05/webjobs-graceful-shutdown/#.VhVYO6L8-B4
-                _shutdownFile = Environment.GetEnvironmentVariable(SHUTDOWN_FILE_ENV_VAR);
+                shutdownFile = Environment.GetEnvironmentVariable(ShutdownFileEnvVar);
                 bool shutdownSignalReceived = false;
 
                 // Setup a file system watcher on that file's directory to know when the file is created
                 // First check for null, though. This does not exist on a localhost deploy, only cloud
-                if (!string.IsNullOrWhiteSpace(_shutdownFile))
+                if (!string.IsNullOrWhiteSpace(shutdownFile))
                 {
-                    var fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(_shutdownFile));
+                    var fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(shutdownFile));
                     fileSystemWatcher.Created += OnShutdownFileChanged;
                     fileSystemWatcher.Changed += OnShutdownFileChanged;
                     fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastWrite;
@@ -51,7 +56,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
                     fileSystemWatcher.EnableRaisingEvents = true;
 
                     // In case the file had already been created before we started watching it.
-                    if (System.IO.File.Exists(_shutdownFile))
+                    if (File.Exists(shutdownFile))
                     {
                         shutdownSignalReceived = true;
                     }
@@ -69,7 +74,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             }
             catch (Exception ex)
             {
-                cancellationTokenSource.Cancel();
+                CancellationTokenSource.Cancel();
                 Trace.TraceError("Webjob terminating: {0}", ex.ToString());
             }
         }
@@ -81,18 +86,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             simulatorContainer = builder.Build();
         }
 
-        private static void OnShutdownFileChanged(object sender, FileSystemEventArgs e)
+        static void OnShutdownFileChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.FullPath.IndexOf(Path.GetFileName(_shutdownFile), StringComparison.OrdinalIgnoreCase) >= 0)
+            if (e.FullPath.IndexOf(Path.GetFileName(shutdownFile), StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                cancellationTokenSource.Cancel();
+                CancellationTokenSource.Cancel();
             }
         }
 
         static void CreateInitialDataAsNeeded(object state)
         {
-            _timer.Dispose();
-            if (!cancellationTokenSource.Token.IsCancellationRequested)
+            timer.Dispose();
+            if (!CancellationTokenSource.Token.IsCancellationRequested)
             {
                 Trace.TraceInformation("Preparing to add initial data");
                 var creator = simulatorContainer.Resolve<IDataInitializer>();
@@ -110,7 +115,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             //in the middle of its work. So we want to delay the data initialization for about 10 seconds to
             //give ourselves the best chance of receiving the shutdown command if it is going to come in. After
             //this delay there is an extremely good chance that we are on a stable start that will remain in place.
-            _timer = new Timer(CreateInitialDataAsNeeded, null, 10000, Timeout.Infinite);
+            timer = new Timer(CreateInitialDataAsNeeded, null, 10000, Timeout.Infinite);
         }
 
         static void StartSimulator()
@@ -123,7 +128,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             var serializer = new JsonSerialize();
             var transportFactory = new IotHubTransportFactory(serializer, logger, configProvider);
 
-            IVirtualDeviceStorage deviceStorage = null;
+            IVirtualDeviceStorage deviceStorage;
             var useConfigforDeviceList = Convert.ToBoolean(configProvider.GetConfigurationSettingValueOrDefault("UseConfigForDeviceList", "False"), CultureInfo.InvariantCulture);
 
             if (useConfigforDeviceList)
@@ -140,19 +145,21 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             // Start Simulator
             Trace.TraceInformation("Starting Simulator");
             var tester = new BulkDeviceTester(transportFactory, logger, configProvider, telemetryFactory, deviceFactory, deviceStorage);
-            Task.Run(() => tester.ProcessDevicesAsync(cancellationTokenSource.Token), cancellationTokenSource.Token);
+            Task.Run(() => tester.ProcessDevicesAsync(CancellationTokenSource.Token), CancellationTokenSource.Token);
         }
 
         static async Task RunAsync()
         {
-            while (!cancellationTokenSource.Token.IsCancellationRequested)
+            while (!CancellationTokenSource.Token.IsCancellationRequested)
             {
                 Trace.TraceInformation("Running");
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(5), cancellationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromMinutes(5), CancellationTokenSource.Token);
                 }
-                catch (TaskCanceledException) { }
+                catch (TaskCanceledException)
+                {
+                }
             }
         }
     }
