@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -7,8 +8,6 @@ using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
-    using Configurations;
-
     public class VirtualDeviceTableStorage : IVirtualDeviceStorage
     {
         private readonly string _storageConnectionString;

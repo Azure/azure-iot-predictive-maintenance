@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
@@ -9,8 +10,6 @@ using Newtonsoft.Json;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
-    using Configurations;
-
     /// <summary>
     /// Wraps calls to the IoT hub identity store.
     /// IDisposable is implemented in order to close out the connection to the IoT Hub when this object is no longer in use

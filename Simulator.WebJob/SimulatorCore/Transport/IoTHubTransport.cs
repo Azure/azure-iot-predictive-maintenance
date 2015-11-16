@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
+﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
@@ -11,8 +12,6 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport
 {
-    using Configurations;
-
     /// <summary>
     /// Implementation of ITransport that talks to IoT Hub.
     /// </summary>

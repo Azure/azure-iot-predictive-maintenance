@@ -2,11 +2,12 @@
 //  Copyright (c) Microsoft Corporation. All rights reserved.
 // ---------------------------------------------------------------
 
+
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
-    using System;
+    using System.Diagnostics;
     using System.IdentityModel.Tokens;
-    using Configurations;
+    using System.Web.Http;
     using global::Owin;
     using Owin.Security;
     using Owin.Security.ActiveDirectory;
@@ -15,61 +16,40 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
     public partial class Startup
     {
-        public void ConfigureAuth(IAppBuilder app, IConfigurationProvider configProvider)
+        public void ConfigureAuth(IAppBuilder app)
         {
+            string federationMetadataAddress = CloudConfigurationManager.GetSetting("FederationMetadataAddress");
+            string federationRealm = CloudConfigurationManager.GetSetting("FederationRealm");
+            string aadTenant = CloudConfigurationManager.GetSetting("AADTenant");
+            string aadAudience = CloudConfigurationManager.GetSetting("AADAudience");
+
+            if (string.IsNullOrWhiteSpace(federationMetadataAddress) || string.IsNullOrWhiteSpace(federationRealm))
+            {
+                Trace.TraceWarning("Unable to load federation values from web.config or other configuration source. Authentication disabled.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(aadTenant) || string.IsNullOrWhiteSpace(aadAudience))
+            {
+                Trace.TraceWarning("Unable to load AAD values from web.config or other configuration source. Authentication disabled.");
+                return;
+            }
+
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             // Primary authentication method for web site to Azure AD via the WsFederation below
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
-
-            string federationMetadataAddress = configProvider.GetConfigurationSettingValue("ida.FederationMetadataAddress");
-            string federationRealm = configProvider.GetConfigurationSettingValue("ida.FederationRealm");
-
-            if (string.IsNullOrEmpty(federationMetadataAddress) || string.IsNullOrEmpty(federationRealm))
-            {
-                throw new ApplicationException("Config issue: Unable to load required federation values from web.config or other configuration source.");
-            }
-
-            // check for default values that will cause app to fail to startup with an unhelpful 404 exception
-            if (federationMetadataAddress.StartsWith("-- ", StringComparison.Ordinal) ||
-                federationRealm.StartsWith("-- ", StringComparison.Ordinal))
-            {
-                throw new ApplicationException("Config issue: Default federation values from web.config need to be overridden or replaced.");
-            }
-
-            app.UseWsFederationAuthentication(
-                new WsFederationAuthenticationOptions
-                {
-                    MetadataAddress = federationMetadataAddress,
-                    Wtrealm = federationRealm
-                });
-
-            string aadTenant = configProvider.GetConfigurationSettingValue("ida.AADTenant");
-            string aadAudience = configProvider.GetConfigurationSettingValue("ida.AADAudience");
-
-            if (string.IsNullOrEmpty(aadTenant) || string.IsNullOrEmpty(aadAudience))
-            {
-                throw new ApplicationException("Config issue: Unable to load required AAD values from web.config or other configuration source.");
-            }
-
-            // check for default values that will cause failure
-            if (aadTenant.StartsWith("-- ", StringComparison.Ordinal) ||
-                aadAudience.StartsWith("-- ", StringComparison.Ordinal))
-            {
-                throw new ApplicationException("Config issue: Default AAD values from web.config need to be overridden or replaced.");
-            }
+            app.UseWsFederationAuthentication(new WsFederationAuthenticationOptions { MetadataAddress = federationMetadataAddress, Wtrealm = federationRealm });
 
             // Fallback authentication method to allow "Authorization: Bearer <token>" in the header for WebAPI calls
             app.UseWindowsAzureActiveDirectoryBearerAuthentication(
                 new WindowsAzureActiveDirectoryBearerAuthenticationOptions
-                {
-                    Tenant = aadTenant,
-                    TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidAudience = aadAudience,
-                        RoleClaimType = "http://schemas.microsoft.com/identity/claims/scope" // Used to unwrap token roles and provide them to [Authorize(Roles="")] attributes
-                    }
-                });
+                        Tenant = aadTenant,
+                        TokenValidationParameters = new TokenValidationParameters { ValidAudience = aadAudience, RoleClaimType = "roles" },
+                    });
+
+            // Require authorization for all controllers
+            Startup.HttpConfiguration.Filters.Add(new AuthorizeAttribute());
         }
     }
 }

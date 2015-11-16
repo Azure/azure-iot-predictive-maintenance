@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices.Factory;

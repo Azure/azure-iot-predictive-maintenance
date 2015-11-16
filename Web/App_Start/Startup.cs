@@ -5,7 +5,6 @@
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
     using System.Web.Http;
-    using Configurations;
     using global::Owin;
 
     public partial class Startup
@@ -14,13 +13,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
         public void Configuration(IAppBuilder app)
         {
-            HttpConfiguration = new HttpConfiguration();
-            ConfigurationProvider configProvider = new ConfigurationProvider();
+            Startup.HttpConfiguration = new System.Web.Http.HttpConfiguration();
 
-            this.ConfigureAuth(app, configProvider);
-            this.ConfigureAutofac(app);
-
-            //ConfigureWebApi(app);
+            this.ConfigureAuth(app);
+            //app.MapSignalR();
         }
     }
 }

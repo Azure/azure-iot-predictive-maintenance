@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
+﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Factory;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
@@ -11,8 +12,6 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
 {
-    using Configurations;
-
     public class DataInitializer : IDataInitializer
     {
         private readonly IIotHubRepository _iotHubRepository;
