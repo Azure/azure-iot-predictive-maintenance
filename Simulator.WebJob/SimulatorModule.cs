@@ -5,6 +5,8 @@ using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJo
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
 {
+    using Configurations;
+
     public sealed class SimulatorModule : Module
     {
         protected override void Load(ContainerBuilder builder)

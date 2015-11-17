@@ -1,19 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using Microsoft.WindowsAzure.ServiceRuntime;
+﻿// ---------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+// ---------------------------------------------------------------
 
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations
+namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.IO;
+    using System.Reflection;
+    using WindowsAzure.ServiceRuntime;
+    using Common.Configurations;
+
     public class ConfigurationProvider : IConfigurationProvider, IDisposable
     {
         readonly Dictionary<string, string> configuration = new Dictionary<string, string>();
-        EnvironmentDescription environment = null;
+        EnvironmentDescription environment;
         const string ConfigToken = "config:";
-        bool _disposed = false;
+        bool _disposed;
 
         public string GetConfigurationSettingValue(string configurationSettingName)
         {
@@ -33,7 +37,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
                     {
                         isAvailable = RoleEnvironment.IsAvailable;
                     }
-                    catch (TypeInitializationException) { }
+                    catch (TypeInitializationException)
+                    {
+                    }
                     if (isAvailable)
                     {
                         configValue = RoleEnvironment.GetConfigurationSettingValue(configurationSettingName);
@@ -47,13 +53,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
                     }
                     if (isEmulated && (configValue != null && configValue.StartsWith(ConfigToken, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (environment == null)
+                        if (this.environment == null)
                         {
-                            LoadEnvironmentConfig();
+                            this.LoadEnvironmentConfig();
                         }
 
-                        configValue = 
-                            environment.GetSetting(configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
+                        configValue =
+                            this.environment.GetSetting(configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
                     }
                     try
                     {
@@ -69,7 +75,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
             catch (RoleEnvironmentException)
             {
                 if (string.IsNullOrEmpty(defaultValue))
+                {
                     throw;
+                }
 
                 this.configuration.Add(configurationSettingName, defaultValue);
             }
@@ -99,9 +107,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
             {
                 location = executingPath.IndexOf("WebJob\\bin", StringComparison.OrdinalIgnoreCase);
             }
-            if (location >=0)
+            if (location >= 0)
             {
-                string fileName = executingPath.Substring(0, location) + "..\\local.config.user";
+                string fileName = executingPath.Substring(0, location) + "local.config.user";
                 if (File.Exists(fileName))
                 {
                     this.environment = new EnvironmentDescription(fileName);
@@ -114,31 +122,31 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (this._disposed)
             {
                 return;
             }
 
             if (disposing)
             {
-                if (environment != null)
+                if (this.environment != null)
                 {
-                    environment.Dispose();
+                    this.environment.Dispose();
                 }
             }
 
-            _disposed = true;
+            this._disposed = true;
         }
 
         ~ConfigurationProvider()
         {
-            Dispose(false);
+            this.Dispose(false);
         }
     }
 }

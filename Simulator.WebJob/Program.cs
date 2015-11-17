@@ -19,6 +19,8 @@ using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJo
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
 {
+    using Configurations;
+
     public static class Program
     {
         static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();

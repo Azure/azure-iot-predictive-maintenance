@@ -21,7 +21,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Contrac
 
         [DataMember(Name = "sensor2")]
         public double Sensor2 { get; set; }
-    
+
         [DataMember(Name = "sensor3")]
         public double Sensor3 { get; set; }
 

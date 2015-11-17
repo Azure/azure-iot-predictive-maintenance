@@ -4,8 +4,8 @@
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Contracts
 {
-    using System.Runtime.Serialization;
     using System.Collections.Generic;
+    using System.Runtime.Serialization;
 
     [DataContract]
     public sealed class EnginesPrediction

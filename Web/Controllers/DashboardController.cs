@@ -6,6 +6,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 {
     using System.Web.Mvc;
 
+    [Authorize]
     public sealed class DashboardController : Controller
     {
         public ActionResult Index()

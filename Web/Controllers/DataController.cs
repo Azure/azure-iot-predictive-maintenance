@@ -11,6 +11,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using Contracts;
     using Newtonsoft.Json;
 
+    [Authorize]
     public sealed class DataController : ApiController
     {
         [Route("api/devices")]
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             devices.Add(new Device
             {
                 Id = "N1172FJ-2",
-                Status = "Running",
+                Status = "Pending",
                 Manufacturer = "Contoso Inc.",
                 Firmware = "1.91",
                 Memory = "7 MB",
@@ -88,7 +89,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
                 }
             }
 
-            var enginesTelemetry = new EnginesTelemetry { Engine1Telemetry = engine1Telemetry, Engine2Telemetry = engine2Telemetry };
+            var enginesTelemetry = new EnginesTelemetry
+            {
+                Engine1Telemetry = engine1Telemetry,
+                Engine2Telemetry = engine2Telemetry
+            };
 
             return enginesTelemetry;
         }
@@ -112,7 +117,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
                 }
             }
 
-            var enginesPrediction = new EnginesPrediction { Engine1Prediction = engine1Prediction, Engine2Prediction = engine2Prediction };
+            var enginesPrediction = new EnginesPrediction
+            {
+                Engine1Prediction = engine1Prediction,
+                Engine2Prediction = engine2Prediction
+            };
 
             return enginesPrediction;
         }

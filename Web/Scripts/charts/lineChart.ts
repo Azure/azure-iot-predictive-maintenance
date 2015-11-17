@@ -79,7 +79,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         }
 
         public createDataView(categories, line1values, line2values) {
-            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "table1", name: "country" } });
+            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "country" } });
 
             var categoryIdentities = categories.map(function (value) {
                 var expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.text(value));
@@ -91,25 +91,25 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var dataViewMetadata = {
                 columns: [
                     {
-                        displayName: 'Sensor',
-                        queryName: 'Sensor',
+                        displayName: "Sensor",
+                        queryName: "Sensor",
                         type: powerbi.ValueType.fromDescriptor({ text: true })
                     },
                     {
-                        displayName: 'Engine 1',
+                        displayName: "Engine 1",
                         isMeasure: true,
                         format: "$0,000.00",
-                        queryName: 'sales1',
+                        queryName: "sales1",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: 'lightgreen' } } } }
+                        objects: { dataPoint: { fill: { solid: { color: "lightgreen" } } } }
                     },
                     {
-                        displayName: 'Engine 2',
+                        displayName: "Engine 2",
                         isMeasure: true,
                         format: "$0,000.00",
-                        queryName: 'sales2',
+                        queryName: "sales2",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: 'lightblue' } } } }
+                        objects: { dataPoint: { fill: { solid: { color: "lightblue" } } } }
                     }
                 ]
             };

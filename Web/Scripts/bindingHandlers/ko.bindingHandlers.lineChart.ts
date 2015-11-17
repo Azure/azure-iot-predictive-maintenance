@@ -1,5 +1,5 @@
-﻿/// <reference path="typings/knockout.d.ts" />
-/// <reference path="charts/linechart.ts" />
+﻿/// <reference path="../typings/knockout.d.ts" />
+/// <reference path="../charts/linechart.ts" />
 
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     ko.bindingHandlers["lineChart"] = {
@@ -8,9 +8,10 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             var lineChart = new LineChart(element);
 
-            var update = function (chartData) {
-                if (!chartData)
+            var update = chartData => {
+                if (!chartData) {
                     return;
+                }
 
                 lineChart.updateChartData(chartData.categories, chartData.line1values, chartData.line2values);
             }

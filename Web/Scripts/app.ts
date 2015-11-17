@@ -14,6 +14,22 @@
             this.devices = new Devices(httpClient);
             this.dashboard = new Dashboard(httpClient);
         }
+
+        private onUnhandledError(errorMessage, url, lineNumber, columnNumber?, errorObject?) {
+            var errorContent;
+
+            if (errorObject && errorObject.message !== undefined) {
+                errorContent = errorObject.message;
+            }
+            else if (errorObject !== undefined) {
+                errorContent = errorObject;
+            }
+            else {
+                errorContent = errorMessage;
+            }
+            
+            //this.notificationService.error(errorContent);
+        }
     }
 }
 

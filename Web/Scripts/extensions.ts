@@ -5,11 +5,11 @@
     }
     var formatted = this;
     for (var i = 0; i < values.length; i++) {
-        var regexp = new RegExp('\\{' + i + '\\}', 'gi');
+        var regexp = new RegExp("\\{" + i + "\\}", "gi");
         if (values[i])
             formatted = formatted.replace(regexp, values[i]);
         else
-            formatted = formatted.replace(regexp, '');
+            formatted = formatted.replace(regexp, "");
     }
     return formatted;
 };
