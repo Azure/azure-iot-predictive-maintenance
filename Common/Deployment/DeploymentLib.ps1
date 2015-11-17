@@ -273,7 +273,8 @@ function GetAzureStorageAccount()
 {
     Param(
         [Parameter(Mandatory=$true,Position=0)] [string] $storageBaseName,
-        [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName
+        [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName,
+        [Parameter(Mandatory=$false,Position=2)] [string] $location = $global:AllocationRegion
     )
     $storageTempName = $storageBaseName.ToLowerInvariant().Replace('-','')
     $storageAccountName = ValidateResourceName $storageTempName.Substring(0, [System.Math]::Min(19, $storageTempName.Length)) Microsoft.Storage/storageAccounts $resourceGroupName
@@ -281,7 +282,7 @@ function GetAzureStorageAccount()
     if ($storage -eq $null)
     {
         Write-Host "$(Get-Date –f $timeStampFormat) - Creating new storage account: $storageAccountName"
-        $storage = New-AzureStorageAccount -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -Location $global:AllocationRegion -Type Standard_GRS
+        $storage = New-AzureStorageAccount -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -Location $location -Type Standard_GRS
     }
     return $storage
 }
@@ -415,7 +416,7 @@ function CreateWorkSpace()
     }
     $subscription = Get-AzureSubscription -Current
     $environment = Get-AzureEnvironment $subscription.Environment
-    $storageAccount = GetAzureStorageAccount $("ml" + $suiteName) $resourceGroupName
+    $storageAccount = GetAzureStorageAccount $("ml" + $suiteName) $resourceGroupName $mlLocation
     $storageAccountKey = (Get-AzureStorageAccountKey -StorageAccountName $storageAccount.Name -ResourceGroupName $resourceGroupName).Key1
     $liveId = (Get-AzureSubscription -Current).DefaultAccount
     $endpointId = [System.Guid]::NewGuid()
@@ -446,7 +447,7 @@ function GetWorkspaceByName()
     )
     $subscription = Get-AzureSubscription -Current
     $environment = Get-AzureEnvironment $subscription.Environment
-    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl | ?{$_.Name -eq $name}
+    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
 }
 
 function CopyExperiment()
@@ -600,7 +601,6 @@ function ProvisionML()
             Write-Host $workspace
             throw ("Unable to create workspace '{0}'" -f $name)
         }
-        $workspace = $workspace
     }
     $workspaceId = $workspace.Id
 
