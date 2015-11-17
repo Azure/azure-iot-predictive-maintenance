@@ -274,7 +274,7 @@ function GetAzureStorageAccount()
     Param(
         [Parameter(Mandatory=$true,Position=0)] [string] $storageBaseName,
         [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName,
-		[Parameter(Mandatory=$false,Position=2)] [string] $location = $global:AllocationRegion
+        [Parameter(Mandatory=$false,Position=2)] [string] $location = $global:AllocationRegion
     )
     $storageTempName = $storageBaseName.ToLowerInvariant().Replace('-','')
     $storageAccountName = ValidateResourceName $storageTempName.Substring(0, [System.Math]::Min(19, $storageTempName.Length)) Microsoft.Storage/storageAccounts $resourceGroupName
