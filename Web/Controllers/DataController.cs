@@ -11,6 +11,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using Contracts;
     using Newtonsoft.Json;
 
+    [Authorize]
     public sealed class DataController : ApiController
     {
         [Route("api/devices")]
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             devices.Add(new Device
             {
                 Id = "N1172FJ-2",
-                Status = "Running",
+                Status = "Pending",
                 Manufacturer = "Contoso Inc.",
                 Firmware = "1.91",
                 Memory = "7 MB",

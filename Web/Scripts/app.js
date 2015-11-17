@@ -8,6 +8,48 @@ var Microsoft;
             (function (Applications) {
                 var PredictiveMaintenance;
                 (function (PredictiveMaintenance) {
+                    var App = (function () {
+                        function App() {
+                            this.sensor1Data = [];
+                            this.sensor2Data = [];
+                            var httpClient = new PredictiveMaintenance.JQueryHttpClient();
+                            this.devices = new PredictiveMaintenance.Devices(httpClient);
+                            this.dashboard = new PredictiveMaintenance.Dashboard(httpClient);
+                        }
+                        App.prototype.onUnhandledError = function (errorMessage, url, lineNumber, columnNumber, errorObject) {
+                            var errorContent;
+                            if (errorObject && errorObject.message !== undefined) {
+                                errorContent = errorObject.message;
+                            }
+                            else if (errorObject !== undefined) {
+                                errorContent = errorObject;
+                            }
+                            else {
+                                errorContent = errorMessage;
+                            }
+                        };
+                        return App;
+                    })();
+                    PredictiveMaintenance.App = App;
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+$(function () {
+    var app = new Microsoft.Azure.Devices.Applications.PredictiveMaintenance.App();
+    ko.applyBindings(app);
+});
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
                     var LineChart = (function () {
                         function LineChart(htmlElement) {
                             this.htmlElement = htmlElement;
@@ -137,8 +179,65 @@ var Microsoft;
         })(Devices = Azure.Devices || (Azure.Devices = {}));
     })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
 })(Microsoft || (Microsoft = {}));
-/// <reference path="typings/knockout.d.ts" />
-/// <reference path="charts/linechart.ts" />
+/// <reference path="../typings/knockout.d.ts" />
+/// <reference path="../charts/linechart.ts" />
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    ko.bindingHandlers["lineChart"] = {
+                        init: function (element, valueAccessor) {
+                            var sourceObservable = valueAccessor();
+                            var lineChart = new PredictiveMaintenance.LineChart(element);
+                            var update = function (chartData) {
+                                if (!chartData) {
+                                    return;
+                                }
+                                lineChart.updateChartData(chartData.categories, chartData.line1values, chartData.line2values);
+                            };
+                            sourceObservable.subscribe(update);
+                            $(window).resize(function () {
+                                lineChart.resizeViewport();
+                            });
+                            update(sourceObservable());
+                        }
+                    };
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+/// <reference path="../typings/knockout.d.ts" />
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    ko.bindingHandlers["selectText"] = {
+                        init: function (element, valueAccessor) {
+                            var target = valueAccessor();
+                            ko.applyBindingsToNode(element, {
+                                click: function () { $(target).select(); }
+                            });
+                        }
+                    };
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+/// <reference path="../typings/knockout.d.ts" />
 var Microsoft;
 (function (Microsoft) {
     var Azure;
@@ -175,6 +274,216 @@ var Microsoft;
                             });
                         }
                     };
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+/// <reference path="../typings/knockout.d.ts" />
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    ko.bindingHandlers["status"] = {
+                        init: function (element, valueAccessor) {
+                            var status = valueAccessor();
+                            var statusClass;
+                            switch (status) {
+                                case "Running":
+                                    statusClass = "status_true";
+                                    break;
+                                case "Pending":
+                                    statusClass = "status_pending";
+                                    break;
+                                case "Disabled":
+                                    statusClass = "status_false";
+                                    break;
+                                default:
+                                    throw new Error("Unknown device state.");
+                            }
+                            ko.applyBindingsToNode(element, { css: statusClass });
+                        }
+                    };
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+String.prototype.format = function () {
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i - 0] = arguments[_i];
+    }
+    var formatted = this;
+    for (var i = 0; i < values.length; i++) {
+        var regexp = new RegExp('\\{' + i + '\\}', 'gi');
+        if (values[i])
+            formatted = formatted.replace(regexp, values[i]);
+        else
+            formatted = formatted.replace(regexp, '');
+    }
+    return formatted;
+};
+<<<<<<< HEAD
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    var App = (function () {
+                        function App() {
+                            this.sensor1Data = [];
+                            this.sensor2Data = [];
+                            var httpClient = new PredictiveMaintenance.JQueryHttpClient();
+                            this.devices = new PredictiveMaintenance.Devices(httpClient);
+                            this.dashboard = new PredictiveMaintenance.Dashboard(httpClient);
+                        }
+                        return App;
+                    })();
+                    PredictiveMaintenance.App = App;
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+$(function () {
+    var app = new Microsoft.Azure.Devices.Applications.PredictiveMaintenance.App();
+    ko.applyBindings(app);
+});
+=======
+>>>>>>> az_local
+/// <reference path="ihttpclient.ts" />
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    var JQueryHttpClient = (function () {
+                        function JQueryHttpClient() {
+                            this.get = this.get.bind(this);
+                            this.post = this.post.bind(this);
+                            this.delete = this.delete.bind(this);
+                            this.onBeforeSend = this.onBeforeSend.bind(this);
+                            this.handleErrorResponse = this.handleErrorResponse.bind(this);
+                            this.handle401Response = this.handle401Response.bind(this);
+                            this.urlFormat = "/{0}";
+                        }
+                        JQueryHttpClient.prototype.onBeforeSend = function (xhrObj) {
+                        };
+                        JQueryHttpClient.prototype.handleErrorResponse = function (xmlHttpRequest) {
+                            switch (xmlHttpRequest.status) {
+                                case 401: this.handle401Response(xmlHttpRequest);
+                            }
+                        };
+                        JQueryHttpClient.prototype.handle401Response = function (xmlHttpRequest) {
+                            window.location.reload();
+                        };
+                        JQueryHttpClient.prototype.get = function (url) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "GET",
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        JQueryHttpClient.prototype.post = function (url, data) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "POST",
+                                data: data,
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        JQueryHttpClient.prototype.patch = function (url, data) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "PATCH",
+                                data: data,
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        JQueryHttpClient.prototype.put = function (url, data) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "PUT",
+                                data: data,
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        JQueryHttpClient.prototype.delete = function (url) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "DELETE",
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        JQueryHttpClient.prototype.head = function (url) {
+                            var promise = jQuery.ajax({
+                                url: this.urlFormat.format(url),
+                                method: "HEAD",
+                                beforeSend: this.onBeforeSend,
+                                error: this.handleErrorResponse,
+                                cache: false
+                            });
+                            return promise;
+                        };
+                        return JQueryHttpClient;
+                    })();
+                    PredictiveMaintenance.JQueryHttpClient = JQueryHttpClient;
+                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
+            })(Applications = Devices.Applications || (Devices.Applications = {}));
+        })(Devices = Azure.Devices || (Azure.Devices = {}));
+    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
+})(Microsoft || (Microsoft = {}));
+var Microsoft;
+(function (Microsoft) {
+    var Azure;
+    (function (Azure) {
+        var Devices;
+        (function (Devices) {
+            var Applications;
+            (function (Applications) {
+                var PredictiveMaintenance;
+                (function (PredictiveMaintenance) {
+                    var SimulationStates = (function () {
+                        function SimulationStates() {
+                        }
+                        SimulationStates.stopped = "stopped";
+                        SimulationStates.running = "running";
+                        SimulationStates.completed = "completed";
+                        return SimulationStates;
+                    })();
+                    PredictiveMaintenance.SimulationStates = SimulationStates;
                 })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
             })(Applications = Devices.Applications || (Devices.Applications = {}));
         })(Devices = Azure.Devices || (Azure.Devices = {}));
@@ -315,210 +624,6 @@ var Microsoft;
                         return Dashboard;
                     })();
                     PredictiveMaintenance.Dashboard = Dashboard;
-                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
-            })(Applications = Devices.Applications || (Devices.Applications = {}));
-        })(Devices = Azure.Devices || (Azure.Devices = {}));
-    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
-})(Microsoft || (Microsoft = {}));
-var Microsoft;
-(function (Microsoft) {
-    var Azure;
-    (function (Azure) {
-        var Devices;
-        (function (Devices) {
-            var Applications;
-            (function (Applications) {
-                var PredictiveMaintenance;
-                (function (PredictiveMaintenance) {
-                    var SimulationStates = (function () {
-                        function SimulationStates() {
-                        }
-                        SimulationStates.stopped = "stopped";
-                        SimulationStates.running = "running";
-                        SimulationStates.completed = "completed";
-                        return SimulationStates;
-                    })();
-                    PredictiveMaintenance.SimulationStates = SimulationStates;
-                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
-            })(Applications = Devices.Applications || (Devices.Applications = {}));
-        })(Devices = Azure.Devices || (Azure.Devices = {}));
-    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
-})(Microsoft || (Microsoft = {}));
-String.prototype.format = function () {
-    var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i - 0] = arguments[_i];
-    }
-    var formatted = this;
-    for (var i = 0; i < values.length; i++) {
-        var regexp = new RegExp('\\{' + i + '\\}', 'gi');
-        if (values[i])
-            formatted = formatted.replace(regexp, values[i]);
-        else
-            formatted = formatted.replace(regexp, '');
-    }
-    return formatted;
-};
-var Microsoft;
-(function (Microsoft) {
-    var Azure;
-    (function (Azure) {
-        var Devices;
-        (function (Devices) {
-            var Applications;
-            (function (Applications) {
-                var PredictiveMaintenance;
-                (function (PredictiveMaintenance) {
-                    var App = (function () {
-                        function App() {
-                            this.sensor1Data = [];
-                            this.sensor2Data = [];
-                            var httpClient = new PredictiveMaintenance.JQueryHttpClient();
-                            this.devices = new PredictiveMaintenance.Devices(httpClient);
-                            this.dashboard = new PredictiveMaintenance.Dashboard(httpClient);
-                        }
-                        return App;
-                    })();
-                    PredictiveMaintenance.App = App;
-                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
-            })(Applications = Devices.Applications || (Devices.Applications = {}));
-        })(Devices = Azure.Devices || (Azure.Devices = {}));
-    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
-})(Microsoft || (Microsoft = {}));
-$(function () {
-    var app = new Microsoft.Azure.Devices.Applications.PredictiveMaintenance.App();
-    ko.applyBindings(app);
-});
-/// <reference path="ihttpclient.ts" />
-var Microsoft;
-(function (Microsoft) {
-    var Azure;
-    (function (Azure) {
-        var Devices;
-        (function (Devices) {
-            var Applications;
-            (function (Applications) {
-                var PredictiveMaintenance;
-                (function (PredictiveMaintenance) {
-                    var JQueryHttpClient = (function () {
-                        function JQueryHttpClient() {
-                            this.get = this.get.bind(this);
-                            this.post = this.post.bind(this);
-                            this.delete = this.delete.bind(this);
-                            this.onBeforeSend = this.onBeforeSend.bind(this);
-                            this.handleErrorResponse = this.handleErrorResponse.bind(this);
-                            this.handle401Response = this.handle401Response.bind(this);
-                            this.urlFormat = "/{0}";
-                        }
-                        JQueryHttpClient.prototype.onBeforeSend = function (xhrObj) {
-                        };
-                        JQueryHttpClient.prototype.handleErrorResponse = function (xmlHttpRequest) {
-                            switch (xmlHttpRequest.status) {
-                                case 401: this.handle401Response(xmlHttpRequest);
-                            }
-                        };
-                        JQueryHttpClient.prototype.handle401Response = function (xmlHttpRequest) {
-                            window.location.reload();
-                        };
-                        JQueryHttpClient.prototype.get = function (url) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "GET",
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        JQueryHttpClient.prototype.post = function (url, data) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "POST",
-                                data: data,
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        JQueryHttpClient.prototype.patch = function (url, data) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "PATCH",
-                                data: data,
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        JQueryHttpClient.prototype.put = function (url, data) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "PUT",
-                                data: data,
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        JQueryHttpClient.prototype.delete = function (url) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "DELETE",
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        JQueryHttpClient.prototype.head = function (url) {
-                            var promise = jQuery.ajax({
-                                url: this.urlFormat.format(url),
-                                method: "HEAD",
-                                beforeSend: this.onBeforeSend,
-                                error: this.handleErrorResponse,
-                                cache: false
-                            });
-                            return promise;
-                        };
-                        return JQueryHttpClient;
-                    })();
-                    PredictiveMaintenance.JQueryHttpClient = JQueryHttpClient;
-                })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
-            })(Applications = Devices.Applications || (Devices.Applications = {}));
-        })(Devices = Azure.Devices || (Azure.Devices = {}));
-    })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
-})(Microsoft || (Microsoft = {}));
-/// <reference path="typings/knockout.d.ts" />
-/// <reference path="charts/linechart.ts" />
-var Microsoft;
-(function (Microsoft) {
-    var Azure;
-    (function (Azure) {
-        var Devices;
-        (function (Devices) {
-            var Applications;
-            (function (Applications) {
-                var PredictiveMaintenance;
-                (function (PredictiveMaintenance) {
-                    ko.bindingHandlers["lineChart"] = {
-                        init: function (element, valueAccessor) {
-                            var sourceObservable = valueAccessor();
-                            var lineChart = new PredictiveMaintenance.LineChart(element);
-                            var update = function (chartData) {
-                                if (!chartData)
-                                    return;
-                                lineChart.updateChartData(chartData.categories, chartData.line1values, chartData.line2values);
-                            };
-                            sourceObservable.subscribe(update);
-                            $(window).resize(function () {
-                                lineChart.resizeViewport();
-                            });
-                            update(sourceObservable());
-                        }
-                    };
                 })(PredictiveMaintenance = Applications.PredictiveMaintenance || (Applications.PredictiveMaintenance = {}));
             })(Applications = Devices.Applications || (Devices.Applications = {}));
         })(Devices = Azure.Devices || (Azure.Devices = {}));

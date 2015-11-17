@@ -62,6 +62,16 @@
       <HintPath>..\packages\Autofac.Owin.3.1.0\lib\net45\Autofac.Integration.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Autofac.Integration.WebApi, Version=3.4.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.WebApi2.3.4.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi.Owin, Version=3.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.WebApi2.Owin.3.3.0\lib\net45\Autofac.Integration.WebApi.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="dotless.Core">
       <HintPath>..\packages\dotless.1.5.1\lib\dotless.Core.dll</HintPath>
       <Private>True</Private>
@@ -185,6 +195,11 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Http.Owin, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.0\lib\net45\System.Web.Http.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
@@ -230,12 +245,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Security\PrincipalHelper.cs" />
     <Content Include="App_Code\App_GlobalResources\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Content>
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Autofac.cs" />
     <Compile Include="Contracts\Device.cs" />
     <Compile Include="Contracts\EnginesPrediction.cs" />
@@ -253,6 +271,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Account.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
   </ItemGroup>
@@ -301,11 +320,15 @@
     <Content Include="Content\visuals.less" />
     <Content Include="Scripts\vendor\knockout.js" />
     <Content Include="Global.asax" />
+    <Content Include="Views\Errors\404.cshtml" />
+    <Content Include="Views\Errors\500.cshtml" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.selectText.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesTelemetry.ts" />
     <TypeScriptCompile Include="Scripts\contracts\ITelemetry.ts" />
-    <TypeScriptCompile Include="Scripts\ko.bindingHandlers.sortBy.ts" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.status.ts" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.sortBy.ts" />
     <TypeScriptCompile Include="Scripts\models\ILineChartData.ts" />
     <TypeScriptCompile Include="Scripts\models\sortedCollection.ts" />
     <TypeScriptCompile Include="Scripts\pages\dashboard.ts" />
@@ -398,9 +421,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ProjectReference Include="..\Simulator\Simulator.WebJob.csproj">
       <Project>{394f6c73-80db-4a64-9092-703985c2e536}</Project>
       <Name>Simulator.WebJob</Name>
+=======
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{5959c109-5369-4ff7-8b55-605a79fdf200}</Project>
+      <Name>Common</Name>
+>>>>>>> az_local
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -416,7 +445,7 @@
     <TypeScriptCompile Include="Scripts\models\IVisualGroup.ts" />
     <TypeScriptCompile Include="Scripts\http\IHttpClient.ts" />
     <TypeScriptCompile Include="Scripts\http\jqueryHttpClient.ts" />
-    <TypeScriptCompile Include="Scripts\ko.bindingHandlers.lineChart.ts" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.lineChart.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\other.ts" />

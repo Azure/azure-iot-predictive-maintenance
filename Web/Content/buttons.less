@@ -1,4 +1,7 @@
-﻿.button { /* anchor version */
+﻿@import "bootstrap/variables.less";
+@import "variables.less";
+
+.button { /* anchor version */
     text-align: center;
     line-height: 32px;
 }
@@ -33,6 +36,25 @@
     border: 0;
     margin: 6px 0 0 6px;
     padding: 0;
+    position: relative;
+}
+
+
+.button_copy:hover, .button_copy:focus {
+    &::after {
+        border: 0;
+        background: none;
+        background-color: #333333;
+        color: #f1f1f1;
+        font-size: 1em;
+        position: absolute;
+        padding: .5em;
+        content: 'Click to select all';
+        right: 0;
+        top: 100%;
+        text-indent: 0;
+        white-space: nowrap;
+    }
 }
 
 /*
