@@ -1,4 +1,5 @@
-﻿/// <reference path="../typings/knockout.d.ts" />
+﻿/// <reference path="typings/knockout.d.ts" />
+/// <reference path="charts/linechart.ts" />
 
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     ko.bindingHandlers["sortBy"] = {
