@@ -447,7 +447,7 @@ function GetWorkspaceByName()
     )
     $subscription = Get-AzureSubscription -Current
     $environment = Get-AzureEnvironment $subscription.Environment
-    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl | ?{$_.Name -eq $name}
+    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
 }
 
 function CopyExperiment()
@@ -601,7 +601,6 @@ function ProvisionML()
             Write-Host $workspace
             throw ("Unable to create workspace '{0}'" -f $name)
         }
-        $workspace = $workspace
     }
     $workspaceId = $workspace.Id
 
