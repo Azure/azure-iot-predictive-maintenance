@@ -10,14 +10,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery")
-                .Include("~/scripts/vendor/jquery-{version}.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/knockout")
-                .Include("~/scripts/vendor/knockout.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/powerbi")
-                .Include("~/scripts/vendor/powerbi-visuals.min.js"));
+            bundles.Add(new ScriptBundle("~/vendor")
+                .Include("~/scripts/vendor/jquery-{version}.js")
+                .Include("~/scripts/vendor/knockout.js")
+                .Include("~/scripts/vendor/powerbi-visuals.min.js")
+                .Include("~/scripts/vendor/moment-with-locales.js"));
         }
     }
 }

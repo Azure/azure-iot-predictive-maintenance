@@ -126,9 +126,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             ];
 
             var dataValues = powerbi.data.DataViewTransform.createValueColumns(columns);
-            var tableDataValues = categories.map(function (countryName, idx) {
-                return [countryName, columns[0].values[idx], columns[1].values[idx]];
-            });
+            var tableDataValues = categories.map((countryName, idx) => [countryName, columns[0].values[idx], columns[1].values[idx]]);
 
             return {
                 metadata: dataViewMetadata,

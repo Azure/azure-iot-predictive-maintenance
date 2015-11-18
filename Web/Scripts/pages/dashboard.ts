@@ -1,3 +1,5 @@
+/// <reference path="../typings/moment.d.ts" />
+
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     export class Dashboard {
         private httpClient: IHttpClient;
@@ -49,20 +51,22 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 var sensor4Data = initialData;
 
                 enginesTelemetry.engine1telemetry.forEach(reading => {
-                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                    var timestamp = moment(reading.timestamp).format("h:mm a");
+
                     sensor1Data.categories.push(timestamp);
                     sensor2Data.categories.push(timestamp);
                     sensor3Data.categories.push(timestamp);
                     sensor4Data.categories.push(timestamp);
 
-                    sensor1Data.line1values.push(reading.sensor1)
-                    sensor2Data.line1values.push(reading.sensor2)
-                    sensor3Data.line1values.push(reading.sensor3)
-                    sensor4Data.line1values.push(reading.sensor4)
+                    sensor1Data.line1values.push(reading.sensor1);
+                    sensor2Data.line1values.push(reading.sensor2);
+                    sensor3Data.line1values.push(reading.sensor3);
+                    sensor4Data.line1values.push(reading.sensor4);
                 });
 
                 enginesTelemetry.engine2telemetry.forEach(reading => {
-                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                    var timestamp = moment(reading.timestamp).format("h:mm a");
+                    
                     sensor1Data.categories.push(timestamp);
                     sensor2Data.categories.push(timestamp);
                     sensor3Data.categories.push(timestamp);

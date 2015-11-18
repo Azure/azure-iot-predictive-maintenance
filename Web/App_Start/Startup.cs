@@ -19,7 +19,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
             this.ConfigureAuth(app, configProvider);
             this.ConfigureAutofac(app);
-            //this.ConfigureWebApi(app);
+            this.ConfigureWebApi(app);
         }
     }
 }
