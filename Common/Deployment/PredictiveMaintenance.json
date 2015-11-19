@@ -54,6 +54,18 @@
             "metadata": {
                 "description": "The file name for the simulator data"
             }
+        },
+        "mlApiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The machine learning API location"
+            }
+        },
+        "mlApiKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The machine learning API key"
+            }
         }
     },
     "variables": {
@@ -275,6 +287,18 @@
                             "value": "DeviceList"
                         },
                         {
+                            "name": "eventHub.HubName",
+                            "value": "[variables('ehDataName')]"
+                        },
+                        {
+                            "name": "eventHub.ConnectionString",
+                            "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+                        },
+                        {
+                            "name": "eventHub.StorageConnectionString",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+                        },
+                        {
                             "name": "ObjectTypePrefix",
                             "value": ""
                         },
@@ -285,6 +309,14 @@
                         {
                             "name": "SimulatorDataFileName",
                             "value": "[parameters('simulatorDataFileName')]"
+                        },
+                        {
+                            "name": "MLApiUrl",
+                            "value": "[parameters('mlApiUrl')]"
+                        },
+                        {
+                            "name": "MLApiKey",
+                            "value": "[parameters('mlApiKey')]"
                         }
                     ]
                 }

@@ -70,7 +70,9 @@ if ($cloudDeploy)
     $params += @{ `
         webJobPackageUri=$webJobPackage; `
         simulatorDataContainer=$simulatorDataContainer; `
-        simulatorDataFileName=$simulatorDataFileName}
+        simulatorDataFileName=$simulatorDataFileName; `
+        mlApiUrl=$machineLearningService.ApiLocation; `
+        mlApiKey=$machineLearningService.PrimaryKey}
 }
 
 # Upload simulator data
