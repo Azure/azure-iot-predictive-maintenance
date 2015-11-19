@@ -7,15 +7,25 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Web.Mvc;
+    using System.Threading.Tasks;
+    using System.Web.Http;
     using Contracts;
     using Newtonsoft.Json;
+    using Services;
 
     [Authorize]
-    public sealed class DataController : ApiController
+    public sealed class DataController : System.Web.Http.ApiController
     {
+        private readonly ITelemetryService telemetryService;
+
+        public DataController(ITelemetryService telemetryService)
+        {
+            this.telemetryService = telemetryService;
+        }
+
+        [HttpGet]
         [Route("api/devices")]
-        public IEnumerable<Device> Devices()
+        public async Task<IEnumerable<Device>> Devices()
         {
             var devices = new Collection<Device>();
 
@@ -58,35 +68,32 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             return devices;
         }
 
+        [HttpPost]
         [Route("api/simulation/start")]
         public void StartSimulation()
         {
             //TODO:
         }
 
+        [HttpPost]
         [Route("api/simulation/stop")]
         public void StopSimulation()
         {
             //TODO:
         }
 
+        [HttpGet]
         [Route("api/telemetry")]
-        public EnginesTelemetry GetEnginesTelemetry()
+        public async Task<EnginesTelemetry> GetEnginesTelemetry()
         {
-            var source = JsonConvert.DeserializeObject<IEnumerable<Telemetry>>("[{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T17:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T18:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767},{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T19:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T20:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767},{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T21:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T22:34:28.3019877Z\",\"sensor1\":9048.495213,\"sensor2\":47.62901242,\"sensor3\":8127.910672,\"sensor4\":8.233265767}]");
+            var source = await this.telemetryService.GetLatestData();
+
             var engine1Telemetry = new Collection<Telemetry>();
             var engine2Telemetry = new Collection<Telemetry>();
 
-            foreach (var telemetry in source)
+            foreach (var telemetry in source) //TODO: Make normal grouping by device ID
             {
-                if (telemetry.DeviceId == "1")
-                {
-                    engine1Telemetry.Add(telemetry);
-                }
-                else
-                {
-                    engine2Telemetry.Add(telemetry);
-                }
+                engine1Telemetry.Add(telemetry);
             }
 
             var enginesTelemetry = new EnginesTelemetry
@@ -98,6 +105,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             return enginesTelemetry;
         }
 
+        [HttpGet]
         [Route("api/prediction")]
         public EnginesPrediction GetEnginesPrediction()
         {

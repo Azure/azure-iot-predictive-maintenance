@@ -18,7 +18,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             sourceObservable.subscribe(update);
 
-            $(window).resize(function () {
+            $(window).resize(() => {
                 lineChart.resizeViewport();
             });
 

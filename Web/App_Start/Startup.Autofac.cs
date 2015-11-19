@@ -4,6 +4,7 @@
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
+    using System.Reflection;
     using System.Web.Mvc;
     using Autofac;
     using Autofac.Integration.Mvc;
@@ -11,6 +12,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     using Common.Configurations;
     using Configurations;
     using global::Owin;
+    using Services;
 
     public partial class Startup
     {
@@ -18,7 +20,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<ConfigurationProvider>().As<IConfigurationProvider>();
+            builder.RegisterType<ConfigurationProvider>()
+                .As<IConfigurationProvider>();
+
+            builder.RegisterType<TelemetryService>()
+                .As<ITelemetryService>();
+
+            builder.RegisterControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
             var container = builder.Build();
 
@@ -29,7 +38,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
             HttpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             app.UseAutofacMiddleware(container);
-            //app.UseAutofacWebApi(HttpConfiguration);
+            app.UseAutofacWebApi(HttpConfiguration);
+
+
         }
     }
 }

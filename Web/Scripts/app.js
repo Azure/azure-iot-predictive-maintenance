@@ -128,6 +128,7 @@ var Microsoft;
         })(Devices = Azure.Devices || (Azure.Devices = {}));
     })(Azure = Microsoft.Azure || (Microsoft.Azure = {}));
 })(Microsoft || (Microsoft = {}));
+/// <reference path="../typings/moment.d.ts" />
 var Microsoft;
 (function (Microsoft) {
     var Azure;
@@ -168,7 +169,7 @@ var Microsoft;
                                 var sensor3Data = initialData;
                                 var sensor4Data = initialData;
                                 enginesTelemetry.engine1telemetry.forEach(function (reading) {
-                                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                                    var timestamp = moment(reading.timestamp).format("h:mm a");
                                     sensor1Data.categories.push(timestamp);
                                     sensor2Data.categories.push(timestamp);
                                     sensor3Data.categories.push(timestamp);
@@ -179,7 +180,7 @@ var Microsoft;
                                     sensor4Data.line1values.push(reading.sensor4);
                                 });
                                 enginesTelemetry.engine2telemetry.forEach(function (reading) {
-                                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                                    var timestamp = moment(reading.timestamp).format("h:mm a");
                                     sensor1Data.categories.push(timestamp);
                                     sensor2Data.categories.push(timestamp);
                                     sensor3Data.categories.push(timestamp);
@@ -535,9 +536,7 @@ var Microsoft;
                                 }
                             ];
                             var dataValues = powerbi.data.DataViewTransform.createValueColumns(columns);
-                            var tableDataValues = categories.map(function (countryName, idx) {
-                                return [countryName, columns[0].values[idx], columns[1].values[idx]];
-                            });
+                            var tableDataValues = categories.map(function (countryName, idx) { return [countryName, columns[0].values[idx], columns[1].values[idx]]; });
                             return {
                                 metadata: dataViewMetadata,
                                 categorical: {
