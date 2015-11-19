@@ -195,7 +195,7 @@
                                     "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
                                     "AccountName": "[parameters('storageName')]",
                                     "BatchSize": 1,
-                                    "ColumnsToRemove": [ ],
+                                    "ColumnsToRemove": [ "DeviceId", "Counter" ],
                                     "PartitionKey": "DeviceId",
                                     "RowKey": "Counter",
                                     "Table": "devicetelemetry"

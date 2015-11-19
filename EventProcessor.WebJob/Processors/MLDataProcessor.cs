@@ -32,7 +32,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             // Create a generic object to represent the JSON request required by this ML experiment;
             // this converts the JSON input (from ASA) into the required format
             var mlRequest = new {
-                Inputs = new { 
+                Inputs = new {
                     data = new {
                         ColumnNames = new string[] {"id", "cycle", "s9", "s11", "s14", "s15"},
                         // The experiment theoretically supports multiple inputs at once,
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             else
             {
                 throw new Exception(string.Format("The ML request failed with status code: {0}", response.StatusCode));
-            }   
+            }
         }
     }
 }
