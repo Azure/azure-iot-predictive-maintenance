@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.ServiceBus.Messaging;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors
 {
@@ -22,7 +18,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             base(configurationProvider.GetConfigurationSettingValue("eventHub.HubName"),
                  configurationProvider.GetConfigurationSettingValue("eventHub.ConnectionString"),
                  configurationProvider.GetConfigurationSettingValue("eventHub.StorageConnectionString"),
-                  configurationProvider)
+                 configurationProvider)
         { }
     }
 }

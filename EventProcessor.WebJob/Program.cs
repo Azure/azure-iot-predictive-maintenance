@@ -51,7 +51,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 {
                     BuildContainer();
 
-                    StartEventProcessorHost();
+                    StartMLDataProcessorHost();
 
                     RunAsync().Wait();
                 }
@@ -78,11 +78,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             eventProcessorContainer = builder.Build();
         }
 
-        static void StartEventProcessorHost()
+        static void StartMLDataProcessorHost()
         {
-            Trace.TraceInformation("Starting Event Processor");
-            var eventProcessor = eventProcessorContainer.Resolve<IMLDataProcessorHost>();
-            eventProcessor.Start(cancellationTokenSource.Token);
+            Trace.TraceInformation("Starting ML Data Processor");
+            var mlDataProcessor = eventProcessorContainer.Resolve<IMLDataProcessorHost>();
+            mlDataProcessor.Start(cancellationTokenSource.Token);
         }
 
         static async Task RunAsync()

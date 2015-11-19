@@ -43,12 +43,6 @@
                 "description": "The start time for Stream Analytics jobs"
             }
         },
-        "simulatorDataContainer": {
-            "type": "string",
-            "metadata": {
-                "description": "The storage account blob container name for the simulator data"
-            }
-        },
         "simulatorDataFileName": {
             "type": "string",
             "metadata": {
@@ -301,10 +295,6 @@
                         {
                             "name": "ObjectTypePrefix",
                             "value": ""
-                        },
-                        {
-                            "name": "SimulatorDataContainer",
-                            "value": "[parameters('simulatorDataContainer')]"
                         },
                         {
                             "name": "SimulatorDataFileName",

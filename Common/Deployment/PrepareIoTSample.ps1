@@ -35,7 +35,6 @@ $resourceGroupName = (GetResourceGroup -Name $suiteName -Type $suiteType).Resour
 $storageAccount = GetAzureStorageAccount $suiteName $resourceGroupName
 $iotHubName = GetAzureIotHubName $suitename $resourceGroupName
 $sevicebusName = GetAzureServicebusName $suitename $resourceGroupName
-$simulatorDataContainer = "simulatordata"
 $simulatorDataFileName = "data.csv"
 
 # Provision Machine Learning workspace
@@ -69,14 +68,13 @@ if ($cloudDeploy)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
     $params += @{ `
         webJobPackageUri=$webJobPackage; `
-        simulatorDataContainer=$simulatorDataContainer; `
         simulatorDataFileName=$simulatorDataFileName; `
         mlApiUrl=$machineLearningService.ApiLocation; `
         mlApiKey=$machineLearningService.PrimaryKey}
 }
 
 # Upload simulator data
-UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName $simulatorDataContainer $false
+UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName "simulatordata" $false
 
 # Stream analytics does not auto stop, and requires a start time for both create and update as well as stop if already exists
 [string]$startTime = (get-date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -104,6 +102,5 @@ UpdateEnvSetting "IotHubName" $result.Outputs['iotHubHostName'].Value
 UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionString'].Value
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
-UpdateEnvSetting "SimulatorDataContainer" $simulatorDataContainer
 
 Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $environmentName)
