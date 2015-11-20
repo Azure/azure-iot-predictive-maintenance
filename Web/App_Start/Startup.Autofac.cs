@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     using Autofac.Integration.Mvc;
     using Autofac.Integration.WebApi;
     using Common.Configurations;
+    using Common.Repository;
     using Configurations;
     using global::Owin;
     using Services;
@@ -25,6 +26,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
             builder.RegisterType<TelemetryService>()
                 .As<ITelemetryService>();
+
+            builder.RegisterType<IotHubRepository>()
+               .As<IIotHubRepository>();
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());

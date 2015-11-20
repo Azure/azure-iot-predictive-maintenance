@@ -10,6 +10,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 
     public interface ITelemetryService
     {
-        Task<IEnumerable<Telemetry>> GetLatestData();
+        Task<IEnumerable<Telemetry>> GetLatestTelemetryData();
+
+        Task<IEnumerable<Prediction>> GetLatestPredictionData();
     }
 }
