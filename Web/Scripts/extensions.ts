@@ -1,9 +1,16 @@
-﻿String.prototype.format = function () {
+﻿interface String {
+    format(...value: any[]);
+}
+
+String.prototype.format = function () {
     var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i - 0] = arguments[_i];
+
+    for (var i = 0; i < arguments.length; i++) {
+        values[i - 0] = arguments[i];
     }
+
     var formatted = this;
+
     for (var i = 0; i < values.length; i++) {
         var regexp = new RegExp("\\{" + i + "\\}", "gi");
         if (values[i])

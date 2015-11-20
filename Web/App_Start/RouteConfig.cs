@@ -17,7 +17,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
             routes.MapRoute("Default", "{controller}/{action}/{id}", new
             {
-                controller = "Dashboard",
+                controller = "Home",
                 action = "Index",
                 id = UrlParameter.Optional
             });

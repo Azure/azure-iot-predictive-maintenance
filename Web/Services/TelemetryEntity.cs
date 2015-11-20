@@ -6,7 +6,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 {
     using WindowsAzure.Storage.Table;
 
-    public sealed class TelemetryRecord : TableEntity
+    public sealed class TelemetryEntity : TableEntity
     {
         public string sensor11 { get; set; }
 

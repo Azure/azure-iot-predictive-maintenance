@@ -3,20 +3,16 @@
 <html>
 <head lang="en">
     @*<title>@Resources.PageTitle</title>*@
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="~/styles/img/favicon.ico" />
-    @*
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    *@
-    <link rel="stylesheet" type="text/css" href="~/styles/app.less" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" href="~/styles/img/favicon.ico"/>
+
+    @Styles.Render("~/styles/app.less")
 
     @Scripts.Render("~/vendor")
-
-    <script src="~/Scripts/app.js"></script>
+    @Scripts.Render("~/Scripts/startup.js")
 </head>
+
 <body class="layout layout-expand">
     <div class="layout-row">
         <header>
@@ -53,11 +49,8 @@
                     <div class="layout-cell">
                         <div class="layout-cell-content aside-nav">
                             <nav>
-                                <a href="@Url.Action("Index", "Dashboard")" class="nav_dashboard">
+                                <a class="nav_dashboard selected">
                                     Dashboard
-                                </a>
-                                <a href="@Url.Action("Index", "Devices")" class="nav_devices">
-                                    Devices
                                 </a>
                             </nav>
                         </div>

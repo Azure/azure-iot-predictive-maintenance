@@ -2,7 +2,8 @@
 
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     export class Dashboard {
-        private httpClient: IHttpClient;
+        private warningTreshold = 500;
+        private httpClient: JQueryHttpClient;
 
         public simulationState: KnockoutObservable<string>;
         public sensor1Data: KnockoutObservable<ILineChartData>;
@@ -17,17 +18,15 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public engine1RulWarning: KnockoutObservable<boolean>;
         public engine2RulWarning: KnockoutObservable<boolean>;
 
-        constructor(httpClient: IHttpClient) {
-            this.httpClient = httpClient;
-
+        constructor() {
             //rebinding...
             this.startSimulation = this.startSimulation.bind(this);
             this.stopSimulation = this.stopSimulation.bind(this);
             this.getTelemetryData = this.getTelemetryData.bind(this);
             this.getPredictionData = this.getPredictionData.bind(this);
 
-            this.simulationState = ko.observable<string>(SimulationStates.stopped);
-
+            //initialization...
+            this.httpClient = new JQueryHttpClient();
             this.sensor1Data = ko.observable<ILineChartData>();
             this.sensor2Data = ko.observable<ILineChartData>();
             this.sensor3Data = ko.observable<ILineChartData>();
@@ -39,7 +38,9 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.engine2Cycles = ko.observable<string>("N/A");
             this.engine1RulWarning = ko.observable<boolean>(false);
             this.engine2RulWarning = ko.observable<boolean>(false);
+            this.simulationState = ko.observable<string>(SimulationStates.stopped);
 
+            //startup...
             this.getTelemetryData();
             this.getPredictionData();
         }
@@ -115,7 +116,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 this.engine1Rul(engine1PredictionRul.toString());
                 this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
 
-                if (engine1PredictionRul < 5)
+                if (engine1PredictionRul < this.warningTreshold)
                     this.engine1RulWarning(true);
 
                 var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
@@ -123,7 +124,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
                 this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
 
-                if (engine2PredictionRul < 5)
+                if (engine2PredictionRul < this.warningTreshold)
                     this.engine2RulWarning(true);
             });
         }

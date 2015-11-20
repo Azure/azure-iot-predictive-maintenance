@@ -27,18 +27,16 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
             var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
 
             var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicetelemetry");
-            //var tableQuery = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
+            //var conditions = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
 
-            TableQuery<TelemetryRecord> query = new TableQuery<TelemetryRecord>()
-                //.Where(tableQuery)
+            TableQuery<TelemetryEntity> query = new TableQuery<TelemetryEntity>()
+                //.Where(conditions)
                 .Take(2000)
                 .Select(new[] { "sensor11", "sensor14", "sensor15", "sensor9" });
 
-            var telemetryData = new Collection<Telemetry>();
-
+            var result = new Collection<Telemetry>();
             var entities = table.ExecuteQuery(query).OrderBy(x => x.Timestamp);
 
-            // Print the fields for each customer.
             foreach (var entity in entities)
             {
                 var telemetry = new Telemetry
@@ -51,30 +49,28 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                     Sensor4 = double.Parse(entity.sensor9)
                 };
 
-                telemetryData.Add(telemetry);
+                result.Add(telemetry);
             }
 
-            return telemetryData;
+            return result;
         }
-
 
         public async Task<IEnumerable<Prediction>> GetLatestPredictionData()
         {
             var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
 
             var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicemlresult");
-            //var tableQuery = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
+            //var conditions = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
 
             TableQuery<PredictionRecord> query = new TableQuery<PredictionRecord>()
-                //.Where(tableQuery)
+                //.Where(conditions)
                 .Take(2000)
                 .Select(new[] { "Timestamp", "Rul" });
 
-            var predictionData = new Collection<Prediction>();
+            var result = new Collection<Prediction>();
 
             var entities = table.ExecuteQuery(query).OrderBy(x => x.Timestamp);
 
-            // Print the fields for each customer.
             foreach (var entity in entities)
             {
                 var prediction = new Prediction
@@ -85,10 +81,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                     Cycles = int.Parse(entity.RowKey)
                 };
 
-                predictionData.Add(prediction);
+                result.Add(prediction);
             }
 
-            return predictionData;
+            return result;
         }
     }
 }

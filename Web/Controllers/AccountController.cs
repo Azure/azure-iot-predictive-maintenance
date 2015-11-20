@@ -7,9 +7,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using System.Web;
     using System.Web.Mvc;
 
-    /// <summary>
-    /// Controller for handling account related actions.
-    /// </summary>
     public sealed class AccountController : Controller
     {
         /// <summary>

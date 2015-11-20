@@ -255,7 +255,8 @@
     <Compile Include="Security\PrincipalHelper.cs" />
     <Compile Include="Services\ITelemetryService.cs" />
     <Compile Include="Services\PredictionRecord.cs" />
-    <Compile Include="Services\TelemetryRecord.cs" />
+    <Compile Include="Services\DeviceEntity.cs" />
+    <Compile Include="Services\TelemetryEntity.cs" />
     <Compile Include="Services\TelemetryService.cs" />
     <Content Include="App_Code\App_GlobalResources\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -265,15 +266,12 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Autofac.cs" />
-    <Compile Include="Contracts\Device.cs" />
     <Compile Include="Contracts\EnginesPrediction.cs" />
     <Compile Include="Contracts\EnginesTelemetry.cs" />
     <Compile Include="Contracts\Prediction.cs" />
     <Compile Include="Contracts\Telemetry.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ApiController.cs" />
-    <Compile Include="Controllers\DevicesController.cs" />
-    <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -295,7 +293,6 @@
     <Content Include="Styles\img\button_copy.svg" />
     <Content Include="Styles\img\button_page_next.svg" />
     <Content Include="Styles\img\button_page_prev.svg" />
-    <Content Include="Styles\img\chart-airplane.svg" />
     <Content Include="Styles\img\favicon.ico" />
     <Content Include="Styles\img\icon_actions.svg" />
     <Content Include="Styles\img\icon_add.svg" />
@@ -333,15 +330,11 @@
     <Content Include="Global.asax" />
     <Content Include="Views\Errors\404.cshtml" />
     <Content Include="Views\Errors\500.cshtml" />
-    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.selectText.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesTelemetry.ts" />
     <TypeScriptCompile Include="Scripts\contracts\ITelemetry.ts" />
-    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.status.ts" />
-    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.sortBy.ts" />
     <TypeScriptCompile Include="Scripts\models\ILineChartData.ts" />
-    <TypeScriptCompile Include="Scripts\models\sortedCollection.ts" />
     <TypeScriptCompile Include="Scripts\pages\dashboard.ts" />
     <TypeScriptCompile Include="Scripts\models\simulationStates.ts" />
     <TypeScriptCompile Include="Scripts\extensions.ts" />
@@ -420,9 +413,8 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Devices\Index.cshtml" />
     <TypeScriptCompile Include="Scripts\typings\moment-node.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\moment.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\underscore.d.ts" />
@@ -439,21 +431,18 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\app.ts" />
-    <TypeScriptCompile Include="Scripts\contracts\IDevice.ts" />
+    <TypeScriptCompile Include="Scripts\startup.ts" />
     <TypeScriptCompile Include="Scripts\models\IBag.ts" />
     <TypeScriptCompile Include="Scripts\models\ICategorical.ts" />
     <TypeScriptCompile Include="Scripts\models\ICategory.ts" />
     <TypeScriptCompile Include="Scripts\models\IDataView.ts" />
     <TypeScriptCompile Include="Scripts\models\IVisualGroup.ts" />
-    <TypeScriptCompile Include="Scripts\http\IHttpClient.ts" />
     <TypeScriptCompile Include="Scripts\http\jqueryHttpClient.ts" />
     <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.lineChart.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\other.ts" />
+    <TypeScriptCompile Include="Scripts\typings\powerbi.d.ts" />
     <TypeScriptCompile Include="Scripts\charts\lineChart.ts" />
-    <TypeScriptCompile Include="Scripts\pages\devices.ts" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App_Code\App_GlobalResources\Resources.resx">
@@ -491,7 +480,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
-    <TypeScriptOutFile>Scripts/app.js</TypeScriptOutFile>
+    <TypeScriptOutFile>scripts/startup.js</TypeScriptOutFile>
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

@@ -11,7 +11,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     [Authorize]
     public sealed class SimulationController : System.Web.Http.ApiController
     {
-        private readonly IIotHubRepository iotHubRepository;
+        readonly IIotHubRepository iotHubRepository;
 
         public SimulationController(IIotHubRepository iotHubRepository)
         {

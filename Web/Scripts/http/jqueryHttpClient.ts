@@ -1,8 +1,5 @@
-﻿/// <reference path="ihttpclient.ts" />
-
-module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
-
-    export class JQueryHttpClient implements IHttpClient {
+﻿module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
+    export class JQueryHttpClient {
         private urlFormat: string;
         private accessToken: string;
 
