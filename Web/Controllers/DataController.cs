@@ -7,6 +7,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
     using Contracts;
@@ -68,38 +69,36 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             return devices;
         }
 
-        [HttpPost]
-        [Route("api/simulation/start")]
-        public void StartSimulation()
-        {
-            //TODO:
-        }
-
-        [HttpPost]
-        [Route("api/simulation/stop")]
-        public void StopSimulation()
-        {
-            //TODO:
-        }
-
         [HttpGet]
         [Route("api/telemetry")]
         public async Task<EnginesTelemetry> GetEnginesTelemetry()
         {
-            var source = await this.telemetryService.GetLatestData();
+            var source = await this.telemetryService.GetLatestTelemetryData();
 
-            var engine1Telemetry = new Collection<Telemetry>();
-            var engine2Telemetry = new Collection<Telemetry>();
+            var d = new Dictionary<string, Collection<Telemetry>>();
+
 
             foreach (var telemetry in source) //TODO: Make normal grouping by device ID
             {
-                engine1Telemetry.Add(telemetry);
+                Collection<Telemetry> collection;
+
+                if (d.ContainsKey(telemetry.DeviceId))
+                {
+                    collection = d[telemetry.DeviceId];
+                }
+                else
+                {
+                    collection = new Collection<Telemetry>();
+                    d[telemetry.DeviceId] = collection;
+                }
+
+                collection.Add(telemetry);
             }
 
             var enginesTelemetry = new EnginesTelemetry
             {
-                Engine1Telemetry = engine1Telemetry,
-                Engine2Telemetry = engine2Telemetry
+                Engine1Telemetry = d.ElementAt(0).Value,
+                Engine2Telemetry = d.ElementAt(1).Value
             };
 
             return enginesTelemetry;
@@ -107,31 +106,38 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
         [HttpGet]
         [Route("api/prediction")]
-        public EnginesPrediction GetEnginesPrediction()
+        public async Task<EnginesPrediction> GetEnginesPrediction()
         {
-            var source = JsonConvert.DeserializeObject<IEnumerable<Prediction>>("[{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T17:34:28.3019877Z\",\"rul\":30,\"cycles\":10},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T18:34:28.3019877Z\",\"rul\":35,\"cycles\":10},{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T19:34:28.3019877Z\",\"rul\":40,\"cycles\":10},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T20:34:28.3019877Z\",\"rul\":40,\"cycles\":10},{\"deviceId\":\"1\",\"timestamp\":\"2015-11-12T21:34:28.3019877Z\",\"rul\":40,\"cycles\":10},{\"deviceId\":\"2\",\"timestamp\":\"2015-11-12T22:34:28.3019877Z\",\"rul\":25,\"cycles\":10}]");
-            var engine1Prediction = new Collection<Prediction>();
-            var engine2Prediction = new Collection<Prediction>();
 
-            foreach (var prediction in source)
+            var source = await this.telemetryService.GetLatestPredictionData();
+
+            var d = new Dictionary<string, Collection<Prediction>>();
+
+
+            foreach (var telemetry in source) //TODO: Make normal grouping by device ID
             {
-                if (prediction.DeviceId == "1")
+                Collection<Prediction> collection;
+
+                if (d.ContainsKey(telemetry.DeviceId))
                 {
-                    engine1Prediction.Add(prediction);
+                    collection = d[telemetry.DeviceId];
                 }
                 else
                 {
-                    engine2Prediction.Add(prediction);
+                    collection = new Collection<Prediction>();
+                    d[telemetry.DeviceId] = collection;
                 }
+
+                collection.Add(telemetry);
             }
 
-            var enginesPrediction = new EnginesPrediction
+            var enginesTelemetry = new EnginesPrediction
             {
-                Engine1Prediction = engine1Prediction,
-                Engine2Prediction = engine2Prediction
+                Engine1Prediction = d.ElementAt(0).Value,
+                Engine2Prediction = d.ElementAt(1).Value
             };
 
-            return enginesPrediction;
+            return enginesTelemetry;
         }
     }
 }

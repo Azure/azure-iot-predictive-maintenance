@@ -14,6 +14,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public engine1Cycles: KnockoutObservable<string>;
         public engine2Rul: KnockoutObservable<string>;
         public engine2Cycles: KnockoutObservable<string>;
+        public engine1RulWarning: KnockoutObservable<boolean>;
+        public engine2RulWarning: KnockoutObservable<boolean>;
 
         constructor(httpClient: IHttpClient) {
             this.httpClient = httpClient;
@@ -35,6 +37,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.engine1Cycles = ko.observable<string>("N/A");
             this.engine2Rul = ko.observable<string>("N/A");
             this.engine2Cycles = ko.observable<string>("N/A");
+            this.engine1RulWarning = ko.observable<boolean>(false);
+            this.engine2RulWarning = ko.observable<boolean>(false);
 
             this.getTelemetryData();
             this.getPredictionData();
@@ -44,11 +48,11 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var getTelemetryPromise = this.httpClient.get("api/telemetry");
 
             getTelemetryPromise.done((enginesTelemetry: IEnginesTelemetry) => {
-                var initialData: ILineChartData = { categories: [], line1values: [], line2values: [] };
-                var sensor1Data = initialData;
-                var sensor2Data = initialData;
-                var sensor3Data = initialData;
-                var sensor4Data = initialData;
+                var sensor1Data = { categories: [], line1values: [], line2values: [] };
+                var sensor2Data = { categories: [], line1values: [], line2values: [] };
+                var sensor3Data = { categories: [], line1values: [], line2values: [] };
+                var sensor4Data = { categories: [], line1values: [], line2values: [] };
+
 
                 enginesTelemetry.engine1telemetry.forEach(reading => {
                     var timestamp = moment(reading.timestamp).format("h:mm a");
@@ -66,16 +70,16 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
                 enginesTelemetry.engine2telemetry.forEach(reading => {
                     var timestamp = moment(reading.timestamp).format("h:mm a");
-                    
+
                     sensor1Data.categories.push(timestamp);
                     sensor2Data.categories.push(timestamp);
                     sensor3Data.categories.push(timestamp);
                     sensor4Data.categories.push(timestamp);
 
-                    sensor1Data.line2values.push(reading.sensor1)
-                    sensor2Data.line2values.push(reading.sensor2)
-                    sensor3Data.line2values.push(reading.sensor3)
-                    sensor4Data.line2values.push(reading.sensor4)
+                    sensor1Data.line2values.push(reading.sensor1);
+                    sensor2Data.line2values.push(reading.sensor2);
+                    sensor3Data.line2values.push(reading.sensor3);
+                    sensor4Data.line2values.push(reading.sensor4);
                 });
 
                 this.sensor1Data(sensor1Data);
@@ -93,23 +97,34 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 var rulData = initialData;
 
                 prediction.engine1prediction.forEach(reading => {
-                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                    var timestamp = moment(reading.timestamp).format("h:mm a");
                     rulData.categories.push(timestamp);
                     rulData.line1values.push(reading.rul);
                 });
 
                 prediction.engine2prediction.forEach(reading => {
-                    var timestamp = new Date(Date.parse(reading.timestamp)).toTimeString();
+                    var timestamp = moment(reading.timestamp).format("h:mm a");
                     rulData.categories.push(timestamp);
                     rulData.line2values.push(reading.rul);
                 });
 
                 this.rulData(rulData);
 
-                this.engine1Rul(_.last(prediction.engine1prediction).rul.toString());
+                var engine1PredictionRul = _.last(prediction.engine1prediction).rul;
+
+                this.engine1Rul(engine1PredictionRul.toString());
                 this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
+
+                if (engine1PredictionRul < 5)
+                    this.engine1RulWarning(true);
+
+                var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
+
                 this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
                 this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
+
+                if (engine2PredictionRul < 5)
+                    this.engine2RulWarning(true);
             });
         }
 

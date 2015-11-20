@@ -161,9 +161,10 @@
       <HintPath>..\packages\WindowsAzure.Storage.5.0.2\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -249,9 +250,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\SimulationController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
     <Compile Include="Security\PrincipalHelper.cs" />
     <Compile Include="Services\ITelemetryService.cs" />
+    <Compile Include="Services\PredictionRecord.cs" />
     <Compile Include="Services\TelemetryRecord.cs" />
     <Compile Include="Services\TelemetryService.cs" />
     <Content Include="App_Code\App_GlobalResources\Resources.Designer.cs">

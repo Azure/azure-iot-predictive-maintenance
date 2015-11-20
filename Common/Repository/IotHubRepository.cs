@@ -1,15 +1,19 @@
-﻿using System;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Newtonsoft.Json;
+﻿// ---------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation. All rights reserved.
+// ---------------------------------------------------------------
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
+    using System;
+    using System.Net;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Configurations;
+    using DeviceSchema;
+    using Helpers;
+    using Models;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Wraps calls to the IoT hub identity store.
     /// IDisposable is implemented in order to close out the connection to the IoT Hub when this object is no longer in use
@@ -18,7 +22,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
     {
         readonly string _iotHubConnectionString;
         readonly RegistryManager _deviceManager;
-        bool _disposed = false;
+        bool _disposed;
 
         public IotHubRepository(IConfigurationProvider configProvider)
         {
@@ -37,8 +41,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
         /// <returns></returns>
         public async Task<dynamic> AddDeviceAsync(dynamic device, SecurityKeys securityKeys)
         {
-
-            Azure.Devices.Device iotHubDevice = new Azure.Devices.Device(DeviceSchemaHelper.GetDeviceID(device));
+            Device iotHubDevice = new Device(DeviceSchemaHelper.GetDeviceID(device));
 
             var authentication = new AuthenticationMechanism
             {
@@ -51,7 +54,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
 
             iotHubDevice.Authentication = authentication;
 
-            await AzureRetryHelper.OperationWithBasicRetryAsync<Azure.Devices.Device>(async () =>
+            await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
                 await _deviceManager.AddDeviceAsync(iotHubDevice));
 
             return device;
@@ -62,19 +65,19 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
         /// </summary>
         /// <param name="oldIotHubDevice">The IoT Hub Device to add back into the IoT Hub</param>
         /// <returns>true if the device was added successfully, false if there was a problem adding the device</returns>
-        public async Task<bool> TryAddDeviceAsync(Azure.Devices.Device oldIotHubDevice)
+        public async Task<bool> TryAddDeviceAsync(Device oldIotHubDevice)
         {
             try
             {
                 // the device needs to be added as a new device as the one that was saved 
                 // has an eTag value that cannot be provided when registering a new device
-                var newIotHubDevice = new Azure.Devices.Device(oldIotHubDevice.Id)
+                var newIotHubDevice = new Device(oldIotHubDevice.Id)
                 {
                     Authentication = oldIotHubDevice.Authentication,
                     Status = oldIotHubDevice.Status
                 };
 
-                await AzureRetryHelper.OperationWithBasicRetryAsync<Azure.Devices.Device>(async () =>
+                await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
                     await _deviceManager.AddDeviceAsync(newIotHubDevice));
             }
             catch (Exception)
@@ -85,7 +88,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
             return true;
         }
 
-        public async Task<Azure.Devices.Device> GetIotHubDeviceAsync(string deviceId)
+        public async Task<Device> GetIotHubDeviceAsync(string deviceId)
         {
             return await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
                 await _deviceManager.GetDeviceAsync(deviceId));
@@ -121,12 +124,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
 
         public async Task UpdateDeviceEnabledStatusAsync(string deviceId, bool isEnabled)
         {
-            Azure.Devices.Device iotHubDevice =
-                await AzureRetryHelper.OperationWithBasicRetryAsync<Azure.Devices.Device>(async () =>
+            Device iotHubDevice =
+                await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
                     await _deviceManager.GetDeviceAsync(deviceId));
 
             iotHubDevice.Status = isEnabled ? DeviceStatus.Enabled : DeviceStatus.Disabled;
-            
+
             await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
                 await _deviceManager.UpdateDeviceAsync(iotHubDevice));
         }
@@ -140,7 +143,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
         public async Task SendCommand(string deviceId, dynamic command)
         {
             ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(_iotHubConnectionString);
-            
+
             byte[] commandAsBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
             var notificationMessage = new Message(commandAsBytes);
 
@@ -155,7 +158,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
 
         public async Task<SecurityKeys> GetDeviceKeysAsync(string deviceId)
         {
-            Azure.Devices.Device iotHubDevice = await _deviceManager.GetDeviceAsync(deviceId);
+            Device iotHubDevice = await _deviceManager.GetDeviceAsync(deviceId);
 
             if (iotHubDevice == null)
             {
@@ -183,7 +186,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
             {
                 return;
             }
-            
+
             if (disposing)
             {
                 if (_deviceManager != null)
