@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization;
 
@@ -11,6 +12,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<ShutdownFileWatcher>()
+                .As<IShutdownFileWatcher>()
+                .SingleInstance();
+
             builder.RegisterType<ConfigurationProvider>()
                 .As<IConfigurationProvider>()
                 .SingleInstance();

@@ -34,7 +34,7 @@ if ($environmentName -ne "local")
 $resourceGroupName = (GetResourceGroup -Name $suiteName -Type $suiteType).ResourceGroupName
 $storageAccount = GetAzureStorageAccount $suiteName $resourceGroupName
 $iotHubName = GetAzureIotHubName $suitename $resourceGroupName
-$simulatorDataContainer = "simulatordata"
+$sevicebusName = GetAzureServicebusName $suitename $resourceGroupName
 $simulatorDataFileName = "data.csv"
 
 # Provision Machine Learning workspace
@@ -49,11 +49,13 @@ UpdateResourceGroupState $resourceGroupName ProvisionAzure
 $params = @{ `
     suiteName=$suitename; `
     storageName=$($storageAccount.Name); `
-    iotHubName=$iotHubName}
+    iotHubName=$iotHubName; `
+    sbName=$sevicebusName}
 
 Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.Name)"
 Write-Host "IotHub Name: $iotHubName"
+Write-Host "Servicebus Name: $sevicebusName"
 Write-Host "ResourceGroup Name: $resourceGroupName"
 Write-Host "Deployment template path: $deploymentTemplatePath"
 
@@ -66,12 +68,13 @@ if ($cloudDeploy)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
     $params += @{ `
         webJobPackageUri=$webJobPackage; `
-        simulatorDataContainer=$simulatorDataContainer; `
-        simulatorDataFileName=$simulatorDataFileName}
+        simulatorDataFileName=$simulatorDataFileName; `
+        mlApiUrl=$machineLearningService.ApiLocation; `
+        mlApiKey=$machineLearningService.PrimaryKey}
 }
 
 # Upload simulator data
-UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName $simulatorDataContainer $false
+UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName "simulatordata" $false
 
 # Stream analytics does not auto stop, and requires a start time for both create and update as well as stop if already exists
 [string]$startTime = (get-date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -92,10 +95,12 @@ if ($result.ProvisioningState -ne "Succeeded")
 UpdateResourceGroupState $resourceGroupName Complete
 UpdateEnvSetting "ServiceStoreAccountName" $storageAccount.Name
 UpdateEnvSetting "ServiceStoreAccountConnectionString" $result.Outputs['storageConnectionString'].Value
+UpdateEnvSetting "ServiceSBName" $sevicebusName
+UpdateEnvSetting "ServiceSBConnectionString" $result.Outputs['ehConnectionString'].Value
+UpdateEnvSetting "ServiceEHName" $result.Outputs['ehDataName'].Value
 UpdateEnvSetting "IotHubName" $result.Outputs['iotHubHostName'].Value
 UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionString'].Value
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
-UpdateEnvSetting "SimulatorDataContainer" $simulatorDataContainer
 
 Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $environmentName)

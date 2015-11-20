@@ -20,6 +20,12 @@
                 "description": "The name of the iotHub"
             }
         },
+        "sbName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the serviceBus"
+            }
+        },
         "webJobPackageUri": {
             "type": "string",
             "defaultValue": "http://aka.ms/azureiot/PredictiveMaintenance/webjob"
@@ -37,16 +43,22 @@
                 "description": "The start time for Stream Analytics jobs"
             }
         },
-        "simulatorDataContainer": {
-            "type": "string",
-            "metadata": {
-                "description": "The storage account blob container name for the simulator data"
-            }
-        },
         "simulatorDataFileName": {
             "type": "string",
             "metadata": {
                 "description": "The file name for the simulator data"
+            }
+        },
+        "mlApiUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The machine learning API location"
+            }
+        },
+        "mlApiKey": {
+            "type": "string",
+            "metadata": {
+                "description": "The machine learning API key"
             }
         }
     },
@@ -55,6 +67,10 @@
         "location": "[resourceGroup().location]",
         "storageVersion": "2015-05-01-preview",
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+        "sbVersion": "2014-09-01",
+        "sbKeyName": "RootManageSharedAccessKey",
+        "sbResourceId": "[resourceId('Microsoft.Eventhub/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
+        "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
         "saVersion": "2015-10-01",
         "webVersion": "2015-04-01",
         "webJobPlanName": "[concat(parameters('suiteName'), '-jobsplan')]",
@@ -105,11 +121,37 @@
             ]
         },
         {
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[parameters('sbName')]",
+            "type": "Microsoft.Eventhub/namespaces",
+            "location": "[variables('location')]",
+            "properties": {
+                "messagingSku": 1,
+                "region": "[variables('location')]"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('ehDataName')]",
+                    "type": "eventHubs",
+                    "location": "[variables('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('ehDataName')]",
+                        "MessageRetentionInDays": 1
+                    }
+                }
+            ]
+        },
+        {
             "apiVersion": "[variables('saVersion')]",
             "type": "Microsoft.StreamAnalytics/streamingjobs",
             "name": "[concat(parameters('suiteName'), '-Telemetry')]",
             "location": "[variables('location')]",
             "dependsOn": [
+                "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
@@ -150,25 +192,15 @@
                         "Properties": {
                             "DataSource": {
                                 "Properties": {
-                                    "Container": "devicetelemetry",
-                                    "DateFormat": "yyyy/MM/dd",
-                                    "TimeFormat": "HH",
-                                    "PathPattern": "devicetelemetry/{date}/{time}",
-                                    "StorageAccounts": [
-                                        {
-                                            "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
-                                            "AccountName": "[parameters('storageName')]"
-                                        }
-                                    ]
+                                    "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
+                                    "AccountName": "[parameters('storageName')]",
+                                    "BatchSize": 1,
+                                    "ColumnsToRemove": [ "DeviceId", "Counter" ],
+                                    "PartitionKey": "DeviceId",
+                                    "RowKey": "Counter",
+                                    "Table": "devicetelemetry"
                                 },
-                                "Type": "Microsoft.Storage/Blob"
-                            },
-                            "Serialization": {
-                                "Properties": {
-                                    "Encoding": "UTF8",
-                                    "FieldDelimiter": ","
-                                },
-                                "Type": "Csv"
+                                "Type": "Microsoft.Storage/Table"
                             }
                         }
                     },
@@ -177,25 +209,20 @@
                         "Properties": {
                             "DataSource": {
                                 "Properties": {
-                                    "Container": "devicetelemetry",
-                                    "DateFormat": "yyyy/MM/dd",
-                                    "TimeFormat": "HH",
-                                    "PathPattern": "devicetelemetry-summary/{date}/{time}",
-                                    "StorageAccounts": [
-                                        {
-                                            "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
-                                            "AccountName": "[parameters('storageName')]"
-                                        }
-                                    ]
+                                    "EventHubName": "[variables('ehDataName')]",
+                                    "ServiceBusNamespace": "[parameters('sbName')]",
+                                    "SharedAccessPolicyKey": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryKey]",
+                                    "SharedAccessPolicyName": "[variables('sbKeyName')]",
+                                    "PartitionKey": "DeviceId"
                                 },
-                                "Type": "Microsoft.Storage/Blob"
+                                "Type": "Microsoft.ServiceBus/EventHub"
                             },
                             "Serialization": {
                                 "Properties": {
                                     "Encoding": "UTF8",
-                                    "FieldDelimiter": ","
+                                    "Format": "Array"
                                 },
-                                "Type": "Csv"
+                                "Type": "Json"
                             }
                         }
                     }
@@ -203,7 +230,7 @@
                 "Transformation": {
                     "Name": "AllToBlob",
                     "Properties": {
-                        "Query": "WITH\r\n    [StreamData] AS (\r\n        SELECT\r\n            *\r\n        FROM\r\n            [IoTHubStream]\r\n        WHERE\r\n            [ObjectType] IS NULL -- Filter out device info and command responses\r\n    )\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    Sensor9,\r\n    Sensor11,\r\n    Sensor14,\r\n    Sensor15\r\nINTO\r\n    [Telemetry]\r\nFROM\r\n    [StreamData]\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    AVG(Sensor9) AS Sensor9,\r\n    AVG(Sensor11) AS Sensor11,\r\n    AVG(Sensor14) AS Sensor14,\r\n    AVG(Sensor15) AS Sensor15\r\nINTO\r\n    [TelemetrySummary]\r\nFROM\r\n    [StreamData]\r\nGROUP BY\r\n    DeviceId,\r\n    Cycle,\r\n    SLIDINGWINDOW(minute, 2) -- Duration must cover the longest possible cycle\r\nHAVING\r\n    SUM(EndOfCycle) = 0 -- Sum when EndOfCycle contains both start (-1) and end (1) events",
+                        "Query": "WITH\r\n    [StreamData] AS (\r\n        SELECT\r\n            *\r\n        FROM\r\n            [IoTHubStream]\r\n        WHERE\r\n            [ObjectType] IS NULL -- Filter out device info and command responses\r\n    )\r\n\r\nSELECT\r\n    DeviceId,\r\n    Counter,\r\n    Cycle,\r\n    Sensor9,\r\n    Sensor11,\r\n    Sensor14,\r\n    Sensor15\r\nINTO\r\n    [Telemetry]\r\nFROM\r\n    [StreamData]\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    AVG(Sensor9) AS Sensor9,\r\n    AVG(Sensor11) AS Sensor11,\r\n    AVG(Sensor14) AS Sensor14,\r\n    AVG(Sensor15) AS Sensor15\r\nINTO\r\n    [TelemetrySummary]\r\nFROM\r\n    [StreamData]\r\nGROUP BY\r\n    DeviceId,\r\n    Cycle,\r\n    SLIDINGWINDOW(minute, 2) -- Duration must cover the longest possible cycle\r\nHAVING\r\n    SUM(EndOfCycle) = 2 -- Sum when EndOfCycle contains both start and end events",
                         "StreamingUnits": 1
                     }
                 }
@@ -254,16 +281,32 @@
                             "value": "DeviceList"
                         },
                         {
+                            "name": "eventHub.HubName",
+                            "value": "[variables('ehDataName')]"
+                        },
+                        {
+                            "name": "eventHub.ConnectionString",
+                            "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+                        },
+                        {
+                            "name": "eventHub.StorageConnectionString",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+                        },
+                        {
                             "name": "ObjectTypePrefix",
                             "value": ""
                         },
                         {
-                            "name": "SimulatorDataContainer",
-                            "value": "[parameters('simulatorDataContainer')]"
-                        },
-                        {
                             "name": "SimulatorDataFileName",
                             "value": "[parameters('simulatorDataFileName')]"
+                        },
+                        {
+                            "name": "MLApiUrl",
+                            "value": "[parameters('mlApiUrl')]"
+                        },
+                        {
+                            "name": "MLApiKey",
+                            "value": "[parameters('mlApiKey')]"
                         }
                     ]
                 }
@@ -297,6 +340,14 @@
         "storageConnectionString": {
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+        },
+        "ehDataName": {
+            "type": "string",
+            "value": "[variables('ehDataName')]"
+        },
+        "ehConnectionString": {
+            "type": "string",
+            "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
         }
     }
 }
