@@ -55,13 +55,21 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                         // Search the data for the next row that contains this device ID
                         while (_data.MoveNext() && !_data.Current.Values.Contains(_deviceId)) ;
 
-                        _logger.LogInfo(_deviceId + " =>\n\t" + string.Join("\n\t", _data.Current.Select(m => m.Key + ": " + m.Value.ToString()).ToArray()));
+                        if (_data.Current != null)
+                        {
+                            _logger.LogInfo(_deviceId + " =>\n\t" + string.Join("\n\t", _data.Current.Select(m => m.Key + ": " + m.Value.ToString()).ToArray()));
 
-                        await sendMessageAsync(_data.Current);
+                            await sendMessageAsync(_data.Current);
+                        }
+                        else
+                        {
+                            // End of the data; stop replaying
+                            TelemetryActive = false;
+                        }
                     }
-                    catch (Exception)
+                    catch (InvalidOperationException)
                     {
-                        // End or modification of the data will result in an exception; stop replaying
+                        // The data has been modified; stop replaying
                         TelemetryActive = false;
                     }
                 }

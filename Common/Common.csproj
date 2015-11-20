@@ -106,8 +106,8 @@
     <Compile Include="DeviceSchema\DeviceSchemaHelper.cs" />
     <Compile Include="DeviceSchema\EventSchemaHelper.cs" />
     <Compile Include="Exceptions\DeviceRequiredPropertyNotFoundException.cs" />
-    <Compile Include="Execution\IShutdownFileRunner.cs" />
-    <Compile Include="Execution\ShutdownFileRunner.cs" />
+    <Compile Include="Execution\IShutdownFileWatcher.cs" />
+    <Compile Include="Execution\ShutdownFileWatcher.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factory\SampleDeviceFactory.cs" />
     <Compile Include="Helpers\AzureRetryHelper.cs" />

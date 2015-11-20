@@ -20,7 +20,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             try
             {
                 BuildContainer();
-                eventProcessorContainer.Resolve<IShutdownFileRunner>().Run(StartMLDataProcessorHost, cancellationTokenSource);
+                eventProcessorContainer.Resolve<IShutdownFileWatcher>().Run(StartMLDataProcessorHost, cancellationTokenSource);
             }
             catch (Exception ex)
             {

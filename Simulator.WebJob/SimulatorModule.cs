@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ShutdownFileRunner>()
-                .As<IShutdownFileRunner>()
+            builder.RegisterType<ShutdownFileWatcher>()
+                .As<IShutdownFileWatcher>()
                 .SingleInstance();
 
             builder.RegisterType<ConfigurationProvider>()

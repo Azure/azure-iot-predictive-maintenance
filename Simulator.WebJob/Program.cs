@@ -34,7 +34,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
             try
             {
                 BuildContainer();
-                simulatorContainer.Resolve<IShutdownFileRunner>().Run(() => {
+                simulatorContainer.Resolve<IShutdownFileWatcher>().Run(() => {
                     StartDataInitializationAsNeeded();
                     StartSimulator();
                 }, cancellationTokenSource);

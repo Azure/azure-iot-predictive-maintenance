@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution
 {
-    public class ShutdownFileRunner : IShutdownFileRunner
+    public class ShutdownFileWatcher : IShutdownFileWatcher
     {
         private const string SHUTDOWN_FILE_ENV_VAR = "WEBJOBS_SHUTDOWN_FILE";
         private string _shutdownFile;

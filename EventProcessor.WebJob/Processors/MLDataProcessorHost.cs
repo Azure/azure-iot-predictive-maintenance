@@ -9,11 +9,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
         IMLDataProcessorHost
     {
         public MLDataProcessorHost(
-            ILifetimeScope scope) :
-            this(scope.Resolve<IConfigurationProvider>())
-        { }
-
-        private MLDataProcessorHost(
             IConfigurationProvider configurationProvider) :
             base(configurationProvider.GetConfigurationSettingValue("eventHub.HubName"),
                  configurationProvider.GetConfigurationSettingValue("eventHub.ConnectionString"),

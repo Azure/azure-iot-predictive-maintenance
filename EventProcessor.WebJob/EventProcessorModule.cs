@@ -11,8 +11,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ShutdownFileRunner>()
-                .As<IShutdownFileRunner>()
+            builder.RegisterType<ShutdownFileWatcher>()
+                .As<IShutdownFileWatcher>()
                 .SingleInstance();
 
             builder.RegisterType<ConfigurationProvider>()

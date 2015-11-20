@@ -29,6 +29,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
         public override async Task ProcessItem(dynamic eventData)
         {
+            // Ensure this is a correctly-formatted event for ML; ignore it otherwise
+            if (eventData == null || eventData.deviceid == null || eventData.cycle == null ||
+                eventData.sensor9 == null || eventData.sensor11 == null || eventData.sensor14 == null || eventData.sensor15 == null)
+            {
+                return;
+            }
+
             // The experiment theoretically supports multiple inputs at once,
             // even though we only get one value at a time, so the request
             // requires an array of inputs
@@ -59,7 +66,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                     PartitionKey = eventData.deviceid.ToString(),
                     RowKey = eventData.cycle.ToString(),
                     // Extract the single relevant RUL value from the JSON output
-                    Rul = result.Results["data"].value.Values[0, RUL_COLUMN].ToString()
+                    Rul = result.Results["data"].value.Values[0, RUL_COLUMN].ToString(),
+                    // Since the simulator might replay data, ensure we can overwrite table values
+                    ETag = "*"
                 };
 
                 // We don't need a data model to represent the result of this operation,
