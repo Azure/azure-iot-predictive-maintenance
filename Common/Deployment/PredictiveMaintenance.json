@@ -67,7 +67,7 @@
         "location": "[resourceGroup().location]",
         "storageVersion": "2015-05-01-preview",
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
-        "sbVersion": "[providers('Microsoft.Eventhub', 'namespaces').apiVersions[0]]",
+        "sbVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
         "sbResourceId": "[resourceId('Microsoft.Eventhub/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
         "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
