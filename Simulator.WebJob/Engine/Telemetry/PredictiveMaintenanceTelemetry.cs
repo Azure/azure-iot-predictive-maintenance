@@ -59,9 +59,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
                         await sendMessageAsync(_data.Current);
                     }
-                    catch (InvalidOperationException)
+                    catch (Exception)
                     {
-                        // End of the data or the data has been modified; stop replaying
+                        // End or modification of the data will result in an exception; stop replaying
                         TelemetryActive = false;
                     }
                 }
