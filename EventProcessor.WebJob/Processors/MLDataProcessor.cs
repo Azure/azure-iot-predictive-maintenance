@@ -17,7 +17,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
     public class MLDataProcessor : Generic.EventProcessor
     {
         private const string ML_ENDPOINT = "/execute?api-version=2.0&details=true";
-
+        private readonly string[] ML_REQUEST_COLUMNS = { "id", "cycle", "s9", "s11", "s14", "s15" };
         private const int RUL_COLUMN = 2;
 
         private readonly IConfigurationProvider _configurationProvider;
@@ -29,28 +29,21 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
         public override async Task ProcessItem(dynamic eventData)
         {
-            // Create a generic object to represent the JSON request required by this ML experiment;
-            // this converts the JSON input (from ASA) into the required format
-            var mlRequest = new {
-                Inputs = new {
-                    data = new {
-                        ColumnNames = new string[] {"id", "cycle", "s9", "s11", "s14", "s15"},
-                        // The experiment theoretically supports multiple inputs at once,
-                        // even though we only get one value at a time, so this is an array of inputs
-                        Values = new string[,] { {
-                            // The id is required to be numeric, so we hash the actual device id
-                            eventData.deviceid.ToString().GetHashCode().ToString(),
-                            // The remaining entries are string representations of the numeric values
-                            eventData.cycle.ToString(),
-                            eventData.sensor9.ToString(),
-                            eventData.sensor11.ToString(),
-                            eventData.sensor14.ToString(),
-                            eventData.sensor15.ToString()
-                        } }
-                    }
-                },
-                GlobalParameters = new {}
-            };
+            // The experiment theoretically supports multiple inputs at once,
+            // even though we only get one value at a time, so the request
+            // requires an array of inputs
+            MLRequest mlRequest = new MLRequest(ML_REQUEST_COLUMNS, new string[,]
+                { {
+                    // The id is required to be numeric, so we hash the actual device id
+                    eventData.deviceid.ToString().GetHashCode().ToString(),
+                    // The remaining entries are string representations of the numeric values
+                    eventData.cycle.ToString(),
+                    eventData.sensor9.ToString(),
+                    eventData.sensor11.ToString(),
+                    eventData.sensor14.ToString(),
+                    eventData.sensor15.ToString()
+                } }
+            );
 
             HttpClient http = new HttpClient();
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configurationProvider.GetConfigurationSettingValue("MLApiKey"));
@@ -59,14 +52,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             HttpResponseMessage response = await http.PostAsJsonAsync("", mlRequest);
             if (response.IsSuccessStatusCode)
             {
-                dynamic result = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+                MLResponse result = JsonConvert.DeserializeObject<MLResponse>(await response.Content.ReadAsStringAsync());
 
                 RulTableEntity entry = new RulTableEntity()
                 {
                     PartitionKey = eventData.deviceid.ToString(),
                     RowKey = eventData.cycle.ToString(),
                     // Extract the single relevant RUL value from the JSON output
-                    Rul = result.Results.data.value.Values[0][RUL_COLUMN].ToString()
+                    Rul = result.Results["data"].value.Values[0, RUL_COLUMN].ToString()
                 };
 
                 // We don't need a data model to represent the result of this operation,

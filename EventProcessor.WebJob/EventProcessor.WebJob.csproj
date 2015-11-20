@@ -160,6 +160,8 @@
     <Compile Include="Processors\IMLDataProcessorHost.cs" />
     <Compile Include="Processors\MLDataProcessor.cs" />
     <Compile Include="Processors\MLDataProcessorHost.cs" />
+    <Compile Include="Processors\Models\MLRequest.cs" />
+    <Compile Include="Processors\Models\MLResponse.cs" />
     <Compile Include="Processors\Models\RulTableEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
