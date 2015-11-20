@@ -7,7 +7,7 @@
     <ProjectGuid>{5959C109-5369-4FF7-8B55-605A79FDF200}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Azure.Devices.Applications.RemoteMonitoring.Common</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common</RootNamespace>
     <AssemblyName>Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -106,6 +106,8 @@
     <Compile Include="DeviceSchema\DeviceSchemaHelper.cs" />
     <Compile Include="DeviceSchema\EventSchemaHelper.cs" />
     <Compile Include="Exceptions\DeviceRequiredPropertyNotFoundException.cs" />
+    <Compile Include="Execution\IShutdownFileRunner.cs" />
+    <Compile Include="Execution\ShutdownFileRunner.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Factory\SampleDeviceFactory.cs" />
     <Compile Include="Helpers\AzureRetryHelper.cs" />

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob
@@ -10,6 +11,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<ShutdownFileRunner>()
+                .As<IShutdownFileRunner>()
+                .SingleInstance();
+
             builder.RegisterType<ConfigurationProvider>()
                 .As<IConfigurationProvider>()
                 .SingleInstance();
