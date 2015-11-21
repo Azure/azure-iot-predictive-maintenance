@@ -54,7 +54,6 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 var sensor3Data = { categories: [], line1values: [], line2values: [] };
                 var sensor4Data = { categories: [], line1values: [], line2values: [] };
 
-
                 enginesTelemetry.engine1telemetry.forEach(reading => {
                     var timestamp = moment(reading.timestamp).format("h:mm a");
 
