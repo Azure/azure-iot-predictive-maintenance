@@ -37,6 +37,13 @@ $iotHubName = GetAzureIotHubName $suitename $resourceGroupName
 $sevicebusName = GetAzureServicebusName $suitename $resourceGroupName
 $simulatorDataFileName = "data.csv"
 
+# Setup AAD for webservice
+UpdateResourceGroupState $resourceGroupName ProvisionAAD
+$global:AADTenant = GetOrSetEnvSetting "AADTenant" "GetAADTenant"
+UpdateEnvSetting "AADMetadataAddress" ("https://login.windows.net/{0}/FederationMetadata/2007-06/FederationMetadata.xml" -f $global:AADTenant)
+UpdateEnvSetting "AADAudience" ($global:site + $global:appName)
+UpdateEnvSetting "AADRealm" ($global:site + $global:appName)
+
 # Provision Machine Learning workspace
 $experimentName = "Remaining Useful Life [Predictive Exp.]"
 $machineLearningService = ProvisionML $suiteName $resourceGroupName $experimentName
@@ -56,17 +63,19 @@ Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.Name)"
 Write-Host "IotHub Name: $iotHubName"
 Write-Host "Servicebus Name: $sevicebusName"
+Write-Host "AAD Tenant: $($global:AADTenant)"
 Write-Host "ResourceGroup Name: $resourceGroupName"
 Write-Host "Deployment template path: $deploymentTemplatePath"
 
 # Upload WebPackages
 if ($cloudDeploy)
 {
-    # $webPackage = UploadFile ("$projectRoot\DeviceAdministration\Web\obj\{0}\Package\Web.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
-    # $params += @{packageUri=$webPackage}
+    $webPackage = UploadFile ("$projectRoot\Web\obj\{0}\Package\Web.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
     FixWebJobZip ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
     $params += @{ `
+        aadTenant=$($global:AADTenant); `
+        packageUri=$webPackage; `
         webJobPackageUri=$webJobPackage; `
         simulatorDataFileName=$simulatorDataFileName; `
         mlApiUrl=$machineLearningService.ApiLocation; `
@@ -104,3 +113,30 @@ UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
 
 Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $environmentName)
+
+if ($environmentName -ne "local")
+{
+    $maxSleep = 40
+    $webEndpoint = "{0}.azurewebsites.net" -f $environmentName
+    if (!(HostEntryExists $webEndpoint))
+    {
+        Write-Host "Waiting for website url to resolve." -NoNewline
+        while (!(HostEntryExists $webEndpoint))
+        {
+            Write-Host "." -NoNewline
+            Clear-DnsClientCache
+            if ($maxSleep-- -le 0)
+            {
+                Write-Host
+                Write-Warning ("website unable to resolve {0}, please wait and try again in 15 minutes" -f $global:site)
+                break
+            }
+            sleep 3
+        }
+        Write-Host
+    }
+    if (HostEntryExists $webEndpoint)
+    {
+        start $global:site
+    }
+}

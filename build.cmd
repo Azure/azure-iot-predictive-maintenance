@@ -69,10 +69,10 @@ msbuild PredictiveMaintenance.sln /v:m /p:Configuration=%Configuration%
 
 :Package
 @REM For Zip based deployments for private repos
-@REM msbuild Web\Web.csproj /v:m /T:Package
-@REM @IF /I '%ERRORLEVEL%' NEQ '0' (
-@REM     @echo Error msbuild Web\Web.csproj /v:m /T:Package
-@REM     @goto :Error)
+msbuild Web\Web.csproj /v:m /T:Package
+@IF /I '%ERRORLEVEL%' NEQ '0' (
+    @echo Error msbuild Web\Web.csproj /v:m /T:Package
+    @goto :Error)
 
 msbuild WebJobHost\WebJobHost.csproj /v:m /T:Package
 @IF /I '%ERRORLEVEL%' NEQ '0' (
