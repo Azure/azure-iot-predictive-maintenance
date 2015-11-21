@@ -340,7 +340,6 @@
     <TypeScriptCompile Include="Scripts\extensions.ts" />
     <Content Include="Styles\spinners.less" />
     <Content Include="Scripts\vendor\jquery-1.11.2.js" />
-    <Content Include="Properties\webjobs-list.json" />
     <Content Include="Styles\navbars.less" />
     <Content Include="Styles\variables.less" />
     <Content Include="Styles\typography.less" />
@@ -400,7 +399,6 @@
     <Content Include="Styles\root_grid_block.less" />
     <Content Include="Styles\root_style_values_block.less" />
     <Content Include="Styles\text_copy_block.less" />
-    <None Include="Properties\PublishProfiles\Package.pubxml" />
     <Content Include="Scripts\vendor\powerbi-visuals.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
