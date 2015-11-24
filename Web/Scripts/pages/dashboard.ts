@@ -2,7 +2,7 @@
 
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     export class Dashboard {
-        private warningTreshold = 500;
+        private warningTreshold: number;
         private httpClient: JQueryHttpClient;
 
         public simulationState: KnockoutObservable<string>;
@@ -24,8 +24,10 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.stopSimulation = this.stopSimulation.bind(this);
             this.getTelemetryData = this.getTelemetryData.bind(this);
             this.getPredictionData = this.getPredictionData.bind(this);
+            this.onPredictionDataLoaded = this.onPredictionDataLoaded.bind(this);
 
             //initialization...
+            this.warningTreshold = 200;
             this.httpClient = new JQueryHttpClient();
             this.sensor1Data = ko.observable<ILineChartData>();
             this.sensor2Data = ko.observable<ILineChartData>();
@@ -89,43 +91,46 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             });
         }
 
-        private getPredictionData() {
-            var getPredictionPromise = this.httpClient.get("api/prediction");
+        private getPredictionData(): void {
+            var getPredictionPromise = this.httpClient.get<IEnginesPrediction>("api/prediction");
 
-            getPredictionPromise.done((prediction: IEnginesPrediction) => {
-                var initialData: ILineChartData = { categories: [], line1values: [], line2values: [] };
-                var rulData = initialData;
+            getPredictionPromise.done(this.onPredictionDataLoaded);
+            //getPredictionPromise.fail(...); TODO: implement handling
+        }
 
-                prediction.engine1prediction.forEach(reading => {
-                    var timestamp = moment(reading.timestamp).format("h:mm a");
-                    rulData.categories.push(timestamp);
-                    rulData.line1values.push(reading.rul);
-                });
+        private onPredictionDataLoaded(prediction: IEnginesPrediction) {
+            var initialData: ILineChartData = { categories: [], line1values: [], line2values: [] };
+            var rulData = initialData;
 
-                prediction.engine2prediction.forEach(reading => {
-                    var timestamp = moment(reading.timestamp).format("h:mm a");
-                    rulData.categories.push(timestamp);
-                    rulData.line2values.push(reading.rul);
-                });
-
-                this.rulData(rulData);
-
-                var engine1PredictionRul = _.last(prediction.engine1prediction).rul;
-
-                this.engine1Rul(engine1PredictionRul.toString());
-                this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
-
-                if (engine1PredictionRul < this.warningTreshold)
-                    this.engine1RulWarning(true);
-
-                var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
-
-                this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
-                this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
-
-                if (engine2PredictionRul < this.warningTreshold)
-                    this.engine2RulWarning(true);
+            prediction.engine1prediction.forEach(reading => {
+                var timestamp = moment(reading.timestamp).format("h:mm a");
+                rulData.categories.push(timestamp);
+                rulData.line1values.push(reading.rul);
             });
+
+            prediction.engine2prediction.forEach(reading => {
+                var timestamp = moment(reading.timestamp).format("h:mm a");
+                rulData.categories.push(timestamp);
+                rulData.line2values.push(reading.rul);
+            });
+
+            this.rulData(rulData);
+
+            var engine1PredictionRul = _.last(prediction.engine1prediction).rul;
+
+            this.engine1Rul(engine1PredictionRul.toString());
+            this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
+
+            if (engine1PredictionRul < this.warningTreshold)
+                this.engine1RulWarning(true);
+
+            var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
+
+            this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
+            this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
+
+            if (engine2PredictionRul < this.warningTreshold)
+                this.engine2RulWarning(true);
         }
 
         public startSimulation() {

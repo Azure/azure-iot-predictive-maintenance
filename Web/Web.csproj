@@ -250,6 +250,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bundling\LessTransform.cs" />
     <Compile Include="Controllers\SimulationController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
     <Compile Include="Security\PrincipalHelper.cs" />
@@ -288,7 +289,37 @@
     <Content Include="Styles\app.less" />
     <Content Include="Styles\buttons.less" />
     <Content Include="Styles\animations.less" />
-    <None Include="Styles\datatables.less" />
+    <Content Include="Styles\bootstrap\mixins\alerts.less" />
+    <Content Include="Styles\bootstrap\mixins\background-variant.less" />
+    <Content Include="Styles\bootstrap\mixins\border-radius.less" />
+    <Content Include="Styles\bootstrap\mixins\buttons.less" />
+    <Content Include="Styles\bootstrap\mixins\center-block.less" />
+    <Content Include="Styles\bootstrap\mixins\clearfix.less" />
+    <Content Include="Styles\bootstrap\mixins\forms.less" />
+    <Content Include="Styles\bootstrap\mixins\gradients.less" />
+    <Content Include="Styles\bootstrap\mixins\grid-framework.less" />
+    <Content Include="Styles\bootstrap\mixins\grid.less" />
+    <Content Include="Styles\bootstrap\mixins\hide-text.less" />
+    <Content Include="Styles\bootstrap\mixins\image.less" />
+    <Content Include="Styles\bootstrap\mixins\labels.less" />
+    <Content Include="Styles\bootstrap\mixins\list-group.less" />
+    <Content Include="Styles\bootstrap\mixins\nav-divider.less" />
+    <Content Include="Styles\bootstrap\mixins\nav-vertical-align.less" />
+    <Content Include="Styles\bootstrap\mixins\opacity.less" />
+    <Content Include="Styles\bootstrap\mixins\pagination.less" />
+    <Content Include="Styles\bootstrap\mixins\panels.less" />
+    <Content Include="Styles\bootstrap\mixins\progress-bar.less" />
+    <Content Include="Styles\bootstrap\mixins\reset-filter.less" />
+    <Content Include="Styles\bootstrap\mixins\reset-text.less" />
+    <Content Include="Styles\bootstrap\mixins\resize.less" />
+    <Content Include="Styles\bootstrap\mixins\responsive-visibility.less" />
+    <Content Include="Styles\bootstrap\mixins\size.less" />
+    <Content Include="Styles\bootstrap\mixins\tab-focus.less" />
+    <Content Include="Styles\bootstrap\mixins\table-row.less" />
+    <Content Include="Styles\bootstrap\mixins\text-emphasis.less" />
+    <Content Include="Styles\bootstrap\mixins\text-overflow.less" />
+    <Content Include="Styles\bootstrap\mixins\vendor-prefixes.less" />
+    <Content Include="Styles\datatables.less" />
     <Content Include="Styles\img\button_back.svg" />
     <Content Include="Styles\img\button_copy.svg" />
     <Content Include="Styles\img\button_page_next.svg" />
@@ -390,7 +421,7 @@
     <Content Include="Styles\charts.less" />
     <Content Include="Styles\device_details_block.less" />
     <Content Include="Styles\drawers.less" />
-    <None Include="Styles\forms.less" />
+    <Content Include="Styles\forms.less" />
     <Content Include="Styles\indicators.less" />
     <Content Include="Styles\tiles.less" />
     <Content Include="Styles\loader_block.less" />
@@ -417,9 +448,7 @@
     <TypeScriptCompile Include="Scripts\typings\moment.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\underscore.d.ts" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Styles\bootstrap\mixins\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>
@@ -490,7 +519,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
-    <TypeScriptOutFile>startup.js</TypeScriptOutFile>
+    <TypeScriptOutFile>scripts/app.js</TypeScriptOutFile>
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

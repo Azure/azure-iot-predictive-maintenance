@@ -4,6 +4,8 @@
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     ko.bindingHandlers["lineChart"] = {
         init: (element: HTMLElement, valueAccessor) => {
+            $(element).addClass("chart-indicator-progress");
+
             var sourceObservable = valueAccessor();
 
             var lineChart = new LineChart(element);
@@ -14,6 +16,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 }
 
                 lineChart.updateChartData(chartData.categories, chartData.line1values, chartData.line2values);
+                $(element).removeClass("chart-indicator-progress");
             }
 
             sourceObservable.subscribe(update);

@@ -1,10 +1,12 @@
-﻿.chart {
+﻿@import "spinners";
+
+.chart {
     margin: 0;
 }
 
 .chart-airplane {
     width: 100%;
-    height: auto;
+    height: 600px;
 
     .chart-airplane-outline {
         stroke: black;
@@ -31,7 +33,7 @@
     }
 
     .chart-airplane-engine-warning {
-        fill: yellow;
+        fill: #ffce00;
     }
 }
 
@@ -41,4 +43,18 @@
 
 .chart-container {
     padding: 10px;
+}
+
+
+.chart-indicator-progress {
+    &::before {
+        .spinner();
+        content: ' ';
+        font-size: 3em;
+        display: inline-block;
+      
+        position: absolute;
+        top: calc(~'50% - 0.5em');
+        left: calc(~'50% - 0.5em');
+    }
 }
