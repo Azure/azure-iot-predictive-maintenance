@@ -285,6 +285,7 @@
     <Compile Include="App_Start\Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\vendor\bootstrap.min.js" />
     <Content Include="Scripts\vendor\moment-with-locales.js" />
     <Content Include="Styles\app.less" />
     <Content Include="Styles\buttons.less" />
@@ -319,43 +320,9 @@
     <Content Include="Styles\bootstrap\mixins\text-emphasis.less" />
     <Content Include="Styles\bootstrap\mixins\text-overflow.less" />
     <Content Include="Styles\bootstrap\mixins\vendor-prefixes.less" />
-    <Content Include="Styles\datatables.less" />
-    <Content Include="Styles\img\button_back.svg" />
-    <Content Include="Styles\img\button_copy.svg" />
-    <Content Include="Styles\img\button_page_next.svg" />
-    <Content Include="Styles\img\button_page_prev.svg" />
     <Content Include="Styles\img\favicon.ico" />
-    <Content Include="Styles\img\icon_actions.svg" />
-    <Content Include="Styles\img\icon_add.svg" />
-    <Content Include="Styles\img\icon_advanced.svg" />
-    <Content Include="Styles\img\icon_confirmed.svg" />
     <Content Include="Styles\img\icon_dashboard.svg" />
-    <Content Include="Styles\img\icon_deviceExplorer_details_close.svg" />
-    <Content Include="Styles\img\icon_deviceExplorer_details_open.svg" />
-    <Content Include="Styles\img\icon_devices.svg" />
-    <Content Include="Styles\img\icon_error.svg" />
-    <Content Include="Styles\img\icon_info_gray.svg" />
-    <Content Include="Styles\img\icon_info_white.svg" />
-    <Content Include="Styles\img\icon_mysolutions.svg" />
-    <Content Include="Styles\img\icon_rules.svg" />
-    <Content Include="Styles\img\icon_status_alarm.svg" />
-    <Content Include="Styles\img\icon_status_all_clear.svg" />
-    <Content Include="Styles\img\icon_status_caution.svg" />
-    <Content Include="Styles\img\icon_status_critical.svg" />
-    <Content Include="Styles\img\icon_status_disabled.svg" />
-    <Content Include="Styles\img\icon_status_enabled.svg" />
-    <Content Include="Styles\img\icon_status_information.svg" />
-    <Content Include="Styles\img\icon_status_null.svg" />
     <Content Include="Styles\img\icon_warning.svg" />
-    <Content Include="Styles\img\logo.svg" />
-    <Content Include="Styles\img\map_addrs.png" />
-    <Content Include="Styles\img\map_copyrights.png" />
-    <Content Include="Styles\img\sort_asc.png" />
-    <Content Include="Styles\img\sort_asc_disabled.png" />
-    <Content Include="Styles\img\sort_both.png" />
-    <Content Include="Styles\img\sort_desc.png" />
-    <Content Include="Styles\img\sort_desc_disabled.png" />
-    <Content Include="Styles\telemetries.less" />
     <Content Include="Styles\visuals.less" />
     <Content Include="Scripts\vendor\knockout.js" />
     <Content Include="Global.asax" />
@@ -375,8 +342,6 @@
     <Content Include="Styles\variables.less" />
     <Content Include="Styles\typography.less" />
     <Content Include="Styles\layouts.less" />
-    <Content Include="Styles\bootstrap\.csscomb.json" />
-    <Content Include="Styles\bootstrap\.csslintrc" />
     <Content Include="Styles\bootstrap\alerts.less" />
     <Content Include="Styles\bootstrap\badges.less" />
     <Content Include="Styles\bootstrap\bootstrap.less" />
@@ -419,17 +384,11 @@
     <Content Include="Styles\bootstrap\variables.less" />
     <Content Include="Styles\bootstrap\wells.less" />
     <Content Include="Styles\charts.less" />
-    <Content Include="Styles\device_details_block.less" />
     <Content Include="Styles\drawers.less" />
     <Content Include="Styles\forms.less" />
     <Content Include="Styles\indicators.less" />
     <Content Include="Styles\tiles.less" />
-    <Content Include="Styles\loader_block.less" />
-    <Content Include="Styles\navigation_block.less" />
-    <Content Include="Styles\root_containers_block.less" />
-    <Content Include="Styles\root_grid_block.less" />
-    <Content Include="Styles\root_style_values_block.less" />
-    <Content Include="Styles\text_copy_block.less" />
+    <Content Include="Styles\scaffolding.less" />
     <Content Include="Scripts\vendor\powerbi-visuals.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -570,4 +529,9 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <Content Include="**\*.js" />
+    </ItemGroup>
+  </Target>
 </Project>

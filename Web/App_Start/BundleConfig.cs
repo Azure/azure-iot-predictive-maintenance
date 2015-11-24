@@ -17,6 +17,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
                 .Include("~/scripts/vendor/knockout.js")
                 .Include("~/scripts/vendor/powerbi-visuals.min.js")
                 .Include("~/scripts/vendor/moment-with-locales.js")
+                .Include("~/scripts/vendor/bootstrap.min.js")
                 .Include("~/scripts/app.js"));
 
             var lessBundle = new Bundle("~/bundle/styles/")

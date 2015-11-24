@@ -1,77 +1,78 @@
 ﻿.tiles {
     max-width: 1600px;
     min-width: 550px;
-}
 
-.tile {
-    background-color: #fff;
-    border: 10px solid #f2f2f2;
-    padding: 10px;
-    margin: 10px;
-
-    h3 {
-        padding: 0;
-        font-size: 1.3em;
-        font-weight: lighter;
-    }
-
-    h4 {
-        text-align: center;
-    }
-
-    sub {
-        display: block;
-        text-transform: uppercase;
-        line-height: 1em;
-    }
-
-    .tile-metric {
-        display: table-cell;
-        width: 50%;
-        white-space: nowrap;
-
-        .tile-metric-value {
-            font-size: 3em;
-            line-height: 1.3em;
-        }
-
-        .tile-metric-unit {
-            text-transform: uppercase;
-            font-size: 1em;
-        }
-    }
-
-    .tile-metric-value-warning::after {
-        content: ' ';
-        display: inline-block;
-        background-image: url('/styles/img/icon_warning.svg');
-        width: 40px;
-        height: 40px;
-    }
-
-    .tile-header {
-        padding-bottom: 5px;
-        white-space: nowrap;
-    }
-
-    .tile-body {
-        display: table;
-        width: 100%;
-    }
-
-    .tile-button {
-        position: absolute;
+    .tile {
+        background-color: #fff;
+        border: 10px solid #f2f2f2;
+        padding: 10px;
         margin: 10px;
-        bottom: 0;
-        left: 0;
-        z-index: 9999;
-    }
 
-    .container-fluid {
-        padding: 0;
-
-        .row {
+        h3 {
+            font-size: 1.3em;
+            font-weight: lighter;
+            padding: 0;
             margin: 0;
+        }
+
+        h4 {
+            text-align: center;
+        }
+
+        sub {
+            display: block;
+            text-transform: uppercase;
+            line-height: 1em;
+        }
+
+        .tile-metric {
+            display: table-cell;
+            width: 50%;
+            white-space: nowrap;
+
+            .tile-metric-value {
+                font-size: 3em;
+                line-height: 1.3em;
+            }
+
+            .tile-metric-unit {
+                text-transform: uppercase;
+                font-size: 1em;
+            }
+        }
+
+        .tile-metric-value-warning::after {
+            content: ' ';
+            display: inline-block;
+            background-image: url('/styles/img/icon_warning.svg');
+            width: 40px;
+            height: 40px;
+        }
+
+        .tile-header {
+            padding-bottom: 5px;
+            white-space: nowrap;
+        }
+
+        .tile-body {
+            display: table;
+            width: 100%;
+        }
+
+        .tile-button {
+            position: absolute;
+            margin: 10px;
+            bottom: 0;
+            left: 0;
+            z-index: 9999;
+        }
+
+        .container-fluid {
+            padding: 0;
+
+            .row {
+                margin: 0;
+            }
         }
     }
 }
