@@ -253,17 +253,17 @@
     <Compile Include="Bundling\LessTransform.cs" />
     <Compile Include="Controllers\SimulationController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Security\PrincipalHelper.cs" />
     <Compile Include="Services\ITelemetryService.cs" />
     <Compile Include="Services\PredictionRecord.cs" />
     <Compile Include="Services\DeviceEntity.cs" />
     <Compile Include="Services\TelemetryEntity.cs" />
     <Compile Include="Services\TelemetryService.cs" />
-    <Content Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Content>
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Autofac.cs" />
@@ -321,6 +321,9 @@
     <Content Include="Styles\bootstrap\mixins\text-overflow.less" />
     <Content Include="Styles\bootstrap\mixins\vendor-prefixes.less" />
     <Content Include="Styles\img\favicon.ico" />
+    <Content Include="Styles\img\icon-close.svg" />
+    <Content Include="Styles\img\icon-error.svg" />
+    <Content Include="Styles\img\icon-exclamation.svg" />
     <Content Include="Styles\img\icon_dashboard.svg" />
     <Content Include="Styles\img\icon_warning.svg" />
     <Content Include="Styles\visuals.less" />
@@ -328,6 +331,7 @@
     <Content Include="Global.asax" />
     <Content Include="Views\Errors\404.cshtml" />
     <Content Include="Views\Errors\500.cshtml" />
+    <TypeScriptCompile Include="Scripts\constants.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesTelemetry.ts" />
@@ -407,7 +411,9 @@
     <TypeScriptCompile Include="Scripts\typings\moment.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\underscore.d.ts" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Styles\alerts.less" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>

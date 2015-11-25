@@ -123,6 +123,24 @@
   <data name="BrandingTitlePrefix" xml:space="preserve">
     <value>Microsoft Azure IoT</value>
   </data>
+  <data name="TileHeadingCycles" xml:space="preserve">
+    <value>Cycles</value>
+  </data>
+  <data name="TileHeadingRul" xml:space="preserve">
+    <value>Remaining Useful Life (RUL)</value>
+  </data>
+  <data name="TileHeadingRulHistory" xml:space="preserve">
+    <value>Remaining Useful Life (RUL) history</value>
+  </data>
+  <data name="ChartLabelEngine1" xml:space="preserve">
+    <value>Engine #1</value>
+  </data>
+  <data name="ChartLabelEngine2" xml:space="preserve">
+    <value>Engine #2</value>
+  </data>
+  <data name="LinkLabelDashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
   <data name="LinkLabelSignOut" xml:space="preserve">
     <value>Sign Out</value>
   </data>
@@ -131,5 +149,8 @@
   </data>
   <data name="PageTitleDashboard" xml:space="preserve">
     <value>Dashboard</value>
+  </data>
+  <data name="TileHeadingSubheadingInDays" xml:space="preserve">
+    <value>In days</value>
   </data>
 </root>

@@ -1,0 +1,30 @@
+﻿@charset "UTF-8";
+@import "variables.less";
+
+messages {
+    position: fixed;
+    z-index: @z-index-messages;
+    width: 100%;
+
+    .alert {
+        margin-bottom: 0;
+        -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 0;
+        padding: 5px;
+    }
+
+    .alert-danger .glyphicon {
+        color: @state-danger-icon;
+    }
+
+    .alert-warning .glyphicon {
+        color: @state-warning-icon;
+    }
+}
+
+
+
+header + .alert {
+    margin-top: -@navbar-margin-bottom;
+}

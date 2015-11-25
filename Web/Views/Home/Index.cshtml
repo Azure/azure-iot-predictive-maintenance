@@ -1,7 +1,7 @@
 ﻿@model Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Models.Account
 
 @{
-    //ViewBag.Title = Resources.PageTitleDashboard;
+    ViewBag.Title = Resources.PageTitleDashboard;
 }
 
 <div class="layout-flex layout-space tiles">
@@ -15,9 +15,6 @@
                                 Aircraft map
                             </h3>
                         </div>
-                        <select>
-                            <option>N2163MS</option>
-                        </select>
                         <!--ko if: simulationState() == 'stopped'-->
                         <button class="btn btn-primary tile-button" data-bind="click: startSimulation">
                             Start simulation
@@ -110,8 +107,8 @@
                                         <polygon class="chart-airplane-fuselage chart-airplane-outline" points="29815,26311 29815,27689 24519,30723 24113,29839 24596,29542 24598,29528 24602,29499 " />
                                         <path class="chart-airplane-fuselage chart-airplane-outline" d="M30827 20540c0,-397 0,-787 0,-1172l491 0c51,0 91,40 91,90l0 992c0,50 -40,90 -91,90l-491 0z" />
                                         <path class="chart-airplane-fuselage chart-airplane-outline" d="M31475 7478l-518 -63c45,-386 102,-772 168,-1155l480 53c46,6 80,45 80,89 0,4 0,8 0,12l-113 985c-5,45 -44,80 -90,80 -4,0 -7,-1 -7,-1z" />
-                                        <text x="4000" y="27601" class="chart-airplane-label">Engine #1</text>
-                                        <text x="50000" y="27601" class="chart-airplane-label">Engine #2</text>
+                                        <text x="4000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine1</text>
+                                        <text x="50000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine2</text>
                                     </g>
                                 </svg>
                             </div>
@@ -165,18 +162,18 @@
                             <div class="layout-cell layout-cell-half tile">
                                 <div class="tile-header">
                                     <h3>
-                                        Remaining Useful Life (RUL)
-                                        <sub>In days</sub>
+                                        @Resources.TileHeadingRul
+                                        <sub>@Resources.TileHeadingSubheadingInDays</sub>
                                     </h3>
                                 </div>
                                 <div class="tile-body">
                                     <div class="tile-metric">
                                         <div class="tile-metric-value" data-bind="text: engine1Rul(), css: { 'tile-metric-value-warning': engine1RulWarning() }"></div>
-                                        <div class="tile-metric-unit">#1 Engine</div>
+                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
                                     </div>
                                     <div class="tile-metric">
                                         <div class="tile-metric-value" data-bind="text: engine2Rul(), css: { 'tile-metric-value-warning': engine2RulWarning() }"></div>
-                                        <div class="tile-metric-unit">#2 Engine</div>
+                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
                                     </div>
                                 </div>
                             </div>
@@ -184,18 +181,18 @@
                             <div class="layout-cell layout-cell-half tile">
                                 <div class="tile-header">
                                     <h3>
-                                        Cycles
+                                        @Resources.TileHeadingCycles
                                         <sub>#</sub>
                                     </h3>
                                 </div>
                                 <div class="tile-body">
                                     <div class="tile-metric">
                                         <div class="tile-metric-value" data-bind="text: engine1Cycles()"></div>
-                                        <div class="tile-metric-unit">#1 Engine</div>
+                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
                                     </div>
                                     <div class="tile-metric">
                                         <div class="tile-metric-value" data-bind="text: engine2Cycles()"></div>
-                                        <div class="tile-metric-unit">#2 Engine</div>
+                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
                                     </div>
                                 </div>
                             </div>
@@ -208,7 +205,7 @@
                         <div class="tile-header">
                             <h3>
                                 Remaining Useful Life (RUL) history
-                                <sub>In days</sub>
+                                <sub>@Resources.TileHeadingSubheadingInDays</sub>
                             </h3>
                         </div>
                         <div class="chart-container">

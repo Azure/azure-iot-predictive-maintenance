@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="18px" height="18px" version="1.1" style="shape-rendering:geometricPrecision;image-rendering:optimizeQuality;"
+viewBox="0 0 6611 6611"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:#FF5D00}
+   ]]>
+  </style>
+ </defs>
+ <g>
+  <path fill="#FF5D00" d="M3306 0c-1825,0 -3306,1481 -3306,3306 0,1824 1481,3305 3306,3305 1824,0 3305,-1481 3305,-3305 0,-1825 -1481,-3306 -3305,-3306zm323 5164l-646 -2 0 -643 646 0 0 645zm0 -1197l-646 0 0 -2645 646 0 0 2645z"/>
+ </g>
+</svg>

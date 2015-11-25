@@ -1,6 +1,7 @@
 ﻿@import "variables.less";
 @import "bootstrap/variables.less";
 @import "animations.less";
+@import "spinners.less";
 
 
 .indicator-bar {
@@ -22,4 +23,48 @@
 .indicator-bar-success {
     background-color: @brand-success;
     color: @brand-success-invert;
+}
+
+.indicator-background-based {
+    background-size: 18px 18px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    margin: 0;
+}
+
+
+.indicator {
+    padding-left: 20px;
+    min-height: 20px;
+}
+
+.indicator-progress {
+    &::before {
+        .spinner();
+        content: ' ';
+        font-size: 1em;
+        margin: 3px;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: center center;
+        position: absolute;
+        margin-left: -20px;
+    }
+}
+
+.indicator-background-based {
+    background-size: 18px 18px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    margin: 0;
+}
+
+.indicator-warning {
+    .indicator-background-based();
+    background-image: url('img/icon-exclamation.svg');
+}
+
+.indicator-danger {
+    .indicator-background-based();
+    background-image: url('img/icon-error.svg');
 }

@@ -1,4 +1,5 @@
 /// <reference path="../typings/moment.d.ts" />
+/// <reference path="../constants.ts" />
 
 module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     export class Dashboard {
@@ -17,14 +18,20 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public engine2Cycles: KnockoutObservable<string>;
         public engine1RulWarning: KnockoutObservable<boolean>;
         public engine2RulWarning: KnockoutObservable<boolean>;
+        public errorMessages: KnockoutObservableArray<string>;
 
         constructor() {
             //rebinding...
             this.startSimulation = this.startSimulation.bind(this);
             this.stopSimulation = this.stopSimulation.bind(this);
             this.getTelemetryData = this.getTelemetryData.bind(this);
+            this.onTelemetryDataLoaded = this.onTelemetryDataLoaded.bind(this);
             this.getPredictionData = this.getPredictionData.bind(this);
             this.onPredictionDataLoaded = this.onPredictionDataLoaded.bind(this);
+            this.onTelemetryLoadError = this.onTelemetryLoadError.bind(this);
+            this.onPredictionLoadError = this.onPredictionLoadError.bind(this);
+            this.onSendCommandError = this.onSendCommandError.bind(this);
+            this.closeMessage = this.closeMessage.bind(this);
 
             //initialization...
             this.warningTreshold = 200;
@@ -41,6 +48,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.engine1RulWarning = ko.observable<boolean>(false);
             this.engine2RulWarning = ko.observable<boolean>(false);
             this.simulationState = ko.observable<string>(SimulationStates.stopped);
+            this.errorMessages = ko.observableArray<string>();
 
             //startup...
             this.getTelemetryData();
@@ -50,52 +58,61 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         private getTelemetryData() {
             var getTelemetryPromise = this.httpClient.get("api/telemetry");
 
-            getTelemetryPromise.done((enginesTelemetry: IEnginesTelemetry) => {
-                var sensor1Data = { categories: [], line1values: [], line2values: [] };
-                var sensor2Data = { categories: [], line1values: [], line2values: [] };
-                var sensor3Data = { categories: [], line1values: [], line2values: [] };
-                var sensor4Data = { categories: [], line1values: [], line2values: [] };
+            getTelemetryPromise.done(this.onTelemetryDataLoaded);
+            getTelemetryPromise.fail(this.onTelemetryLoadError);
+        }
 
-                enginesTelemetry.engine1telemetry.forEach(reading => {
-                    var timestamp = moment(reading.timestamp).format("h:mm a");
+        private onTelemetryDataLoaded(enginesTelemetry: IEnginesTelemetry) {
+            var sensor1Data = { categories: [], line1values: [], line2values: [] };
+            var sensor2Data = { categories: [], line1values: [], line2values: [] };
+            var sensor3Data = { categories: [], line1values: [], line2values: [] };
+            var sensor4Data = { categories: [], line1values: [], line2values: [] };
 
-                    sensor1Data.categories.push(timestamp);
-                    sensor2Data.categories.push(timestamp);
-                    sensor3Data.categories.push(timestamp);
-                    sensor4Data.categories.push(timestamp);
+            enginesTelemetry.engine1telemetry.forEach(reading => {
+                var timestamp = moment(reading.timestamp).format("h:mm a");
 
-                    sensor1Data.line1values.push(reading.sensor1);
-                    sensor2Data.line1values.push(reading.sensor2);
-                    sensor3Data.line1values.push(reading.sensor3);
-                    sensor4Data.line1values.push(reading.sensor4);
-                });
+                sensor1Data.categories.push(timestamp);
+                sensor2Data.categories.push(timestamp);
+                sensor3Data.categories.push(timestamp);
+                sensor4Data.categories.push(timestamp);
 
-                enginesTelemetry.engine2telemetry.forEach(reading => {
-                    var timestamp = moment(reading.timestamp).format("h:mm a");
-
-                    sensor1Data.categories.push(timestamp);
-                    sensor2Data.categories.push(timestamp);
-                    sensor3Data.categories.push(timestamp);
-                    sensor4Data.categories.push(timestamp);
-
-                    sensor1Data.line2values.push(reading.sensor1);
-                    sensor2Data.line2values.push(reading.sensor2);
-                    sensor3Data.line2values.push(reading.sensor3);
-                    sensor4Data.line2values.push(reading.sensor4);
-                });
-
-                this.sensor1Data(sensor1Data);
-                this.sensor2Data(sensor2Data);
-                this.sensor3Data(sensor3Data);
-                this.sensor4Data(sensor4Data);
+                sensor1Data.line1values.push(reading.sensor1);
+                sensor2Data.line1values.push(reading.sensor2);
+                sensor3Data.line1values.push(reading.sensor3);
+                sensor4Data.line1values.push(reading.sensor4);
             });
+
+            enginesTelemetry.engine2telemetry.forEach(reading => {
+                var timestamp = moment(reading.timestamp).format("h:mm a");
+
+                sensor1Data.categories.push(timestamp);
+                sensor2Data.categories.push(timestamp);
+                sensor3Data.categories.push(timestamp);
+                sensor4Data.categories.push(timestamp);
+
+                sensor1Data.line2values.push(reading.sensor1);
+                sensor2Data.line2values.push(reading.sensor2);
+                sensor3Data.line2values.push(reading.sensor3);
+                sensor4Data.line2values.push(reading.sensor4);
+            });
+
+            this.sensor1Data(sensor1Data);
+            this.sensor2Data(sensor2Data);
+            this.sensor3Data(sensor3Data);
+            this.sensor4Data(sensor4Data);
+
+            setTimeout(this.getTelemetryData, 5000);
+        }
+
+        private onTelemetryLoadError(): void {
+            this.errorMessages.push(Constants.couldNotLoadTelemetry);
         }
 
         private getPredictionData(): void {
             var getPredictionPromise = this.httpClient.get<IEnginesPrediction>("api/prediction");
 
             getPredictionPromise.done(this.onPredictionDataLoaded);
-            //getPredictionPromise.fail(...); TODO: implement handling
+            getPredictionPromise.fail(this.onPredictionLoadError);
         }
 
         private onPredictionDataLoaded(prediction: IEnginesPrediction) {
@@ -131,6 +148,20 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             if (engine2PredictionRul < this.warningTreshold)
                 this.engine2RulWarning(true);
+
+            setTimeout(this.getPredictionData, 5000);
+        }
+
+        private onPredictionLoadError(): void {
+            this.errorMessages.push(Constants.couldNotLoadPredictions);
+        }
+
+        private onSendCommandError(): void {
+            this.errorMessages.push(Constants.couldNotSendCommand);
+        }
+
+        public closeMessage(message: string) {
+            this.errorMessages.remove(message);
         }
 
         public startSimulation() {
@@ -139,6 +170,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             startEmulationPromise.done(() => {
                 this.simulationState(SimulationStates.running);
             });
+
+            startEmulationPromise.fail(this.onSendCommandError);
         }
 
         public stopSimulation() {
@@ -147,6 +180,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             stopEmulationPromise.done(() => {
                 this.simulationState(SimulationStates.stopped);
             });
+
+            stopEmulationPromise.fail(this.onSendCommandError);
         }
     }
 }

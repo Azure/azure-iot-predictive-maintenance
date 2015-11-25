@@ -79,7 +79,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         }
 
         public createDataView(categories, line1values, line2values) {
-            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "country" } });
+            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "engines" } });
 
             var categoryIdentities = categories.map(value => {
                 var expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.text(value));

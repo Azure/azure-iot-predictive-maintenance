@@ -79,6 +79,33 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Engine #1.
+        /// </summary>
+        public static string ChartLabelEngine1 {
+            get {
+                return ResourceManager.GetString("ChartLabelEngine1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Engine #2.
+        /// </summary>
+        public static string ChartLabelEngine2 {
+            get {
+                return ResourceManager.GetString("ChartLabelEngine2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dashboard.
+        /// </summary>
+        public static string LinkLabelDashboard {
+            get {
+                return ResourceManager.GetString("LinkLabelDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sign Out.
         /// </summary>
         public static string LinkLabelSignOut {
@@ -102,6 +129,42 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         public static string PageTitleDashboard {
             get {
                 return ResourceManager.GetString("PageTitleDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cycles.
+        /// </summary>
+        public static string TileHeadingCycles {
+            get {
+                return ResourceManager.GetString("TileHeadingCycles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remaining Useful Life (RUL).
+        /// </summary>
+        public static string TileHeadingRul {
+            get {
+                return ResourceManager.GetString("TileHeadingRul", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remaining Useful Life (RUL) history.
+        /// </summary>
+        public static string TileHeadingRulHistory {
+            get {
+                return ResourceManager.GetString("TileHeadingRulHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In days.
+        /// </summary>
+        public static string TileHeadingSubheadingInDays {
+            get {
+                return ResourceManager.GetString("TileHeadingSubheadingInDays", resourceCulture);
             }
         }
     }
