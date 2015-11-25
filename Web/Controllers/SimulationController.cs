@@ -5,6 +5,7 @@
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
     using System.Web.Http;
+    using System.Threading.Tasks;
     using Common.DeviceSchema;
     using Common.Repository;
 
@@ -20,22 +21,22 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
         [HttpPost]
         [Route("api/simulation/start")]
-        public void StartSimulation()
+        public async Task StartSimulation()
         {
             var command = CommandSchemaHelper.CreateNewCommand("StartTelemetry");
 
-            this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
-            this.iotHubRepository.SendCommand("N1172FJ-2", command);
+            await this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
+            await this.iotHubRepository.SendCommand("N1172FJ-2", command);
         }
 
         [HttpPost]
         [Route("api/simulation/stop")]
-        public void StopSimulation()
+        public async Task StopSimulation()
         {
             var command = CommandSchemaHelper.CreateNewCommand("StopTelemetry");
 
-            this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
-            this.iotHubRepository.SendCommand("N1172FJ-2", command);
+            await this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
+            await this.iotHubRepository.SendCommand("N1172FJ-2", command);
         }
     }
 }
