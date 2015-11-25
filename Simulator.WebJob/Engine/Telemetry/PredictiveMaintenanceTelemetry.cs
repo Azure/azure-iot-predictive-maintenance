@@ -40,8 +40,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             _deviceId = deviceId;
             _active = false;
             _data = dataset.GetEnumerator();
-
-            TelemetryActive = true;
         }
 
         public async Task SendEventsAsync(CancellationToken token, Func<object, Task> sendMessageAsync)
