@@ -85,11 +85,11 @@ if ($cloudDeploy)
 # Upload simulator data
 UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName "simulatordata" $false
 
-# Stream analytics does not auto stop, and requires a start time for both create and update as well as stop if already exists
-[string]$startTime = (get-date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-$null = StopExistingStreamAnalyticsJobs $resourceGroupName
-$params += @{asaStartBehavior='CustomTime'}
-$params += @{asaStartTime=$startTime}
+# Stream analytics does not auto stop, and if already exists should be set to LastOutputEventTime to not lose data
+if (StopExistingStreamAnalyticsJobs $resourceGroupName)
+{
+    $params += @{asaStartBehavior='LastOutputEventTime'}
+}
 
 Write-Host "Provisioning resources, if this is the first time, this operation can take up 10 minutes..."
 $result = New-AzureResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $deploymentTemplatePath -TemplateParameterObject $params -Verbose

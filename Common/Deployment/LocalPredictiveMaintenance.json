@@ -37,7 +37,8 @@
             "type": "string",
             "metadata": {
                 "description": "The start time for Stream Analytics jobs"
-            }
+            },
+            "defaultValue": "notused"
         }
     },
     "variables": {
@@ -130,7 +131,6 @@
                     "name": "standard"
                 },
                 "OutputStartMode": "[parameters('asaStartBehavior')]",
-                "OutputStartTime": "[parameters('asaStartTime')]",
                 "EventsOutOfOrderMaxDelayInSeconds": 10,
                 "EventsOutOfOrderPolicy": "adjust",
                 "Inputs": [
