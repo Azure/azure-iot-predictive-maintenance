@@ -7,9 +7,6 @@
 @IF /I '%3' NEQ '' (
     Set EnvironmentName=%3)
 
-@IF /I '%4' NEQ '' (
-    Set ActionType=%4)
-
 @REM ----------------------------------------------
 @REM Validate arguments
 @REM ----------------------------------------------
@@ -25,9 +22,6 @@
 	) ELSE (
 		Set EnvironmentName=%Command%
 	)
-
-@IF /I '%ActionType%' neq 'Clean' (
-    Set ActionType=Update)
 
 @IF /I '%Configuration%' == '' (
     Set Configuration=Debug)
@@ -56,9 +50,7 @@
 @GOTO :Error
 
 :Build
-@IF /I '%ActionType%' == 'Clean' (
-    rmdir /s /q Build_Output)
-msbuild PredictiveMaintenance.sln /v:m /p:Configuration=%Configuration%
+msbuild PredictiveMaintenance.sln /v:m /p:Configuration=%Configuration% /t:Clean,Build
 
 @IF /I '%ERRORLEVEL%' NEQ '0' (
     @echo Error msbuild PredictiveMaintenance.sln /v:m /t:publish /p:Configuration=%Configuration%
@@ -97,7 +89,6 @@ msbuild WebJobHost\WebJobHost.csproj /v:m /T:Package
 @ECHO   Command: build (just builds); local (config local); cloud (config cloud, build, and deploy)
 @ECHO   Configuration: build configuration either Debug or Release; default is Debug
 @ECHO   EnvironmentName: Name of cloud environment to deploy - default is local
-@ECHO   ActionType: "Clean" flag indicating to clean before build/config - default is not to clean
 @ECHO
 @ECHO eg.
 @ECHO   build - build.cmd build
@@ -107,5 +98,4 @@ msbuild WebJobHost\WebJobHost.csproj /v:m /T:Package
 @Set Command=
 @Set EnvironmentName=
 @Set Configuration=
-@Set ActionType=
 
