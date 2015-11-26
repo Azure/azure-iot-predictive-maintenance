@@ -34,30 +34,15 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         [Route("api/simulation/start")]
         public async Task StartSimulation()
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.storageConnectionString);
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-            CloudTable telemetryTable = tableClient.GetTableReference(this.telemetryTableName);
-            CloudTable mlTable = tableClient.GetTableReference(this.mlResultTableName);
-
-            //delete partition id's
-            clearTable(telemetryTable);
-            clearTable(mlTable);
-
-            var command = CommandSchemaHelper.CreateNewCommand("StartTelemetry");
-
-            await this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
-            await this.iotHubRepository.SendCommand("N1172FJ-2", command);
+            this.clearTables();
+            await sendCommand("StartTelemetry");
         }
 
         [HttpPost]
         [Route("api/simulation/stop")]
         public async Task StopSimulation()
         {
-            var command = CommandSchemaHelper.CreateNewCommand("StopTelemetry");
-
-            await this.iotHubRepository.SendCommand("N1172FJ-1", command); //TODO: Pull IDs from service
-            await this.iotHubRepository.SendCommand("N1172FJ-2", command);
+            await sendCommand("StopTelemetry");
         }
 
         private string[] partitionKeys()
@@ -67,6 +52,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
                 "N1172FJ-1",
                 "N1172FJ-2"
             };
+        }
+
+        private void clearTables()
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.storageConnectionString);
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            CloudTable telemetryTable = tableClient.GetTableReference(this.telemetryTableName);
+            CloudTable mlTable = tableClient.GetTableReference(this.mlResultTableName);
+
+            clearTable(telemetryTable);
+            clearTable(mlTable);
         }
 
         private void clearTable(CloudTable table)
@@ -94,6 +91,16 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
             //flush out whatever is left
             table.ExecuteBatch(batchDelete);
+        }
+
+        private async Task sendCommand(string commandName)
+        {
+            var command = CommandSchemaHelper.CreateNewCommand(commandName);
+
+            foreach (var partitionKey in this.partitionKeys())
+            {
+                await this.iotHubRepository.SendCommand(partitionKey, command);
+            }
         }
     }
 }
