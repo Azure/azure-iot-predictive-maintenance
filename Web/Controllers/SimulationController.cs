@@ -68,29 +68,32 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
         private void clearTable(CloudTable table)
         {
-            string[] partitionKeys = this.partitionKeys();
-            TableBatchOperation batchDelete = new TableBatchOperation();
-
-            //gets all the entities in the table
-            List<DynamicTableEntity> entities = table.ExecuteQuery(new TableQuery()).ToList();
-
-            entities.ForEach(e =>
+            foreach (var partitionKey in this.partitionKeys())
             {
-                if (partitionKeys.Contains(e.PartitionKey))
+                TableBatchOperation batchDelete = new TableBatchOperation();
+
+                // gets all the entities in the table for this partition key
+                string partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey);
+                List<DynamicTableEntity> entities = table.ExecuteQuery(new TableQuery().Where(partitionCondition)).ToList();
+
+                entities.ForEach(e =>
                 {
                     batchDelete.Add(TableOperation.Delete(e));
 
-                    //Azure has a limit on batch operations
-                    if(batchDelete.Count == 100)
+                    // Azure has a limit on batch operations
+                    if (batchDelete.Count == 100)
                     {
                         table.ExecuteBatch(batchDelete);
                         batchDelete = new TableBatchOperation();
                     }
-                }
-            });
+                });
 
-            //flush out whatever is left
-            table.ExecuteBatch(batchDelete);
+                // flush out whatever is left
+                if (batchDelete.Count > 0)
+                {
+                    table.ExecuteBatch(batchDelete);
+                }
+            }
         }
 
         private async Task sendCommand(string commandName)
