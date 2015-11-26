@@ -47,11 +47,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
                 collection.Add(telemetry);
             }
 
-            var enginesTelemetry = new EnginesTelemetry
+            var enginesTelemetry = new EnginesTelemetry();
+
+            if (deviceGroup.Count >= 2)
             {
-                Engine1Telemetry = deviceGroup.ElementAt(0).Value,
-                Engine2Telemetry = deviceGroup.ElementAt(1).Value
-            };
+                enginesTelemetry.Engine1Telemetry = deviceGroup.ElementAt(0).Value;
+                enginesTelemetry.Engine2Telemetry = deviceGroup.ElementAt(1).Value;
+            }
+            else
+            {
+                enginesTelemetry.Engine1Telemetry = new Collection<Telemetry>();
+                enginesTelemetry.Engine2Telemetry = new Collection<Telemetry>();
+            }
 
             return enginesTelemetry;
         }
@@ -81,11 +88,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
                 collection.Add(telemetry);
             }
 
-            var enginesTelemetry = new EnginesPrediction
+            var enginesTelemetry = new EnginesPrediction();
+
+            if (deviceGroup.Count >= 2)
             {
-                Engine1Prediction = deviceGroup.ElementAt(0).Value,
-                Engine2Prediction = deviceGroup.ElementAt(1).Value
-            };
+                enginesTelemetry.Engine1Prediction = deviceGroup.ElementAt(0).Value;
+                enginesTelemetry.Engine2Prediction = deviceGroup.ElementAt(1).Value;
+            }
+            else
+            {
+                enginesTelemetry.Engine1Prediction = new Collection<Prediction>();
+                enginesTelemetry.Engine2Prediction = new Collection<Prediction>();
+            }
 
             return enginesTelemetry;
         }

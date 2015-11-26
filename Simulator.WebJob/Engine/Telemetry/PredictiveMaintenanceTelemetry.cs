@@ -15,7 +15,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         private readonly ILogger _logger;
         private readonly string _deviceId;
 
-        private const int REPORT_FREQUENCY_IN_SECONDS = 5;
+        private const int REPORT_FREQUENCY_IN_SECONDS = 1;
 
         private IEnumerator<IDictionary<string, object>> _data;
         private bool _active;
