@@ -133,21 +133,25 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             this.rulData(rulData);
 
-            var engine1PredictionRul = _.last(prediction.engine1prediction).rul;
+            if (prediction.engine1prediction.length > 0) {
+                var engine1PredictionRul = _.last(prediction.engine1prediction).rul;
 
-            this.engine1Rul(engine1PredictionRul.toString());
-            this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
+                this.engine1Rul(engine1PredictionRul.toString());
+                this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
 
-            if (engine1PredictionRul < this.warningTreshold)
-                this.engine1RulWarning(true);
+                if (engine1PredictionRul < this.warningTreshold)
+                    this.engine1RulWarning(true);
+            }
 
-            var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
+            if (prediction.engine2prediction.length > 0) {
+                var engine2PredictionRul = _.last(prediction.engine2prediction).rul;
 
-            this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
-            this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
+                this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
+                this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
 
-            if (engine2PredictionRul < this.warningTreshold)
-                this.engine2RulWarning(true);
+                if (engine2PredictionRul < this.warningTreshold)
+                    this.engine2RulWarning(true);
+            }
 
             setTimeout(this.getPredictionData, 5000);
         }

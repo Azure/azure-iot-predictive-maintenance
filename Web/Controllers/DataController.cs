@@ -49,7 +49,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
             var enginesTelemetry = new EnginesTelemetry();
 
-            if (deviceGroup.Count > 0)
+            if (deviceGroup.Count >= 2)
             {
                 enginesTelemetry.Engine1Telemetry = deviceGroup.ElementAt(0).Value;
                 enginesTelemetry.Engine2Telemetry = deviceGroup.ElementAt(1).Value;
@@ -90,7 +90,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
 
             var enginesTelemetry = new EnginesPrediction();
 
-            if (deviceGroup.Count > 0)
+            if (deviceGroup.Count >= 2)
             {
                 enginesTelemetry.Engine1Prediction = deviceGroup.ElementAt(0).Value;
                 enginesTelemetry.Engine2Prediction = deviceGroup.ElementAt(1).Value;
