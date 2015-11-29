@@ -124,16 +124,16 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var rulData = initialData;
 
             prediction.engine1prediction.forEach(reading => {
-                var timestamp = new Date(reading.timestamp);
+                var cycles = reading.cycles;
 
-                rulData.categories.push(timestamp);
+                rulData.categories.push(cycles);
                 rulData.line1values.push(reading.rul);
             });
 
             prediction.engine2prediction.forEach(reading => {
-                var timestamp = new Date(reading.timestamp);
+                var cycles = reading.cycles;
 
-                rulData.categories.push(timestamp);
+                rulData.categories.push(cycles);
                 rulData.line2values.push(reading.rul);
             });
 

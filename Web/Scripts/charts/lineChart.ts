@@ -10,7 +10,6 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.htmlElement = htmlElement;
             this.createDefaultStyles = this.createDefaultStyles.bind(this);
             this.createLineChartVisual = this.createLineChartVisual.bind(this);
-            this.createDataView = this.createDataView.bind(this);
             this.resizeViewport = this.resizeViewport.bind(this);
 
             this.pluginService = powerbi.visuals.visualPluginFactory.create();
@@ -63,9 +62,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             return lineChartVisual;
         }
 
-        public updateChartData(categories: Array<any>, line1values: Array<any>, line2values: Array<any>) {
-            var lineChartDataView = this.createDataView(categories, line1values, line2values);
-
+        public updateChartData(lineChartDataView) {
             this.lineChartVisual.onDataChanged({
                 dataViews: [lineChartDataView],
                 viewport: this.lineChartVisual.viewport,
@@ -76,73 +73,6 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public resizeViewport(): void {
             this.lineChartVisual.currentViewport.width = this.htmlElement.clientWidth;
             this.lineChartVisual.render();
-        }
-
-        public createDataView(categories, line1values, line2values) {
-            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "date" } });
-
-            var categoryIdentities = categories.map(value => {
-                var expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.dateTime(value));
-                return powerbi.data.createDataViewScopeIdentity(expr);
-            });
-        
-            // Metadata, describes the data columns, and provides the visual with hints
-            // so it can decide how to best represent the data
-            var dataViewMetadata = {
-                columns: [
-                    {
-                        displayName: "Date",
-                        queryName: "Date",
-                        type: powerbi.ValueType.fromDescriptor({ dateTime: true })
-                    },
-                    {
-                        displayName: "Engine 1",
-                        isMeasure: true,
-                        format: "0000.00",
-                        queryName: "sales1",
-                        type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: "lightgreen" } } } }
-                    },
-                    {
-                        displayName: "Engine 2",
-                        isMeasure: true,
-                        format: "0000.00",
-                        queryName: "sales2",
-                        type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: "lightblue" } } } }
-                    }
-                ]
-            };
-
-            var columns = [
-                {
-                    source: dataViewMetadata.columns[1],
-                    values: line1values
-                },
-                {
-                    source: dataViewMetadata.columns[2],
-                    values: line2values
-                }
-            ];
-
-            var dataValues = powerbi.data.DataViewTransform.createValueColumns(columns);
-            var tableDataValues = categories.map((countryName, idx) => [countryName, columns[0].values[idx], columns[1].values[idx]]);
-
-            return {
-                metadata: dataViewMetadata,
-                categorical: {
-                    categories: [{
-                        source: dataViewMetadata.columns[0],
-                        values: categories,
-                        identity: categoryIdentities,
-                    }],
-                    values: dataValues
-                },
-                table: {
-                    rows: tableDataValues,
-                    columns: dataViewMetadata.columns
-                }
-            };
         }
     }
 }

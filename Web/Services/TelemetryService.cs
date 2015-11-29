@@ -16,7 +16,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 
     public sealed class TelemetryService : ITelemetryService
     {
-        const int TimeOffsetInSeconds = 30;
+        const int TimeOffsetInSeconds = 120;
+        const int MaxRecordsToSend = 50;
+        const int MaxRecordsToReceive = 200;
+
         readonly IConfigurationProvider configurationProvider;
 
         public TelemetryService(IConfigurationProvider configurationProvider)
@@ -33,11 +36,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
             TableQuery<TelemetryEntity> query = new TableQuery<TelemetryEntity>()
                 .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
                 .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
-                .Take(TimeOffsetInSeconds)
+                .Take(MaxRecordsToReceive)
                 .Select(new[] { "sensor11", "sensor14", "sensor15", "sensor9" });
 
             var result = new Collection<Telemetry>();
-            var entities = table.ExecuteQuery(query).OrderBy(x => x.Timestamp);
+            var entities = table.ExecuteQuery(query)
+                .OrderByDescending(x => x.Timestamp)
+                .Take(MaxRecordsToSend);
 
             foreach (var entity in entities)
             {
@@ -54,7 +59,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                 result.Add(telemetry);
             }
 
-            return result;
+            return result.OrderBy(x => x.Timestamp);
         }
 
         public async Task<IEnumerable<Prediction>> GetLatestPrediction(string deviceId)
@@ -67,11 +72,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
             TableQuery<PredictionRecord> query = new TableQuery<PredictionRecord>()
                 .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
                 .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
-                .Take(TimeOffsetInSeconds)
+                .Take(MaxRecordsToReceive)
                 .Select(new[] { "Timestamp", "Rul" });
 
             var result = new Collection<Prediction>();
-            var entities = table.ExecuteQuery(query).OrderBy(x => x.Timestamp);
+            var entities = table.ExecuteQuery(query)
+                .OrderByDescending(x => x.RowKey)
+                .Take(MaxRecordsToSend);
 
             foreach (var entity in entities)
             {
@@ -85,7 +92,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                 result.Add(prediction);
             }
 
-            return result;
+            return result.OrderBy(x => x.Cycles);
         }
     }
 }
