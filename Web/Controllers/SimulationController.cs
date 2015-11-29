@@ -38,7 +38,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         [Route("api/simulation/start")]
         public async Task StartSimulation()
         {
-
             this.ClearTables();
             await this.WriteState(StartStopConstants.STARTING);
             await this.SendCommand("StartTelemetry");
