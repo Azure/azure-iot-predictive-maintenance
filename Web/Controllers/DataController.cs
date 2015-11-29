@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     [Authorize]
     public sealed class DataController : ApiController
     {
-        const string Engine1DeviceId = "N1172FJ-1";
-        const string Engine2DeviceId = "N1172FJ-2";
+        const string Engine1DeviceId = "N2172FJ-1";
+        const string Engine2DeviceId = "N2172FJ-2";
 
         readonly ITelemetryService telemetryService;
 

@@ -55,8 +55,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         {
             return new[]
             {
-                "N1172FJ-1",
-                "N1172FJ-2"
+                "N2172FJ-1",
+                "N2172FJ-2"
             };
         }
 
