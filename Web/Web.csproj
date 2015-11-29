@@ -331,6 +331,7 @@
     <Content Include="Global.asax" />
     <Content Include="Views\Errors\404.cshtml" />
     <Content Include="Views\Errors\500.cshtml" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.predictionLineChart.ts" />
     <TypeScriptCompile Include="Scripts\constants.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IPrediction.ts" />
     <TypeScriptCompile Include="Scripts\contracts\IEnginesPrediction.ts" />
@@ -430,7 +431,7 @@
     <TypeScriptCompile Include="Scripts\models\IDataView.ts" />
     <TypeScriptCompile Include="Scripts\models\IVisualGroup.ts" />
     <TypeScriptCompile Include="Scripts\http\jqueryHttpClient.ts" />
-    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.lineChart.ts" />
+    <TypeScriptCompile Include="Scripts\bindingHandlers\ko.bindingHandlers.telemetryLineChart.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\powerbi.d.ts" />
