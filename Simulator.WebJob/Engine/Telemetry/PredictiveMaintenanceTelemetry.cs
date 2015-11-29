@@ -5,6 +5,9 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
+using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models.Commands;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
 using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry;
 
@@ -14,6 +17,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
     {
         private readonly ILogger _logger;
         private readonly string _deviceId;
+        private readonly IConfigurationProvider _config;
 
         private const int REPORT_FREQUENCY_IN_SECONDS = 1;
 
@@ -31,11 +35,24 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                     _data.Reset();
                 }
                 _active = value;
+                if (_active)
+                {
+                    StateTableEntity.Write(_deviceId, StartStopConstants.STARTED,
+                        _config.GetConfigurationSettingValue("device.StorageConnectionString"),
+                        _config.GetConfigurationSettingValue("SimulatorStateTableName")).Wait();
+                }
+                else
+                {
+                    StateTableEntity.Write(_deviceId, StartStopConstants.STOPPED,
+                        _config.GetConfigurationSettingValue("device.StorageConnectionString"),
+                        _config.GetConfigurationSettingValue("SimulatorStateTableName")).Wait();
+                }
             }
         }
 
-        public PredictiveMaintenanceTelemetry(ILogger logger, string deviceId, IList<ExpandoObject> dataset)
+        public PredictiveMaintenanceTelemetry(IConfigurationProvider config, ILogger logger, string deviceId, IList<ExpandoObject> dataset)
         {
+            _config = config;
             _logger = logger;
             _deviceId = deviceId;
             _active = false;

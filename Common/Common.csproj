@@ -116,9 +116,11 @@
     <Compile Include="Helpers\ParsingHelper.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Models\Commands\DeviceCommandConstants.cs" />
+    <Compile Include="Models\Commands\StartStopConstants.cs" />
     <Compile Include="Models\DeviceListEntity.cs" />
     <Compile Include="Models\DeviceModelConstants.cs" />
     <Compile Include="Models\InitialDeviceConfig.cs" />
+    <Compile Include="Models\StateTableEntity.cs" />
     <Compile Include="Models\TableStorageResponse.cs" />
     <Compile Include="Repository\IIotHubRepository.cs" />
     <Compile Include="Repository\IotHubRepository.cs" />
