@@ -13,6 +13,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using Common.Configurations;
     using Common.DeviceSchema;
     using Common.Repository;
+    using Common.Models;
+    using Common.Models.Commands;
 
     [Authorize]
     public sealed class SimulationController : ApiController
@@ -21,6 +23,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         readonly string storageConnectionString;
         readonly string telemetryTableName;
         readonly string mlResultTableName;
+        readonly string simulatorStateTableName;
 
         public SimulationController(IIotHubRepository iotHubRepository, IConfigurationProvider configProvider)
         {
@@ -28,6 +31,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             this.storageConnectionString = configProvider.GetConfigurationSettingValue("device.StorageConnectionString");
             this.telemetryTableName = configProvider.GetConfigurationSettingValue("TelemetryStoreContainerName");
             this.mlResultTableName = configProvider.GetConfigurationSettingValue("MLResultTableName");
+            this.simulatorStateTableName = configProvider.GetConfigurationSettingValue("SimulatorStateTableName");
         }
 
         [HttpPost]
@@ -35,6 +39,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         public async Task StartSimulation()
         {
             this.ClearTables();
+            await this.WriteState(StartStopConstants.STARTING);
             await this.SendCommand("StartTelemetry");
         }
 
@@ -42,6 +47,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         [Route("api/simulation/stop")]
         public async Task StopSimulation()
         {
+            await this.WriteState(StartStopConstants.STOPPING);
             await this.SendCommand("StopTelemetry");
         }
 
@@ -103,6 +109,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             foreach (var partitionKey in this.PartitionKeys())
             {
                 await this.iotHubRepository.SendCommand(partitionKey, command);
+            }
+        }
+
+        private async Task WriteState(string state)
+        {
+            foreach (var partitionKey in this.PartitionKeys())
+            {
+                await StateTableEntity.Write(partitionKey, state, this.storageConnectionString, this.simulatorStateTableName);
             }
         }
     }

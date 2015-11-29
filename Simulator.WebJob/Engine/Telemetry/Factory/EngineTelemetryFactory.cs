@@ -17,12 +17,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
     public class EngineTelemetryFactory : ITelemetryFactory
     {
         private readonly ILogger _logger;
+        private readonly IConfigurationProvider _config;
 
         private IList<ExpandoObject> _dataset;
 
         public EngineTelemetryFactory(ILogger logger, IConfigurationProvider config)
         {
             _logger = logger;
+            _config = config;
 
             // This will load the CSV data from the specified file in blob storage;
             // any failure in accessing or reading the data will be handled as an exception
@@ -41,7 +43,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             var startupTelemetry = new StartupTelemetry(_logger, device);
             device.TelemetryEvents.Add(startupTelemetry);
 
-            var monitorTelemetry = new PredictiveMaintenanceTelemetry(_logger, device.DeviceID, _dataset);
+            var monitorTelemetry = new PredictiveMaintenanceTelemetry(_config, _logger, device.DeviceID, _dataset);
             device.TelemetryEvents.Add(monitorTelemetry);
 
             return monitorTelemetry;
