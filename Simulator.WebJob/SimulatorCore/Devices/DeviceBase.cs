@@ -223,7 +223,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                     exception = null;
 
                     // Pause before running through the receive loop
-                    await Task.Delay(TimeSpan.FromSeconds(10), token);
+                    await Task.Delay(TimeSpan.FromSeconds(1), token);
                     Logger.LogInfo("Device {0} checking for commands...", DeviceID);
 
                     try
