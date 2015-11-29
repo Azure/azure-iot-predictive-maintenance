@@ -57,7 +57,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 viewport: { height: height, width: width },
                 settings: { slicingEnabled: false },
                 interactivity: { isInteractiveLegend: false, selection: false },
-                animation: { transitionImmediate: true }
+                animation: { transitionImmediate: false }
             });
 
             return lineChartVisual;
@@ -91,14 +91,14 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var dataViewMetadata = {
                 columns: [
                     {
-                        displayName: "Sensor",
-                        queryName: "Sensor",
+                        displayName: "Time",
+                        queryName: "Time",
                         type: powerbi.ValueType.fromDescriptor({ text: true })
                     },
                     {
                         displayName: "Engine 1",
                         isMeasure: true,
-                        format: "$0,000.00",
+                        format: "0000.00",
                         queryName: "sales1",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
                         objects: { dataPoint: { fill: { solid: { color: "lightgreen" } } } }
@@ -106,7 +106,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                     {
                         displayName: "Engine 2",
                         isMeasure: true,
-                        format: "$0,000.00",
+                        format: "0000.00",
                         queryName: "sales2",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
                         objects: { dataPoint: { fill: { solid: { color: "lightblue" } } } }

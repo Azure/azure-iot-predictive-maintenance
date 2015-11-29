@@ -12,6 +12,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
         public void ConfigureWebApi(IAppBuilder app)
         {
             app.UseWebApi(HttpConfiguration);
+
             HttpConfiguration.MapHttpAttributeRoutes();
         }
     }

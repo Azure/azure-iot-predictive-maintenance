@@ -13,6 +13,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Contrac
         [DataMember(Name = "deviceId")]
         public string DeviceId { get; set; }
 
+        [DataMember(Name = "recordId")]
+        public string RecordId { get; set; }
+
         [DataMember(Name = "timestamp")]
         public DateTime Timestamp { get; set; }
 

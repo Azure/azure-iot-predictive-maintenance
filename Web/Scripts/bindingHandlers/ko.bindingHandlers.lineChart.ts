@@ -10,8 +10,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             var lineChart = new LineChart(element);
 
-            var update = chartData => {
-                if (!chartData) {
+            var onChartDataReceived = chartData => {
+                if (!chartData || !chartData.categories || !chartData.line1values || !chartData.line2values) {
                     return;
                 }
 
@@ -19,13 +19,13 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 $(element).removeClass("chart-indicator-progress");
             }
 
-            sourceObservable.subscribe(update);
+            sourceObservable.subscribe(onChartDataReceived);
 
             $(window).resize(() => {
                 lineChart.resizeViewport();
             });
 
-            update(sourceObservable());
+            onChartDataReceived(sourceObservable());
         }
     };
 }

@@ -4,6 +4,7 @@
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -15,6 +16,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 
     public sealed class TelemetryService : ITelemetryService
     {
+        const int TimeOffsetInSeconds = 30;
         readonly IConfigurationProvider configurationProvider;
 
         public TelemetryService(IConfigurationProvider configurationProvider)
@@ -22,16 +24,16 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
             this.configurationProvider = configurationProvider;
         }
 
-        public async Task<IEnumerable<Telemetry>> GetLatestTelemetryData()
+        public async Task<IEnumerable<Telemetry>> GetLatestTelemetry(string deviceId)
         {
             var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
-
             var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicetelemetry");
-            //var conditions = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
+            var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
             TableQuery<TelemetryEntity> query = new TableQuery<TelemetryEntity>()
-                //.Where(conditions)
-                .Take(2000)
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
+                .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
+                .Take(TimeOffsetInSeconds)
                 .Select(new[] { "sensor11", "sensor14", "sensor15", "sensor9" });
 
             var result = new Collection<Telemetry>();
@@ -42,33 +44,33 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                 var telemetry = new Telemetry
                 {
                     DeviceId = entity.PartitionKey,
+                    RecordId = entity.RowKey,
                     Timestamp = entity.Timestamp.DateTime,
-                    Sensor1 = double.Parse(entity.sensor11),
-                    Sensor2 = double.Parse(entity.sensor14),
-                    Sensor3 = double.Parse(entity.sensor15),
-                    Sensor4 = double.Parse(entity.sensor9)
+                    Sensor1 = Math.Round(double.Parse(entity.sensor11)),
+                    Sensor2 = Math.Round(double.Parse(entity.sensor14)),
+                    Sensor3 = Math.Round(double.Parse(entity.sensor15)),
+                    Sensor4 = Math.Round(double.Parse(entity.sensor9))
                 };
-
                 result.Add(telemetry);
             }
 
             return result;
         }
 
-        public async Task<IEnumerable<Prediction>> GetLatestPredictionData()
+        public async Task<IEnumerable<Prediction>> GetLatestPrediction(string deviceId)
         {
             var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
-
             var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicemlresult");
-            //var conditions = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddHours(-24).DateTime);
+
+            var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
             TableQuery<PredictionRecord> query = new TableQuery<PredictionRecord>()
-                //.Where(conditions)
-                .Take(2000)
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
+                .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
+                .Take(TimeOffsetInSeconds)
                 .Select(new[] { "Timestamp", "Rul" });
 
             var result = new Collection<Prediction>();
-
             var entities = table.ExecuteQuery(query).OrderBy(x => x.Timestamp);
 
             foreach (var entity in entities)
@@ -80,7 +82,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
                     RemainingUsefulLife = (int)double.Parse(entity.Rul),
                     Cycles = int.Parse(entity.RowKey)
                 };
-
                 result.Add(prediction);
             }
 

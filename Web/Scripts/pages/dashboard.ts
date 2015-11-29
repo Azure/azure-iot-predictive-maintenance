@@ -5,6 +5,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
     export class Dashboard {
         private warningTreshold: number;
         private httpClient: JQueryHttpClient;
+        private engine1RecordId: number;
+        private engine2RecordId: number;
 
         public simulationState: KnockoutObservable<string>;
         public sensor1Data: KnockoutObservable<ILineChartData>;
@@ -19,6 +21,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public engine1RulWarning: KnockoutObservable<boolean>;
         public engine2RulWarning: KnockoutObservable<boolean>;
         public errorMessages: KnockoutObservableArray<string>;
+        public sendingCommand: KnockoutObservable<boolean>;
 
         constructor() {
             //rebinding...
@@ -34,7 +37,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.closeMessage = this.closeMessage.bind(this);
 
             //initialization...
-            this.warningTreshold = 200;
+            this.warningTreshold = 75;
             this.httpClient = new JQueryHttpClient();
             this.sensor1Data = ko.observable<ILineChartData>();
             this.sensor2Data = ko.observable<ILineChartData>();
@@ -49,6 +52,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.engine2RulWarning = ko.observable<boolean>(false);
             this.simulationState = ko.observable<string>(SimulationStates.stopped);
             this.errorMessages = ko.observableArray<string>();
+            this.sendingCommand = ko.observable<boolean>(false);
 
             //startup...
             this.getTelemetryData();
@@ -69,7 +73,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var sensor4Data = { categories: [], line1values: [], line2values: [] };
 
             enginesTelemetry.engine1telemetry.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("h:mm a");
+                var timestamp = moment(reading.timestamp).format("mm:ss");
 
                 sensor1Data.categories.push(timestamp);
                 sensor2Data.categories.push(timestamp);
@@ -83,7 +87,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             });
 
             enginesTelemetry.engine2telemetry.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("h:mm a");
+                var timestamp = moment(reading.timestamp).format("mm:ss");
 
                 sensor1Data.categories.push(timestamp);
                 sensor2Data.categories.push(timestamp);
@@ -101,7 +105,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.sensor3Data(sensor3Data);
             this.sensor4Data(sensor4Data);
 
-            setTimeout(this.getTelemetryData, 5000);
+            setTimeout(this.getTelemetryData, 1000);
         }
 
         private onTelemetryLoadError(): void {
@@ -153,7 +157,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                     this.engine2RulWarning(true);
             }
 
-            setTimeout(this.getPredictionData, 5000);
+            setTimeout(this.getPredictionData, 1000);
         }
 
         private onPredictionLoadError(): void {
@@ -162,6 +166,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
         private onSendCommandError(): void {
             this.errorMessages.push(Constants.couldNotSendCommand);
+            this.sendingCommand(false);
         }
 
         public closeMessage(message: string) {
@@ -171,8 +176,11 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public startSimulation() {
             var startEmulationPromise = this.httpClient.post("api/simulation/start", {});
 
+            this.sendingCommand(true);
+
             startEmulationPromise.done(() => {
                 this.simulationState(SimulationStates.running);
+                this.sendingCommand(false);
             });
 
             startEmulationPromise.fail(this.onSendCommandError);
@@ -181,8 +189,11 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         public stopSimulation() {
             var stopEmulationPromise = this.httpClient.post("api/simulation/stop", {});
 
+            this.sendingCommand(true);
+
             stopEmulationPromise.done(() => {
                 this.simulationState(SimulationStates.stopped);
+                this.sendingCommand(false);
             });
 
             stopEmulationPromise.fail(this.onSendCommandError);

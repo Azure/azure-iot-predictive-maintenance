@@ -4,18 +4,18 @@
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
-    using System.Web.Http;
-    using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web.Http;
+    using WindowsAzure.Storage;
+    using WindowsAzure.Storage.Table;
+    using Common.Configurations;
     using Common.DeviceSchema;
     using Common.Repository;
-    using Common.Configurations;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
 
     [Authorize]
-    public sealed class SimulationController : System.Web.Http.ApiController
+    public sealed class SimulationController : ApiController
     {
         readonly IIotHubRepository iotHubRepository;
         readonly string storageConnectionString;
@@ -34,27 +34,27 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         [Route("api/simulation/start")]
         public async Task StartSimulation()
         {
-            this.clearTables();
-            await sendCommand("StartTelemetry");
+            this.ClearTables();
+            await this.SendCommand("StartTelemetry");
         }
 
         [HttpPost]
         [Route("api/simulation/stop")]
         public async Task StopSimulation()
         {
-            await sendCommand("StopTelemetry");
+            await this.SendCommand("StopTelemetry");
         }
 
-        private string[] partitionKeys()
+        string[] PartitionKeys()
         {
-            return new string[]
+            return new[]
             {
                 "N1172FJ-1",
                 "N1172FJ-2"
             };
         }
 
-        private void clearTables()
+        void ClearTables()
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.storageConnectionString);
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -62,13 +62,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             CloudTable telemetryTable = tableClient.GetTableReference(this.telemetryTableName);
             CloudTable mlTable = tableClient.GetTableReference(this.mlResultTableName);
 
-            clearTable(telemetryTable);
-            clearTable(mlTable);
+            this.ClearTable(telemetryTable);
+            this.ClearTable(mlTable);
         }
 
-        private void clearTable(CloudTable table)
+        void ClearTable(CloudTable table)
         {
-            foreach (var partitionKey in this.partitionKeys())
+            foreach (var partitionKey in this.PartitionKeys())
             {
                 TableBatchOperation batchDelete = new TableBatchOperation();
 
@@ -96,11 +96,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             }
         }
 
-        private async Task sendCommand(string commandName)
+        async Task SendCommand(string commandName)
         {
             var command = CommandSchemaHelper.CreateNewCommand(commandName);
 
-            foreach (var partitionKey in this.partitionKeys())
+            foreach (var partitionKey in this.PartitionKeys())
             {
                 await this.iotHubRepository.SendCommand(partitionKey, command);
             }

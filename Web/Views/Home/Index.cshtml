@@ -16,7 +16,7 @@
                             </h3>
                         </div>
                         <!--ko if: simulationState() == 'stopped'-->
-                        <button class="btn btn-primary tile-button" data-bind="click: startSimulation">
+                        <button class="btn btn-primary tile-button" data-bind="click: startSimulation, disable: sendingCommand">
                             Start simulation
                         </button>
                         <div class="indicator indicator-bar indicator-bar-inactive">
@@ -24,7 +24,7 @@
                         </div>
                         <!--/ko-->
                         <!--ko if: simulationState() == 'running'-->
-                        <button class="btn btn-primary tile-button" data-bind="click: stopSimulation">
+                        <button class="btn btn-primary tile-button" data-bind="click: stopSimulation, disable: sendingCommand">
                             Stop simulation
                         </button>
                         <div class="indicator indicator-bar indicator-bar-progress">
