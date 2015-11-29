@@ -79,10 +79,10 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         }
 
         public createDataView(categories, line1values, line2values) {
-            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "engines" } });
+            var fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: "s", entity: "table1", name: "date" } });
 
             var categoryIdentities = categories.map(value => {
-                var expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.text(value));
+                var expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.dateTime(value));
                 return powerbi.data.createDataViewScopeIdentity(expr);
             });
         
@@ -91,9 +91,9 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var dataViewMetadata = {
                 columns: [
                     {
-                        displayName: "Time",
-                        queryName: "Time",
-                        type: powerbi.ValueType.fromDescriptor({ text: true })
+                        displayName: "Date",
+                        queryName: "Date",
+                        type: powerbi.ValueType.fromDescriptor({ dateTime: true })
                     },
                     {
                         displayName: "Engine 1",

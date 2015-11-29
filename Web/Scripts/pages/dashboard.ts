@@ -73,7 +73,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var sensor4Data = { categories: [], line1values: [], line2values: [] };
 
             enginesTelemetry.engine1telemetry.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("mm:ss");
+                var timestamp = new Date(reading.timestamp);
 
                 sensor1Data.categories.push(timestamp);
                 sensor2Data.categories.push(timestamp);
@@ -87,7 +87,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             });
 
             enginesTelemetry.engine2telemetry.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("mm:ss");
+                var timestamp = new Date(reading.timestamp);
 
                 sensor1Data.categories.push(timestamp);
                 sensor2Data.categories.push(timestamp);
@@ -124,13 +124,15 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             var rulData = initialData;
 
             prediction.engine1prediction.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("h:mm a");
+                var timestamp = new Date(reading.timestamp);
+
                 rulData.categories.push(timestamp);
                 rulData.line1values.push(reading.rul);
             });
 
             prediction.engine2prediction.forEach(reading => {
-                var timestamp = moment(reading.timestamp).format("h:mm a");
+                var timestamp = new Date(reading.timestamp);
+
                 rulData.categories.push(timestamp);
                 rulData.line2values.push(reading.rul);
             });
