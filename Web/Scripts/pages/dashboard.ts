@@ -7,6 +7,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
         private httpClient: JQueryHttpClient;
         private engine1RecordId: number;
         private engine2RecordId: number;
+        private emptyString: string;
 
         public simulationState: KnockoutObservable<string>;
         public sensor1Data: KnockoutObservable<ILineChartData>;
@@ -39,6 +40,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.onSimulationStateReceived = this.onSimulationStateReceived.bind(this);
 
             //initialization...
+            this.emptyString = "N/A";
             this.warningTreshold = 160;
             this.httpClient = new JQueryHttpClient();
             this.sensor1Data = ko.observable<ILineChartData>();
@@ -46,10 +48,10 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.sensor3Data = ko.observable<ILineChartData>();
             this.sensor4Data = ko.observable<ILineChartData>();
             this.rulData = ko.observable<ILineChartData>();
-            this.engine1Rul = ko.observable<string>("N/A");
-            this.engine1Cycles = ko.observable<string>("N/A");
-            this.engine2Rul = ko.observable<string>("N/A");
-            this.engine2Cycles = ko.observable<string>("N/A");
+            this.engine1Rul = ko.observable<string>(this.emptyString);
+            this.engine1Cycles = ko.observable<string>(this.emptyString);
+            this.engine2Rul = ko.observable<string>(this.emptyString);
+            this.engine2Cycles = ko.observable<string>(this.emptyString);
             this.engine1RulWarning = ko.observable<boolean>(false);
             this.engine2RulWarning = ko.observable<boolean>(false);
             this.simulationState = ko.observable<string>(SimulationStates.stopped);
@@ -159,8 +161,11 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 this.engine1Rul(engine1PredictionRul.toString());
                 this.engine1Cycles(_.last(prediction.engine1prediction).cycles.toString());
 
-                if (engine1PredictionRul < this.warningTreshold)
-                    this.engine1RulWarning(true);
+                this.engine1RulWarning(engine1PredictionRul < this.warningTreshold);
+            } else {
+                this.engine1Rul(this.emptyString);
+                this.engine1Cycles(this.emptyString);
+                this.engine1RulWarning(false);
             }
 
             if (prediction.engine2prediction.length > 0) {
@@ -169,8 +174,11 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                 this.engine2Rul(_.last(prediction.engine2prediction).rul.toString());
                 this.engine2Cycles(_.last(prediction.engine2prediction).cycles.toString());
 
-                if (engine2PredictionRul < this.warningTreshold)
-                    this.engine2RulWarning(true);
+                this.engine2RulWarning(engine2PredictionRul < this.warningTreshold);
+            } else {
+                this.engine2Rul(this.emptyString);
+                this.engine2Cycles(this.emptyString);
+                this.engine2RulWarning(false);
             }
 
             setTimeout(this.getPredictionData, 1000);
