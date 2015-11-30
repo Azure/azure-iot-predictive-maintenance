@@ -594,8 +594,8 @@ function ProvisionML()
         [Parameter(Mandatory=$true, Position=2)]
         [string]$experimentName
     )
-    $trainingUri ="https%3a%2f%2fstorage.azureml.net%2fdirectories%2f6931bbef1f08495e9f9f1596719eb3ea%2fitems&communityUri=http%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2fba56b9805e484fd8b5b3e1096edabc4d"
-    $scoringUri = "https%3a%2f%2fstorage.azureml.net%2fdirectories%2f5d8bb3d2946742f1900f9c492ea6582f%2fitems&communityUri=http%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2f79494084daca4f42ab759986fa645df7"
+    $trainingUri = "https%3a%2f%2fstorage.azureml.net%2fdirectories%2f3200a36ce557450aab40d18054ad0ac1%2fitems&communityUri=https%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2fremaining-useful-life-engines-1&entityId=Remaining-Useful-Life-Engines-1"
+    $scoringUri = "https%3a%2f%2fstorage.azureml.net%2fdirectories%2f3df9f53c197f465ba50b02dfb9610ef7%2fitems&communityUri=https%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2fremaining-useful-life-predictive-exp-2&entityId=Remaining-Useful-Life-Predictive-Exp-2"
 
     # Check for workspace
     $workspace = GetWorkspaceByName $name
