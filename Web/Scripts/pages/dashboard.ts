@@ -39,7 +39,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.onSimulationStateReceived = this.onSimulationStateReceived.bind(this);
 
             //initialization...
-            this.warningTreshold = 75;
+            this.warningTreshold = 160;
             this.httpClient = new JQueryHttpClient();
             this.sensor1Data = ko.observable<ILineChartData>();
             this.sensor2Data = ko.observable<ILineChartData>();
