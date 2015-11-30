@@ -7,6 +7,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     using System.Web.Http;
     using Configurations;
     using global::Owin;
+    using Owin;
 
     public partial class Startup
     {
@@ -16,6 +17,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
         {
             HttpConfiguration = new HttpConfiguration();
             ConfigurationProvider configProvider = new ConfigurationProvider();
+
+            app.Use<EnforceHttpsMiddleware>();
 
             this.ConfigureAuth(app, configProvider);
             this.ConfigureAutofac(app);

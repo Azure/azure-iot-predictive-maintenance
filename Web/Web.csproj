@@ -253,6 +253,7 @@
     <Compile Include="Bundling\LessTransform.cs" />
     <Compile Include="Controllers\SimulationController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Owin\EnforceHttpsMiddleware.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

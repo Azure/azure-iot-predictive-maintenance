@@ -8,10 +8,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     using System.IdentityModel.Tokens;
     using Common.Configurations;
     using global::Owin;
-    using Owin.Security;
-    using Owin.Security.ActiveDirectory;
-    using Owin.Security.Cookies;
-    using Owin.Security.WsFederation;
+    using Microsoft.Owin.Security;
+    using Microsoft.Owin.Security.ActiveDirectory;
+    using Microsoft.Owin.Security.Cookies;
+    using Microsoft.Owin.Security.WsFederation;
 
     public partial class Startup
     {
