@@ -15,7 +15,17 @@
                                 Aircraft map
                             </h3>
                         </div>
-                        <!--ko if: simulationState() == 'stopped'-->
+                        <!--ko if: simulationState() == 'Stopping'-->
+                        <div class="indicator indicator-bar indicator-bar-inactive">
+                            Stopping...
+                        </div>
+                        <!--/ko-->
+                        <!--ko if: simulationState() == 'Starting'-->
+                        <div class="indicator indicator-bar indicator-bar-inactive">
+                            Starting...
+                        </div>
+                        <!--/ko-->
+                        <!--ko if: simulationState() == 'Stopped'-->
                         <button class="btn btn-primary tile-button" data-bind="click: startSimulation, disable: sendingCommand">
                             Start simulation
                         </button>
@@ -23,7 +33,7 @@
                             Simulation stopped
                         </div>
                         <!--/ko-->
-                        <!--ko if: simulationState() == 'running'-->
+                        <!--ko if: simulationState() == 'Started'-->
                         <button class="btn btn-primary tile-button" data-bind="click: stopSimulation, disable: sendingCommand">
                             Stop simulation
                         </button>

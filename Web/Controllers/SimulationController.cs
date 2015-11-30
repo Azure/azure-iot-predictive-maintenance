@@ -12,6 +12,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using WindowsAzure.Storage.Table;
     using Common.Configurations;
     using Common.DeviceSchema;
+    using Common.Helpers;
     using Common.Repository;
     using Common.Models;
     using Common.Models.Commands;
@@ -20,6 +21,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     public sealed class SimulationController : ApiController
     {
         readonly IIotHubRepository iotHubRepository;
+        readonly IConfigurationProvider configurationProvider;
         readonly string storageConnectionString;
         readonly string telemetryTableName;
         readonly string mlResultTableName;
@@ -28,6 +30,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         public SimulationController(IIotHubRepository iotHubRepository, IConfigurationProvider configProvider)
         {
             this.iotHubRepository = iotHubRepository;
+            this.configurationProvider = configProvider;
             this.storageConnectionString = configProvider.GetConfigurationSettingValue("device.StorageConnectionString");
             this.telemetryTableName = configProvider.GetConfigurationSettingValue("TelemetryStoreContainerName");
             this.mlResultTableName = configProvider.GetConfigurationSettingValue("MLResultTableName");
@@ -118,6 +121,21 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
             {
                 await StateTableEntity.Write(partitionKey, state, this.storageConnectionString, this.simulatorStateTableName);
             }
+        }
+
+        [HttpGet]
+        [Route("api/simulation/state")]
+        public async Task<string> GetSimulationState()
+        {
+            var table = await AzureTableStorageHelper.GetTableAsync(this.storageConnectionString, "simulatorstate");
+            var query = new TableQuery<StateTableEntity>()
+                .Take(1)
+                .Select(new[] { "State" });
+
+            var result = table.ExecuteQuery(query);
+            var stateEntity = result.FirstOrDefault();
+
+            return stateEntity != null ? stateEntity.State : StartStopConstants.STOPPED;
         }
     }
 }

@@ -33,9 +33,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
             var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicetelemetry");
             var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
+            var deviceFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId);
+            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime);
+            var filter = TableQuery.CombineFilters(deviceFilter, TableOperators.And, timestampFilter);
+
             TableQuery<TelemetryEntity> query = new TableQuery<TelemetryEntity>()
-                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
-                .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
+                .Where(filter)
                 .Take(MaxRecordsToReceive)
                 .Select(new[] { "sensor11", "sensor14", "sensor15", "sensor9" });
 
@@ -69,9 +72,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 
             var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
+            var deviceFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId);
+            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime);
+            var filter = TableQuery.CombineFilters(deviceFilter, TableOperators.And, timestampFilter);
+
             TableQuery<PredictionRecord> query = new TableQuery<PredictionRecord>()
-                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId))
-                .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime))
+                .Where(filter)
                 .Take(MaxRecordsToReceive)
                 .Select(new[] { "Timestamp", "Rul" });
 

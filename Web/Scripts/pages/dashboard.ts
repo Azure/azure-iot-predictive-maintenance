@@ -35,6 +35,8 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.onPredictionLoadError = this.onPredictionLoadError.bind(this);
             this.onSendCommandError = this.onSendCommandError.bind(this);
             this.closeMessage = this.closeMessage.bind(this);
+            this.getSimulationState = this.getSimulationState.bind(this);
+            this.onSimulationStateReceived = this.onSimulationStateReceived.bind(this);
 
             //initialization...
             this.warningTreshold = 75;
@@ -57,6 +59,18 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             //startup...
             this.getTelemetryData();
             this.getPredictionData();
+
+            setInterval(this.getSimulationState, 3000);
+        }
+
+        private getSimulationState() {
+            var getSimulationStatePromise = this.httpClient.get<string>("api/simulation/state");
+
+            getSimulationStatePromise.done(this.onSimulationStateReceived);
+        }
+
+        private onSimulationStateReceived(state: string) {
+            this.simulationState(state);
         }
 
         private getTelemetryData() {
@@ -181,7 +195,6 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.sendingCommand(true);
 
             startEmulationPromise.done(() => {
-                this.simulationState(SimulationStates.running);
                 this.sendingCommand(false);
             });
 
@@ -194,7 +207,6 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
             this.sendingCommand(true);
 
             stopEmulationPromise.done(() => {
-                this.simulationState(SimulationStates.stopped);
                 this.sendingCommand(false);
             });
 
