@@ -160,11 +160,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In days.
+        ///   Looks up a localized string similar to In cycles.
         /// </summary>
-        public static string TileHeadingSubheadingInDays {
+        public static string TileHeadingSubheadingInCycles {
             get {
-                return ResourceManager.GetString("TileHeadingSubheadingInDays", resourceCulture);
+                return ResourceManager.GetString("TileHeadingSubheadingInCycles", resourceCulture);
             }
         }
     }

@@ -150,7 +150,7 @@
   <data name="PageTitleDashboard" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="TileHeadingSubheadingInDays" xml:space="preserve">
-    <value>In days</value>
+  <data name="TileHeadingSubheadingInCycles" xml:space="preserve">
+    <value>In cycles</value>
   </data>
 </root>
