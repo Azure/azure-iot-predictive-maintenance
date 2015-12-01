@@ -32,7 +32,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                         format: "0000.00",
                         queryName: "engine1",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: "lightgreen" } } } }
+                        objects: { dataPoint: { fill: { solid: { color: "#C02FB0" } } } }
                     },
                     {
                         displayName: "Engine 2",
@@ -40,7 +40,7 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
                         format: "0000.00",
                         queryName: "engine2",
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
-                        objects: { dataPoint: { fill: { solid: { color: "lightblue" } } } }
+                        objects: { dataPoint: { fill: { solid: { color: "#00AAAD" } } } }
                     }
                 ]
             };
