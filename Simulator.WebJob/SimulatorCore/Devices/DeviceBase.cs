@@ -45,7 +45,7 @@
 
         public dynamic Commands { get; set; }
 
-        public List<ITelemetry> TelemetryEvents { get; }
+        public List<ITelemetry> TelemetryEvents { get; set; }
 
         public bool RepeatEventListForever { get; set; }
 
