@@ -1,18 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Xml.XPath;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Extensions;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations
 {
+    using System;
+    using System.IO;
+    using System.Xml;
+    using System.Xml.XPath;
+    using Extensions;
+
     public class EnvironmentDescription : IDisposable
     {
-        bool isDisposed = false;
-        XmlDocument document = null;
-        XPathNavigator navigator = null;
-        string fileName = null;
-        int updatedValuesCount = 0;
+        bool _isDisposed;
+        readonly XmlDocument _document;
+        XPathNavigator _navigator;
+        readonly string _fileName;
+        int _updatedValuesCount;
         const string ValueAttributeName = "value";
         const string SettingXpath = "//setting[@name='{0}']";
 
@@ -23,20 +23,20 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
                 throw new ArgumentNullException("fileName");
             }
 
-            this.fileName = fileName;
-            this.document = new XmlDocument();
+            _fileName = fileName;
+            _document = new XmlDocument();
             using (XmlReader reader = XmlReader.Create(fileName))
             {
-                this.document.Load(reader);
+                _document.Load(reader);
             }
-            this.navigator = this.document.CreateNavigator();
+            _navigator = _document.CreateNavigator();
         }
 
         public void Dispose()
         {
-            if (!this.isDisposed)
+            if (!_isDisposed)
             {
-                this.Dispose(true);
+                Dispose(true);
                 GC.SuppressFinalize(this);
             }
         }
@@ -45,18 +45,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
         {
             if (disposing)
             {
-                this.isDisposed = true;
-                if (this.updatedValuesCount > 0)
+                _isDisposed = true;
+                if (_updatedValuesCount > 0)
                 {
-                    this.document.Save(this.fileName);
-                    Console.Out.WriteLine("Successfully updated {0} mapping(s) in {1}", this.updatedValuesCount, Path.GetFileName(this.fileName).Split('.')[0]);
+                    _document.Save(_fileName);
+                    Console.Out.WriteLine("Successfully updated {0} mapping(s) in {1}", _updatedValuesCount, Path.GetFileName(_fileName).Split('.')[0]);
                 }
             }
         }
 
         public bool SettingExists(string settingName)
         {
-            return !string.IsNullOrEmpty(this.GetSetting(settingName, false));
+            return !string.IsNullOrEmpty(GetSetting(settingName, false));
         }
 
         public string GetSetting(string settingName, bool errorOnNull = true)
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
             }
 
             string result = string.Empty;
-            XmlNode node = this.GetSettingNode(settingName.Trim());
+            XmlNode node = GetSettingNode(settingName.Trim());
             if (node != null)
             {
                 result = node.Attributes[ValueAttributeName].Value;
@@ -85,12 +85,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
         XmlNode GetSettingNode(string settingName)
         {
             string xpath = SettingXpath.FormatInvariant(settingName);
-            return this.document.SelectSingleNode(xpath);
+            return _document.SelectSingleNode(xpath);
         }
 
         public bool SetSetting(string settingName, string settingValue)
         {
-            return this.SetSetting(this.GetSettingNode(settingName), settingValue);
+            return SetSetting(GetSettingNode(settingName), settingValue);
         }
 
         public bool SetSetting(IXPathNavigable node, string settingValue)
@@ -98,7 +98,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Conf
             if (node != null)
             {
                 ((XmlNode)node).Attributes[ValueAttributeName].Value = settingValue;
-                this.updatedValuesCount++;
+                _updatedValuesCount++;
                 return true;
             }
             return false;

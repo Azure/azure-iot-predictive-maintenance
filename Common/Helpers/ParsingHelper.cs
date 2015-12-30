@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+
     // Methods, related to parsing.
     public static class ParsingHelper
     {
@@ -57,7 +57,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
 
                 if (currentChar == '"')
                 {
-                    if (textReader.Peek() == (int)'"')
+                    if (textReader.Peek() == '"')
                     {
                         textReader.Read();
                         stringBuffer.Append('"');
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                     switch (currentChar)
                     {
                         case '\r':
-                            if (textReader.Peek() == (int)'\n')
+                            if (textReader.Peek() == '\n')
                             {
                                 textReader.Read();
                             }
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                             break;
 
                         case '\n':
-                            if (textReader.Peek() == (int)'\r')
+                            if (textReader.Peek() == '\r')
                             {
                                 textReader.Read();
                             }
@@ -142,7 +142,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             {
                 if (firstRow == null)
                 {
-                    if (row.Any(t => object.ReferenceEquals(t, null)))
+                    if (row.Any(t => ReferenceEquals(t, null)))
                     {
                         throw new ArgumentException("parsedCsv's first non-null item has an index that is a null reference.", "parsedCsv");
                     }
@@ -153,7 +153,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 {
                     var currentItem = new Dictionary<string, string>();
 
-                    for (int i = 0; (i < row.Length) &&(i < firstRow.Length); ++i)
+                    for (int i = 0; (i < row.Length) && (i < firstRow.Length); ++i)
                     {
                         currentItem[firstRow[i]] = row[i];
                     }
@@ -195,7 +195,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             {
                 if (firstRow == null)
                 {
-                    if (row.Any(t => object.ReferenceEquals(t, null)))
+                    if (row.Any(t => ReferenceEquals(t, null)))
                     {
                         throw new ArgumentException(
                             "parsedCsv's first non-null item has an index that is a null reference.",
@@ -207,7 +207,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 else
                 {
                     ExpandoObject currentItem = new ExpandoObject();
-                    IDictionary<string, object> currentDictionary = (IDictionary<string, object>)currentItem;
+                    IDictionary<string, object> currentDictionary = currentItem;
 
                     for (int i = 0; (i < row.Length) && (i < firstRow.Length); ++i)
                     {

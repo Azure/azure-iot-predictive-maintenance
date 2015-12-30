@@ -1,15 +1,15 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory
 {
+    using Common.Configurations;
+    using Devices;
+    using Logging;
+    using Serialization;
+
     public class IotHubTransportFactory : ITransportFactory
     {
-        private ISerialize _serializer;
-        private ILogger _logger;
-        private IConfigurationProvider _configurationProvider;
+        readonly ISerialize _serializer;
+        readonly ILogger _logger;
+        readonly IConfigurationProvider _configurationProvider;
 
         public IotHubTransportFactory(ISerialize serializer, ILogger logger,
             IConfigurationProvider configurationProvider)

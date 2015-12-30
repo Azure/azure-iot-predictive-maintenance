@@ -79,6 +79,24 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start simulation.
+        /// </summary>
+        public static string ButtonLabelStartSimulation {
+            get {
+                return ResourceManager.GetString("ButtonLabelStartSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop simulation.
+        /// </summary>
+        public static string ButtonLabelStopSimulation {
+            get {
+                return ResourceManager.GetString("ButtonLabelStopSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Engine #1.
         /// </summary>
         public static string ChartLabelEngine1 {
@@ -93,6 +111,42 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         public static string ChartLabelEngine2 {
             get {
                 return ResourceManager.GetString("ChartLabelEngine2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simulation in progress.
+        /// </summary>
+        public static string IndicatorLabelStarted {
+            get {
+                return ResourceManager.GetString("IndicatorLabelStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting....
+        /// </summary>
+        public static string IndicatorLabelStarting {
+            get {
+                return ResourceManager.GetString("IndicatorLabelStarting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simulation stopped.
+        /// </summary>
+        public static string IndicatorLabelStopped {
+            get {
+                return ResourceManager.GetString("IndicatorLabelStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stopping....
+        /// </summary>
+        public static string IndicatorLabelStopping {
+            get {
+                return ResourceManager.GetString("IndicatorLabelStopping", resourceCulture);
             }
         }
         
@@ -133,6 +187,15 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aircraft map.
+        /// </summary>
+        public static string TileHeadingAircraftMap {
+            get {
+                return ResourceManager.GetString("TileHeadingAircraftMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cycles.
         /// </summary>
         public static string TileHeadingCycles {
@@ -156,6 +219,51 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         public static string TileHeadingRulHistory {
             get {
                 return ResourceManager.GetString("TileHeadingRulHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor 11.
+        /// </summary>
+        public static string TileHeadingSensor11 {
+            get {
+                return ResourceManager.GetString("TileHeadingSensor11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor 14.
+        /// </summary>
+        public static string TileHeadingSensor14 {
+            get {
+                return ResourceManager.GetString("TileHeadingSensor14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor 15.
+        /// </summary>
+        public static string TileHeadingSensor15 {
+            get {
+                return ResourceManager.GetString("TileHeadingSensor15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor 9.
+        /// </summary>
+        public static string TileHeadingSensor9 {
+            get {
+                return ResourceManager.GetString("TileHeadingSensor9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sensor history.
+        /// </summary>
+        public static string TileHeadingSensorHistory {
+            get {
+                return ResourceManager.GetString("TileHeadingSensorHistory", resourceCulture);
             }
         }
         

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Common.Models;
+    using Telemetry;
+
     /// <summary>
     /// Represents a device. Implementors may be written in managed code, or a managed wrapper
     /// around a native (C/C++) core.
@@ -27,7 +27,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         bool RepeatEventListForever { get; set; }
 
         void Init(InitialDeviceConfig config);
-
 
         Task SendDeviceInfo();
 

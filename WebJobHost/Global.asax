@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Microsoft.Azure.Devices.Applications.PredictiveMaintenance.DeviceAdmin.Web.MvcApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="WebJobHost.MvcApplication" Language="C#" %>

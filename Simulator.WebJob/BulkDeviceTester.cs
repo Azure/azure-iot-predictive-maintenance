@@ -1,39 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Common.Configurations;
+    using Common.Models;
+    using Common.Repository;
+    using SimulatorCore.Devices;
+    using SimulatorCore.Devices.Factory;
+    using SimulatorCore.Logging;
+    using SimulatorCore.Telemetry.Factory;
+    using SimulatorCore.Transport.Factory;
+
     /// <summary>
     /// Creates multiple devices with events for testing.
     /// </summary>
     public class BulkDeviceTester
     {
         // change this to inject a different logger
-        private readonly ILogger _logger;
-        private readonly ITransportFactory _transportFactory;
-        private readonly IConfigurationProvider _configProvider;
-        private readonly ITelemetryFactory _telemetryFactory;
-        private readonly IDeviceFactory _deviceFactory;
-        private readonly IVirtualDeviceStorage _deviceStorage;
+        readonly ILogger _logger;
+        readonly ITransportFactory _transportFactory;
+        readonly IConfigurationProvider _configProvider;
+        readonly ITelemetryFactory _telemetryFactory;
+        readonly IDeviceFactory _deviceFactory;
+        readonly IVirtualDeviceStorage _deviceStorage;
 
-        private List<InitialDeviceConfig> _deviceList;
-        private readonly int _devicePollIntervalSeconds;
+        List<InitialDeviceConfig> _deviceList;
+        readonly int _devicePollIntervalSeconds;
 
-        private const int DEFAULT_DEVICE_POLL_INTERVAL_SECONDS = 120;
+        const int DEFAULT_DEVICE_POLL_INTERVAL_SECONDS = 120;
 
-        public BulkDeviceTester(ITransportFactory transportFactory, ILogger logger, IConfigurationProvider configProvider, 
+        public BulkDeviceTester(ITransportFactory transportFactory, ILogger logger, IConfigurationProvider configProvider,
             ITelemetryFactory telemetryFactory, IDeviceFactory deviceFactory, IVirtualDeviceStorage virtualDeviceStorage)
         {
             _transportFactory = transportFactory;
@@ -45,8 +45,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             _deviceList = new List<InitialDeviceConfig>();
 
             string pollingIntervalString = _configProvider.GetConfigurationSettingValueOrDefault(
-                                        "DevicePollIntervalSeconds",
-                                        DEFAULT_DEVICE_POLL_INTERVAL_SECONDS.ToString(CultureInfo.InvariantCulture));
+                "DevicePollIntervalSeconds",
+                DEFAULT_DEVICE_POLL_INTERVAL_SECONDS.ToString(CultureInfo.InvariantCulture));
 
             _devicePollIntervalSeconds = Convert.ToInt32(pollingIntervalString, CultureInfo.InvariantCulture);
         }
@@ -77,7 +77,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                                 .Select(x => x.DeviceId)
                                 .ToList();
                     }
-                    else if(_deviceList != null && _deviceList.Any())
+                    else if (_deviceList != null && _deviceList.Any())
                     {
                         removedDevices = _deviceList.Select(x => x.DeviceId).ToList();
                     }
@@ -90,7 +90,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                     {
                         _logger.LogInfo("********** {0} DEVICES REMOVED ********** ", removedDevices.Count);
                     }
-                        
 
                     //reset the base list of devices for comparison the next
                     //time we retrieve the device list
@@ -126,7 +125,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                 //do nothing if task was cancelled
                 _logger.LogInfo("********** Primary worker role cancellation token source has been cancelled. **********");
             }
-            finally 
+            finally
             {
                 //ensure that all devices have been stopped
                 dm.StopAllDevices();

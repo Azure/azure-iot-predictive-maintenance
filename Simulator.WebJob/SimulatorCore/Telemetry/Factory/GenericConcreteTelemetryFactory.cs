@@ -1,13 +1,13 @@
-﻿using System;
-using System.Globalization;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory
 {
+    using System;
+    using System.Globalization;
+    using Devices;
+    using Logging;
+
     public class GenericConcreteTelemetryFactory
     {
-        private readonly ILogger _logger;
+        readonly ILogger _logger;
 
         public GenericConcreteTelemetryFactory(ILogger logger)
         {

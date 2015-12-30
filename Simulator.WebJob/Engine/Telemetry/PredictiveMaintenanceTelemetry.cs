@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models.Commands;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Common.Configurations;
+    using Common.Models;
+    using Common.Models.Commands;
+    using SimulatorCore.Logging;
+    using SimulatorCore.Telemetry;
+
     public class PredictiveMaintenanceTelemetry : ITelemetry
     {
-        private readonly ILogger _logger;
-        private readonly string _deviceId;
-        private readonly IConfigurationProvider _config;
+        readonly ILogger _logger;
+        readonly string _deviceId;
+        readonly IConfigurationProvider _config;
 
-        private const int REPORT_FREQUENCY_IN_SECONDS = 1;
+        const int REPORT_FREQUENCY_IN_SECONDS = 1;
 
-        private IEnumerator<IDictionary<string, object>> _data;
-        private bool _active;
+        readonly IEnumerator<IDictionary<string, object>> _data;
+        bool _active;
 
         public bool TelemetryActive
         {
@@ -68,7 +67,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                     try
                     {
                         // Search the data for the next row that contains this device ID
-                        while (_data.MoveNext() && !_data.Current.Values.Contains(_deviceId)) ;
+                        while (_data.MoveNext() && !_data.Current.Values.Contains(_deviceId)) { }
 
                         if (_data.Current != null)
                         {

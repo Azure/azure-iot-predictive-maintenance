@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Models
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Models
 {
+    using System.Collections.Generic;
+
     public class MLRequest
     {
         public class Data
@@ -19,15 +15,17 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
         public MLRequest(string[] columns, string[,] values)
         {
-            Inputs = new Dictionary<string, Data>()
-            { { 
-                "data", 
-                new Data() 
+            Inputs = new Dictionary<string, Data>
+            {
                 {
-                    ColumnNames = columns,
-                    Values = values
+                    "data",
+                    new Data
+                    {
+                        ColumnNames = columns,
+                        Values = values
+                    }
                 }
-            } };
+            };
             GlobalParameters = new Dictionary<string, string>();
         }
     }

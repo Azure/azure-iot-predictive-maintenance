@@ -1,24 +1,24 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport;
-
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.CommandProcessors
 {
+    using System;
+    using System.Threading.Tasks;
+    using Devices;
+    using SimulatorCore.CommandProcessors;
+    using SimulatorCore.Transport;
+
     /// <summary>
     /// Command processor to start telemetry data
+    /// </summary>
     public class StartCommandProcessor : CommandProcessor
     {
-        private const string START_TELEMETRY = "StartTelemetry";
+        const string START_TELEMETRY = "StartTelemetry";
 
         public StartCommandProcessor(EngineDevice device)
             : base(device)
         {
-
         }
 
-        public async override Task<CommandProcessingResult> HandleCommandAsync(DeserializableCommand deserializableCommand)
+        public override async Task<CommandProcessingResult> HandleCommandAsync(DeserializableCommand deserializableCommand)
         {
             if (deserializableCommand.CommandName == START_TELEMETRY)
             {
@@ -34,7 +34,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                 {
                     return CommandProcessingResult.RetryLater;
                 }
-
             }
             else if (NextCommandProcessor != null)
             {

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dynamitey;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Dynamitey;
+
     /// <summary>
     /// Helper class to encapsulate interactions with the event schema (messages from the device).
     /// </summary>

@@ -1,10 +1,12 @@
 ﻿using Microsoft.Owin;
-using Owin;
+using WebJobHost;
 
-[assembly: OwinStartup(typeof(WebJobHost.Startup))]
+[assembly: OwinStartup(typeof(Startup))]
 
 namespace WebJobHost
 {
+    using Owin;
+
     public class Startup
     {
         public void Configuration(IAppBuilder app)

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Common.Exceptions;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
 {
+    using System;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using Devices.Common.Exceptions;
+
     /// <summary>
     /// Static helper class that implement retry logic around async operations by running the
     /// operation additional times on transient errors such as a network failure
     /// </summary>
     public static class AzureRetryHelper
     {
-        private const int RETRY_COUNT = 2;
+        const int RETRY_COUNT = 2;
 
         /// <summary>
         /// Wrapper for the generic method for async operations that don't return a value
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
         {
             int currentRetry = 0;
 
-            while(true)
+            while (true)
             {
                 try
                 {
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
         /// </summary>
         /// <param name="originalException"></param>
         /// <returns></returns>
-        private static bool IsTransient(Exception originalException)
+        static bool IsTransient(Exception originalException)
         {
             // If the exception is a IotHubException its IsTransient property can be inspected
             IotHubException iotHubException = originalException as IotHubException;
@@ -89,8 +89,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 // If the web exception contains one of the following status values  it may be transient.
                 return new[]
                 {
-                    WebExceptionStatus.ConnectionClosed, 
-                    WebExceptionStatus.Timeout, 
+                    WebExceptionStatus.ConnectionClosed,
+                    WebExceptionStatus.Timeout,
                     WebExceptionStatus.RequestCanceled
                 }.Contains(webException.Status);
             }

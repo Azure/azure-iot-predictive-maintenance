@@ -1,8 +1,8 @@
-﻿using System.Text;
-using Newtonsoft.Json;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization
 {
+    using System.Text;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// JSON implementation of the ISerialize interface that serializes/deserializes
     /// objects into JSON data that is encoded as a UTF8 byte array
@@ -25,7 +25,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// <typeparam name="T">Type to deserialize into</typeparam>
         /// <param name="bytes">Byte array to deserialize into type T</param>
         /// <returns></returns>
-        public T DeserializeObject<T>(byte[] bytes) where T : class 
+        public T DeserializeObject<T>(byte[] bytes) where T : class
         {
             string jsonData = Encoding.UTF8.GetString(bytes);
             return JsonConvert.DeserializeObject<T>(jsonData);

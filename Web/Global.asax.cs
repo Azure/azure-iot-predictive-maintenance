@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
     using System;
     using System.Diagnostics;
@@ -22,13 +18,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
             GlobalFilters.Filters.Add(new HandleErrorAttribute());
         }
 
-        protected void Application_End()
-        {
-        }
-
         protected void Application_Error()
         {
-            Exception error = this.Server.GetLastError();
+            Exception error = Server.GetLastError();
 
             if (error != null)
             {

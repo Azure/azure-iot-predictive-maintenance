@@ -1,230 +1,228 @@
-﻿@model Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Models.Account
-
-@{
+﻿@{
     ViewBag.Title = Resources.PageTitleDashboard;
 }
 
 <div class="layout-flex layout-space tiles">
-    <div class="layout-flex-row">
-        <div class="layout-flex-cell layout-flex-cell-half">
-            <div class="layout">
-                <div class="layout-row">
-                    <div class="layout-cell tile">
-                        <div class="tile-header">
-                            <h3>
-                                Aircraft map
-                            </h3>
-                        </div>
-                        <!--ko if: simulationState() == 'Stopping'-->
-                        <div class="indicator indicator-bar indicator-bar-inactive">
-                            Stopping...
-                        </div>
-                        <!--/ko-->
-                        <!--ko if: simulationState() == 'Starting'-->
-                        <div class="indicator indicator-bar indicator-bar-inactive">
-                            Starting...
-                        </div>
-                        <!--/ko-->
-                        <!--ko if: simulationState() == 'Stopped'-->
-                        <button class="btn btn-primary tile-button" data-bind="click: startSimulation, disable: sendingCommand">
-                            Start simulation
-                        </button>
-                        <div class="indicator indicator-bar indicator-bar-inactive">
-                            Simulation stopped
-                        </div>
-                        <!--/ko-->
-                        <!--ko if: simulationState() == 'Started'-->
-                        <button class="btn btn-primary tile-button" data-bind="click: stopSimulation, disable: sendingCommand">
-                            Stop simulation
-                        </button>
-                        <div class="indicator indicator-bar indicator-bar-progress">
-                            Simulation in progress
-                        </div>
-                        <!--/ko-->
-                        <div class="chart-container">
-                            <div class="chart">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 67703 71465" class="chart-airplane">
-                                    <g>
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="35583,3687 35455,3708 35202,3478 34954,2958 35198,2767 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34880,2940 35153,3514 35437,3771 35666,3733 35223,2672 35192,2697 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="35117,2610 34869,2813 34731,2487 34786,2056 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34671,2495 34845,2908 35194,2623 34749,1877 34739,1963 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34647,1898 34594,2396 33931,2009 33931,1440 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33872,2043 34643,2493 34710,1867 33872,1331 33872,1385 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32120,3687 32505,2767 32749,2958 32501,3478 32248,3708 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32823,2940 32480,2673 32466,2709 32037,3733 32266,3771 32550,3514 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32586,2610 32917,2055 32972,2487 32834,2812 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33033,2495 32954,1877 32910,1951 32509,2623 32857,2908 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33772,2009 33109,2396 33056,1898 33772,1440 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32993,1867 33060,2493 33831,2043 33831,1331 33786,1360 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M33687 68330c42,-230 114,-335 154,-328 39,-8 112,98 153,328 43,223 69,551 70,972l-447 0c2,-421 27,-749 70,-972z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M33629 68319c-22,111 -39,247 -51,405l-356 -6147 358 -5256c38,-318 178,-546 253,-679 75,133 215,361 254,680l357 5259 -345 6103c-11,-141 -27,-263 -47,-365 -48,-231 -101,-368 -211,-377 -111,9 -164,146 -212,377z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M34821 890c682,1107 1361,3129 1742,5282l-475 53c-91,11 -160,87 -160,177 1,6 0,14 2,24l112 983c11,91 88,159 179,159 5,0 13,0 23,-2l513 -63c77,672 120,1342 120,1985 0,0 0,4161 0,9791l-492 0c-99,0 -180,80 -180,178l0 993c0,100 81,179 180,179l492 0c0,1579 0,3250 0,4959l0 0 0 11782 0 0c0,816 0,1611 0,2376l-208 0c-99,0 -180,80 -180,179l0 607c0,99 81,179 180,179l208 0c0,4633 0,8033 0,8495 0,232 0,485 0,763 0,1380 -29,3406 -384,6793l-338 -42c-7,-1 -13,-1 -19,-1 -91,0 -169,68 -178,161l-99 988c0,5 -1,11 -1,17 0,91 69,169 162,178l324 42c-39,323 -79,655 -123,1000 -258,2029 -496,3288 -695,4392l-1348 7036 -150 0c51,-321 96,-732 96,-1202 0,-7 0,-13 0,-20l379 -6731 -357 -5264c-46,-378 -229,-636 -286,-750l-27 -53 -26 53c-57,114 -241,372 -287,749l-357 5262 393 6784 2 0c2,458 45,858 96,1172l-144 0 -1333 -7037c-199,-1103 -437,-2362 -695,-4391 -44,-345 -84,-677 -123,-1000l326 -42c90,-9 160,-86 160,-178 0,-5 0,-11 -1,-17l-99 -989c-9,-92 -87,-160 -178,-160 -6,0 -12,0 -18,1l-339 42c-355,-3387 -385,-5413 -385,-6793 0,-278 2,-531 2,-763 0,-453 0,-3747 0,-8260l2 0 0 -235 205 0c99,0 180,-80 180,-178l0 -608c0,-99 -81,-178 -180,-178l-205 0 4 -7696 -6 0c0,-3870 0,-7878 0,-11422l491 0c99,0 180,-80 180,-179l0 -992c0,-100 -81,-179 -180,-179l-491 0c0,-5630 0,-9791 0,-9791 0,-643 42,-1313 119,-1985l516 63c7,1 15,2 20,2 91,-1 168,-68 179,-159l112 -986c1,-7 1,-13 1,-21 0,-90 -67,-166 -159,-177l-475 -53c189,-1067 451,-2101 750,-3008 304,-924 648,-1716 992,-2274 343,-561 690,-878 969,-874 280,-4 627,313 970,874z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M36747 7415l-516 63c-4,0 -6,0 -10,0 -46,0 -85,-34 -90,-79l-113 -987c0,-3 0,-5 0,-10 0,-44 34,-83 80,-89l480 -53c66,383 123,769 169,1155z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M36877 19368c0,385 0,775 0,1172l-492 0c-50,0 -91,-40 -91,-90l0 -993c0,-49 41,-89 91,-89l492 0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M37829 26275l0 1449 5382 3083 430 -938 254 156 0 4 14 8 66 38 376 231c-150,275 -173,474 -173,568 0,37 4,57 4,59l2 12 646 484 -30 283 21064 12452 314 -541c50,41 98,91 144,153 -25,51 -67,152 -68,269 0,68 15,142 58,212 107,174 253,205 321,207 12,40 28,80 45,119 -24,18 -56,58 -86,141 -50,138 -97,399 -97,907 0,127 3,270 9,429l60 -3c-7,-158 -10,-300 -10,-426 0,-504 48,-760 94,-887 22,-61 43,-91 57,-105 28,54 57,101 81,132l768 1398c86,178 132,381 133,711 0,94 -4,198 -12,315l-1148 -687 -785 -330 -180 -864 -9625 -4634 -149 1316 -171 -72 -216 -71 -106 -1460 -11356 -4277 0 896 -1106 -84 -46 -812 -3068 -241 20 817 -2453 -187 -320 -4454c0,-2093 0,-4226 0,-6304l863 528z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43101,29499 43107,29542 43119,29549 43590,29838 43184,30724 37888,27689 37888,26311 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43109,29066 43895,29066 43895,29880 43152,29426 " />
-                                        <path id="Engine_x0020_2" data-bind="css: { 'chart-airplane-engine-warning': engine2RulWarning() }" class="chart-airplane-engine2 chart-airplane-outline" d="M42729 29007c-28,-243 -239,-2108 -280,-2618 -15,-174 -21,-384 -21,-603 0,-463 30,-968 80,-1266 9,-28 18,-55 28,-81 584,-26 1128,-35 1592,-35 867,0 1459,30 1542,35 10,27 20,56 29,85 49,294 79,800 79,1263 0,219 -6,428 -21,602 -41,510 -252,2375 -280,2618l-316 0 0 0 -790 0 0 -2320c-2,-232 -116,-553 -219,-643l-19 -16 -19 16c-103,90 -217,411 -219,643l0 2320 -820 0 0 0 -346 0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M42839 24146c307,-25 761,-34 1202,-34 602,0 1183,17 1325,34 149,17 226,109 280,232 -147,-7 -714,-33 -1518,-33 -458,0 -993,9 -1569,34 54,-126 131,-222 280,-233z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="45129,29066 44994,30552 44371,30171 44371,29066 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M45041 30685l3105 1898 -521 730 -2762 -1633 30 -278 -654 -490c-1,-9 -2,-21 -2,-38 0,-84 21,-272 164,-538l636 391 4 -42z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="51657,34731 51219,35438 47676,33343 48196,32615 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="55268,36939 54859,37589 51270,35468 51708,34762 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="59209,39349 58842,39944 54910,37619 55318,36970 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="62700,41483 62355,42021 58893,39974 59259,39380 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M66088 43555c14,9 29,21 43,31l-288 496 -3436 -2031 343 -536 3338 2040z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M66614 44402c-63,-7 -167,-39 -251,-176 -36,-59 -49,-122 -50,-181 0,-73 20,-142 40,-192 3,-8 6,-15 9,-22 92,135 177,319 252,571z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="60530,43989 60897,43134 65510,45355 65676,46151 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="55845,42020 55987,40769 60844,43108 60475,43966 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43999,38073 43999,37084 55287,41137 55289,41131 55340,41833 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M53619 41896c-49,276 -146,572 -299,668 -5,-6 -12,-14 -20,-27 -67,-101 -211,-428 -226,-1347l375 110 229 76c-4,77 -17,290 -59,520z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M49829 40615c-50,261 -141,545 -273,658 -5,-9 -11,-20 -19,-35 -66,-127 -203,-488 -224,-1309l583 193c-6,74 -24,274 -67,493z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M46097 39411c-52,278 -145,580 -276,694 -5,-8 -11,-19 -18,-33 -65,-128 -199,-500 -218,-1379l583 193c-7,82 -27,294 -71,525z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M42904 37710l-5556 -357c-12,-155 -23,-271 -23,-308l-34 -480 6648 507 0 982 -1035 -344z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M42243 38311c-49,309 -139,658 -285,834 -4,-6 -9,-12 -15,-21 -67,-99 -212,-432 -218,-1400l578 37c-5,94 -21,309 -60,550z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M36877 40622l-208 0c-50,0 -91,-40 -91,-90l0 -607c0,-49 41,-89 91,-89l208 0c0,265 0,528 0,786z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M37281 37873c0,110 -4,220 -14,320 -30,295 -193,1427 -297,2143l-4 -7038 270 3750c1,85 45,455 45,825z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M36146 56808l338 43c-39,371 -83,760 -130,1165l-324 -42c-48,-4 -83,-43 -83,-89 0,-2 0,-5 1,-9l98 -987c4,-47 44,-81 90,-81 3,0 7,0 10,0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M43478 68566c926,538 1125,1984 1187,2876l-1194 -364 -19 -895 -8435 -3543 589 -3063 7872 4989z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34678,68399 35005,66700 43393,70223 43411,71060 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M33841 71137c-66,-241 -220,-905 -224,-1776l447 0c-4,871 -159,1535 -223,1776z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="24297,71059 24315,70223 32689,66706 33006,68399 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M23043 71442c62,-892 262,-2338 1185,-2875l7873 -4990 576 3069 -8421 3537 -19 894 -1194 365z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M31219 56851l340 -43c2,0 5,0 8,0 46,0 85,35 90,81l99 987c0,2 0,6 0,9 0,46 -35,85 -82,89l-325 42c-47,-405 -91,-793 -130,-1165z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M30829 40622l0 -786 205 0c50,0 91,40 91,89l0 608c0,48 -41,89 -91,89l-205 0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M30443 38193c-10,-100 -14,-210 -14,-321 0,-369 44,-739 45,-827l263 -3661 0 3986 1 0c0,1022 0,2010 0,2951 -105,-717 -265,-1835 -295,-2128z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M24799 37710l-1035 344 0 -982 6656 -508 -35 478c0,38 -12,156 -23,311l-5563 357z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M25847 38928c-32,102 -64,163 -87,196 -6,9 -10,15 -15,21 -146,-176 -235,-525 -285,-834 -38,-241 -54,-456 -60,-550l578 -37c-4,640 -68,1003 -131,1204z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="12364,41833 12414,41131 12416,41137 23705,37084 23705,38073 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M21984 39845c-31,111 -61,183 -83,227 -7,14 -14,25 -19,33 -131,-114 -224,-416 -276,-694 -44,-231 -64,-443 -70,-525l582 -193c-12,579 -75,939 -134,1152z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M18251 41018c-32,106 -63,177 -85,220 -8,15 -14,26 -19,35 -132,-114 -222,-397 -273,-658 -43,-219 -61,-419 -67,-493l583 -193c-14,541 -78,883 -139,1089z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M14490 42343c-33,100 -64,160 -87,193 -8,14 -15,22 -20,28 -153,-97 -250,-392 -299,-668 -42,-230 -55,-443 -59,-520l232 -77 373 -109c-10,608 -77,957 -140,1153z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M12090 41923l-175 74 -149 -1317 -9625 4634 -179 864 -780 327 -1154 690c-8,-116 -12,-221 -12,-315 0,-330 48,-533 135,-713l770 -1402c20,-26 46,-67 72,-116 1,1 2,1 3,2 73,60 244,300 244,1151 0,96 -3,201 -7,313l59 2c5,-113 7,-218 7,-315 0,-572 -75,-876 -154,-1040 -44,-95 -91,-143 -125,-167 8,-18 16,-35 24,-54 3,1 11,2 26,2 62,1 221,-23 334,-209 40,-65 53,-138 53,-208 0,-142 -57,-276 -86,-337 50,-67 101,-122 154,-166l314 541 21064 -12452 -30 -283 646 -485 3 -11c0,-2 3,-22 3,-59 0,-94 -24,-293 -172,-568l382 -235 73 -42 0 -3 254 -156 430 937 5382 -3083 0 -1449 863 -528 0 6401 -313 4356 -2460 188 20 -817 -3068 241 -45 812 -1107 84 0 -896 -11356 4277 -106 1460 -212 70z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="11858,42021 7228,43966 6860,43108 11716,40769 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="2028,46150 2193,45355 6806,43134 7173,43988 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M1064 44483c5,-13 9,-26 12,-38 76,-267 162,-459 255,-600 28,64 67,172 67,281 0,62 -13,123 -45,177 -102,166 -232,180 -283,180 -2,0 -3,0 -6,0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M1572 43586c15,-10 30,-22 44,-31l3337 -2041 343 537 -3436 2031 -288 -496z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="8444,39380 8810,39974 5348,42021 5004,41484 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="12385,36970 12794,37619 8861,39944 8494,39349 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="15995,34762 16433,35468 12845,37589 12435,36939 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="19507,32615 20028,33343 16484,35438 16046,34731 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M22662 30685l4 42 636 -391c143,266 164,454 164,538 0,17 -1,30 -2,38l-654 490 31 278 -2762 1633 -521 -730 3104 -1898z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="22575,29066 23332,29066 23332,30171 22709,30551 " />
-                                        <path id="Engine_x0020_1" data-bind="css: { 'chart-airplane-engine-warning': engine1RulWarning() }" class="chart-airplane-engine1 chart-airplane-outline" d="M22226 29007c-28,-243 -239,-2108 -280,-2618 -15,-174 -21,-383 -21,-602 0,-463 30,-968 80,-1267 9,-28 18,-55 28,-81 81,-5 673,-35 1542,-35 464,0 1007,9 1592,35 10,27 19,56 29,85 49,294 79,799 79,1262 0,219 -7,429 -21,603 -42,510 -253,2375 -280,2618l-346 0 0 0 -820 0 0 -2320c-2,-232 -116,-553 -219,-643l-19 -16 -19 16c-103,90 -216,411 -219,643l0 2320 -790 0 0 0 -316 0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M22057 24378c54,-123 131,-215 280,-232 142,-17 723,-34 1325,-34 441,0 895,9 1202,34 149,11 225,106 279,233 -575,-25 -1110,-34 -1568,-34 -804,0 -1373,26 -1518,33z" />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="24595,29066 24551,29425 23808,29879 23808,29066 " />
-                                        <polygon class="chart-airplane-fuselage chart-airplane-outline" points="29815,26311 29815,27689 24519,30723 24113,29839 24596,29542 24598,29528 24602,29499 " />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M30827 20540c0,-397 0,-787 0,-1172l491 0c51,0 91,40 91,90l0 992c0,50 -40,90 -91,90l-491 0z" />
-                                        <path class="chart-airplane-fuselage chart-airplane-outline" d="M31475 7478l-518 -63c45,-386 102,-772 168,-1155l480 53c46,6 80,45 80,89 0,4 0,8 0,12l-113 985c-5,45 -44,80 -90,80 -4,0 -7,-1 -7,-1z" />
-                                        <text x="4000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine1</text>
-                                        <text x="50000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine2</text>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+<div class="layout-flex-row">
+<div class="layout-flex-cell layout-flex-cell-half">
+    <div class="layout">
+        <div class="layout-row">
+            <div class="layout-cell tile">
+                <div class="tile-header">
+                    <h3>
+                        @Resources.TileHeadingAircraftMap
+                    </h3>
                 </div>
-            </div>
-        </div>
-        <div class="layout-flex-cell layout-flex-cell-half">
-            <div class="layout">
-                <div class="layout-row">
-                    <div class="layout-cell tile">
-                        <div class="tile-header">
-                            <h3>
-                                Sensor history
-                            </h3>
-                        </div>
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-6 chart-container">
-                                    <h4>Sensor 9</h4>
-                                    <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor1Data">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 chart-container">
-                                    <h4>Sensor 11</h4>
-                                    <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor2Data">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 chart-container">
-                                    <h4>Sensor 14</h4>
-                                    <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor3Data">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 chart-container">
-                                    <h4>Sensor 15</h4>
-                                    <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor4Data">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!--ko if: simulationState() == 'Stopping'-->
+                <div class="indicator indicator-bar indicator-bar-inactive">
+                    @Resources.IndicatorLabelStopping
                 </div>
-
-                <div class="layout-row">
-                    <div class="layout">
-                        <div class="layout-row">
-                            <div class="layout-cell layout-cell-half tile">
-                                <div class="tile-header">
-                                    <h3>
-                                        @Resources.TileHeadingRul
-                                        <sub>@Resources.TileHeadingSubheadingInCycles</sub>
-                                    </h3>
-                                </div>
-                                <div class="tile-body">
-                                    <div class="tile-metric">
-                                        <div class="tile-metric-value" data-bind="text: engine1Rul(), css: { 'tile-metric-value-warning': engine1RulWarning() }"></div>
-                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
-                                    </div>
-                                    <div class="tile-metric">
-                                        <div class="tile-metric-value" data-bind="text: engine2Rul(), css: { 'tile-metric-value-warning': engine2RulWarning() }"></div>
-                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="layout-cell layout-cell-half tile">
-                                <div class="tile-header">
-                                    <h3>
-                                        @Resources.TileHeadingCycles
-                                        <sub>#</sub>
-                                    </h3>
-                                </div>
-                                <div class="tile-body">
-                                    <div class="tile-metric">
-                                        <div class="tile-metric-value" data-bind="text: engine1Cycles()"></div>
-                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
-                                    </div>
-                                    <div class="tile-metric">
-                                        <div class="tile-metric-value" data-bind="text: engine2Cycles()"></div>
-                                        <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!--/ko-->
+                <!--ko if: simulationState() == 'Starting'-->
+                <div class="indicator indicator-bar indicator-bar-inactive">
+                    @Resources.IndicatorLabelStarting
                 </div>
-
-                <div class="layout-row">
-                    <div class="layout-cell tile">
-                        <div class="tile-header">
-                            <h3>
-                                Remaining Useful Life (RUL) history
-                                <sub>@Resources.TileHeadingSubheadingInCycles</sub>
-                            </h3>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart chart-linechart" data-bind="predictionLineChart: rulData">
-                            </div>
-                        </div>
+                <!--/ko-->
+                <!--ko if: simulationState() == 'Stopped'-->
+                <button class="btn btn-primary tile-button" data-bind="click: startSimulation, disable: sendingCommand">
+                    @Resources.ButtonLabelStartSimulation
+                </button>
+                <div class="indicator indicator-bar indicator-bar-inactive">
+                    @Resources.IndicatorLabelStopped
+                </div>
+                <!--/ko-->
+                <!--ko if: simulationState() == 'Started'-->
+                <button class="btn btn-primary tile-button" data-bind="click: stopSimulation, disable: sendingCommand">
+                    @Resources.ButtonLabelStopSimulation
+                </button>
+                <div class="indicator indicator-bar indicator-bar-progress">
+                    @Resources.IndicatorLabelStarted
+                </div>
+                <!--/ko-->
+                <div class="chart-container">
+                    <div class="chart">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 67703 71465" class="chart-airplane">
+                            <g>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="35583,3687 35455,3708 35202,3478 34954,2958 35198,2767 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34880,2940 35153,3514 35437,3771 35666,3733 35223,2672 35192,2697 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="35117,2610 34869,2813 34731,2487 34786,2056 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34671,2495 34845,2908 35194,2623 34749,1877 34739,1963 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34647,1898 34594,2396 33931,2009 33931,1440 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33872,2043 34643,2493 34710,1867 33872,1331 33872,1385 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32120,3687 32505,2767 32749,2958 32501,3478 32248,3708 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32823,2940 32480,2673 32466,2709 32037,3733 32266,3771 32550,3514 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32586,2610 32917,2055 32972,2487 32834,2812 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33033,2495 32954,1877 32910,1951 32509,2623 32857,2908 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="33772,2009 33109,2396 33056,1898 33772,1440 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="32993,1867 33060,2493 33831,2043 33831,1331 33786,1360 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M33687 68330c42,-230 114,-335 154,-328 39,-8 112,98 153,328 43,223 69,551 70,972l-447 0c2,-421 27,-749 70,-972z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M33629 68319c-22,111 -39,247 -51,405l-356 -6147 358 -5256c38,-318 178,-546 253,-679 75,133 215,361 254,680l357 5259 -345 6103c-11,-141 -27,-263 -47,-365 -48,-231 -101,-368 -211,-377 -111,9 -164,146 -212,377z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M34821 890c682,1107 1361,3129 1742,5282l-475 53c-91,11 -160,87 -160,177 1,6 0,14 2,24l112 983c11,91 88,159 179,159 5,0 13,0 23,-2l513 -63c77,672 120,1342 120,1985 0,0 0,4161 0,9791l-492 0c-99,0 -180,80 -180,178l0 993c0,100 81,179 180,179l492 0c0,1579 0,3250 0,4959l0 0 0 11782 0 0c0,816 0,1611 0,2376l-208 0c-99,0 -180,80 -180,179l0 607c0,99 81,179 180,179l208 0c0,4633 0,8033 0,8495 0,232 0,485 0,763 0,1380 -29,3406 -384,6793l-338 -42c-7,-1 -13,-1 -19,-1 -91,0 -169,68 -178,161l-99 988c0,5 -1,11 -1,17 0,91 69,169 162,178l324 42c-39,323 -79,655 -123,1000 -258,2029 -496,3288 -695,4392l-1348 7036 -150 0c51,-321 96,-732 96,-1202 0,-7 0,-13 0,-20l379 -6731 -357 -5264c-46,-378 -229,-636 -286,-750l-27 -53 -26 53c-57,114 -241,372 -287,749l-357 5262 393 6784 2 0c2,458 45,858 96,1172l-144 0 -1333 -7037c-199,-1103 -437,-2362 -695,-4391 -44,-345 -84,-677 -123,-1000l326 -42c90,-9 160,-86 160,-178 0,-5 0,-11 -1,-17l-99 -989c-9,-92 -87,-160 -178,-160 -6,0 -12,0 -18,1l-339 42c-355,-3387 -385,-5413 -385,-6793 0,-278 2,-531 2,-763 0,-453 0,-3747 0,-8260l2 0 0 -235 205 0c99,0 180,-80 180,-178l0 -608c0,-99 -81,-178 -180,-178l-205 0 4 -7696 -6 0c0,-3870 0,-7878 0,-11422l491 0c99,0 180,-80 180,-179l0 -992c0,-100 -81,-179 -180,-179l-491 0c0,-5630 0,-9791 0,-9791 0,-643 42,-1313 119,-1985l516 63c7,1 15,2 20,2 91,-1 168,-68 179,-159l112 -986c1,-7 1,-13 1,-21 0,-90 -67,-166 -159,-177l-475 -53c189,-1067 451,-2101 750,-3008 304,-924 648,-1716 992,-2274 343,-561 690,-878 969,-874 280,-4 627,313 970,874z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M36747 7415l-516 63c-4,0 -6,0 -10,0 -46,0 -85,-34 -90,-79l-113 -987c0,-3 0,-5 0,-10 0,-44 34,-83 80,-89l480 -53c66,383 123,769 169,1155z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M36877 19368c0,385 0,775 0,1172l-492 0c-50,0 -91,-40 -91,-90l0 -993c0,-49 41,-89 91,-89l492 0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M37829 26275l0 1449 5382 3083 430 -938 254 156 0 4 14 8 66 38 376 231c-150,275 -173,474 -173,568 0,37 4,57 4,59l2 12 646 484 -30 283 21064 12452 314 -541c50,41 98,91 144,153 -25,51 -67,152 -68,269 0,68 15,142 58,212 107,174 253,205 321,207 12,40 28,80 45,119 -24,18 -56,58 -86,141 -50,138 -97,399 -97,907 0,127 3,270 9,429l60 -3c-7,-158 -10,-300 -10,-426 0,-504 48,-760 94,-887 22,-61 43,-91 57,-105 28,54 57,101 81,132l768 1398c86,178 132,381 133,711 0,94 -4,198 -12,315l-1148 -687 -785 -330 -180 -864 -9625 -4634 -149 1316 -171 -72 -216 -71 -106 -1460 -11356 -4277 0 896 -1106 -84 -46 -812 -3068 -241 20 817 -2453 -187 -320 -4454c0,-2093 0,-4226 0,-6304l863 528z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43101,29499 43107,29542 43119,29549 43590,29838 43184,30724 37888,27689 37888,26311 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43109,29066 43895,29066 43895,29880 43152,29426 "/>
+                                <path id="Engine_x0020_2" data-bind="css: { 'chart-airplane-engine-warning': engine2RulWarning() }" class="chart-airplane-engine2 chart-airplane-outline" d="M42729 29007c-28,-243 -239,-2108 -280,-2618 -15,-174 -21,-384 -21,-603 0,-463 30,-968 80,-1266 9,-28 18,-55 28,-81 584,-26 1128,-35 1592,-35 867,0 1459,30 1542,35 10,27 20,56 29,85 49,294 79,800 79,1263 0,219 -6,428 -21,602 -41,510 -252,2375 -280,2618l-316 0 0 0 -790 0 0 -2320c-2,-232 -116,-553 -219,-643l-19 -16 -19 16c-103,90 -217,411 -219,643l0 2320 -820 0 0 0 -346 0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M42839 24146c307,-25 761,-34 1202,-34 602,0 1183,17 1325,34 149,17 226,109 280,232 -147,-7 -714,-33 -1518,-33 -458,0 -993,9 -1569,34 54,-126 131,-222 280,-233z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="45129,29066 44994,30552 44371,30171 44371,29066 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M45041 30685l3105 1898 -521 730 -2762 -1633 30 -278 -654 -490c-1,-9 -2,-21 -2,-38 0,-84 21,-272 164,-538l636 391 4 -42z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="51657,34731 51219,35438 47676,33343 48196,32615 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="55268,36939 54859,37589 51270,35468 51708,34762 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="59209,39349 58842,39944 54910,37619 55318,36970 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="62700,41483 62355,42021 58893,39974 59259,39380 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M66088 43555c14,9 29,21 43,31l-288 496 -3436 -2031 343 -536 3338 2040z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M66614 44402c-63,-7 -167,-39 -251,-176 -36,-59 -49,-122 -50,-181 0,-73 20,-142 40,-192 3,-8 6,-15 9,-22 92,135 177,319 252,571z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="60530,43989 60897,43134 65510,45355 65676,46151 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="55845,42020 55987,40769 60844,43108 60475,43966 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="43999,38073 43999,37084 55287,41137 55289,41131 55340,41833 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M53619 41896c-49,276 -146,572 -299,668 -5,-6 -12,-14 -20,-27 -67,-101 -211,-428 -226,-1347l375 110 229 76c-4,77 -17,290 -59,520z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M49829 40615c-50,261 -141,545 -273,658 -5,-9 -11,-20 -19,-35 -66,-127 -203,-488 -224,-1309l583 193c-6,74 -24,274 -67,493z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M46097 39411c-52,278 -145,580 -276,694 -5,-8 -11,-19 -18,-33 -65,-128 -199,-500 -218,-1379l583 193c-7,82 -27,294 -71,525z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M42904 37710l-5556 -357c-12,-155 -23,-271 -23,-308l-34 -480 6648 507 0 982 -1035 -344z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M42243 38311c-49,309 -139,658 -285,834 -4,-6 -9,-12 -15,-21 -67,-99 -212,-432 -218,-1400l578 37c-5,94 -21,309 -60,550z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M36877 40622l-208 0c-50,0 -91,-40 -91,-90l0 -607c0,-49 41,-89 91,-89l208 0c0,265 0,528 0,786z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M37281 37873c0,110 -4,220 -14,320 -30,295 -193,1427 -297,2143l-4 -7038 270 3750c1,85 45,455 45,825z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M36146 56808l338 43c-39,371 -83,760 -130,1165l-324 -42c-48,-4 -83,-43 -83,-89 0,-2 0,-5 1,-9l98 -987c4,-47 44,-81 90,-81 3,0 7,0 10,0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M43478 68566c926,538 1125,1984 1187,2876l-1194 -364 -19 -895 -8435 -3543 589 -3063 7872 4989z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="34678,68399 35005,66700 43393,70223 43411,71060 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M33841 71137c-66,-241 -220,-905 -224,-1776l447 0c-4,871 -159,1535 -223,1776z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="24297,71059 24315,70223 32689,66706 33006,68399 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M23043 71442c62,-892 262,-2338 1185,-2875l7873 -4990 576 3069 -8421 3537 -19 894 -1194 365z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M31219 56851l340 -43c2,0 5,0 8,0 46,0 85,35 90,81l99 987c0,2 0,6 0,9 0,46 -35,85 -82,89l-325 42c-47,-405 -91,-793 -130,-1165z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M30829 40622l0 -786 205 0c50,0 91,40 91,89l0 608c0,48 -41,89 -91,89l-205 0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M30443 38193c-10,-100 -14,-210 -14,-321 0,-369 44,-739 45,-827l263 -3661 0 3986 1 0c0,1022 0,2010 0,2951 -105,-717 -265,-1835 -295,-2128z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M24799 37710l-1035 344 0 -982 6656 -508 -35 478c0,38 -12,156 -23,311l-5563 357z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M25847 38928c-32,102 -64,163 -87,196 -6,9 -10,15 -15,21 -146,-176 -235,-525 -285,-834 -38,-241 -54,-456 -60,-550l578 -37c-4,640 -68,1003 -131,1204z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="12364,41833 12414,41131 12416,41137 23705,37084 23705,38073 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M21984 39845c-31,111 -61,183 -83,227 -7,14 -14,25 -19,33 -131,-114 -224,-416 -276,-694 -44,-231 -64,-443 -70,-525l582 -193c-12,579 -75,939 -134,1152z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M18251 41018c-32,106 -63,177 -85,220 -8,15 -14,26 -19,35 -132,-114 -222,-397 -273,-658 -43,-219 -61,-419 -67,-493l583 -193c-14,541 -78,883 -139,1089z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M14490 42343c-33,100 -64,160 -87,193 -8,14 -15,22 -20,28 -153,-97 -250,-392 -299,-668 -42,-230 -55,-443 -59,-520l232 -77 373 -109c-10,608 -77,957 -140,1153z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M12090 41923l-175 74 -149 -1317 -9625 4634 -179 864 -780 327 -1154 690c-8,-116 -12,-221 -12,-315 0,-330 48,-533 135,-713l770 -1402c20,-26 46,-67 72,-116 1,1 2,1 3,2 73,60 244,300 244,1151 0,96 -3,201 -7,313l59 2c5,-113 7,-218 7,-315 0,-572 -75,-876 -154,-1040 -44,-95 -91,-143 -125,-167 8,-18 16,-35 24,-54 3,1 11,2 26,2 62,1 221,-23 334,-209 40,-65 53,-138 53,-208 0,-142 -57,-276 -86,-337 50,-67 101,-122 154,-166l314 541 21064 -12452 -30 -283 646 -485 3 -11c0,-2 3,-22 3,-59 0,-94 -24,-293 -172,-568l382 -235 73 -42 0 -3 254 -156 430 937 5382 -3083 0 -1449 863 -528 0 6401 -313 4356 -2460 188 20 -817 -3068 241 -45 812 -1107 84 0 -896 -11356 4277 -106 1460 -212 70z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="11858,42021 7228,43966 6860,43108 11716,40769 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="2028,46150 2193,45355 6806,43134 7173,43988 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M1064 44483c5,-13 9,-26 12,-38 76,-267 162,-459 255,-600 28,64 67,172 67,281 0,62 -13,123 -45,177 -102,166 -232,180 -283,180 -2,0 -3,0 -6,0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M1572 43586c15,-10 30,-22 44,-31l3337 -2041 343 537 -3436 2031 -288 -496z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="8444,39380 8810,39974 5348,42021 5004,41484 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="12385,36970 12794,37619 8861,39944 8494,39349 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="15995,34762 16433,35468 12845,37589 12435,36939 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="19507,32615 20028,33343 16484,35438 16046,34731 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M22662 30685l4 42 636 -391c143,266 164,454 164,538 0,17 -1,30 -2,38l-654 490 31 278 -2762 1633 -521 -730 3104 -1898z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="22575,29066 23332,29066 23332,30171 22709,30551 "/>
+                                <path id="Engine_x0020_1" data-bind="css: { 'chart-airplane-engine-warning': engine1RulWarning() }" class="chart-airplane-engine1 chart-airplane-outline" d="M22226 29007c-28,-243 -239,-2108 -280,-2618 -15,-174 -21,-383 -21,-602 0,-463 30,-968 80,-1267 9,-28 18,-55 28,-81 81,-5 673,-35 1542,-35 464,0 1007,9 1592,35 10,27 19,56 29,85 49,294 79,799 79,1262 0,219 -7,429 -21,603 -42,510 -253,2375 -280,2618l-346 0 0 0 -820 0 0 -2320c-2,-232 -116,-553 -219,-643l-19 -16 -19 16c-103,90 -216,411 -219,643l0 2320 -790 0 0 0 -316 0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M22057 24378c54,-123 131,-215 280,-232 142,-17 723,-34 1325,-34 441,0 895,9 1202,34 149,11 225,106 279,233 -575,-25 -1110,-34 -1568,-34 -804,0 -1373,26 -1518,33z"/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="24595,29066 24551,29425 23808,29879 23808,29066 "/>
+                                <polygon class="chart-airplane-fuselage chart-airplane-outline" points="29815,26311 29815,27689 24519,30723 24113,29839 24596,29542 24598,29528 24602,29499 "/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M30827 20540c0,-397 0,-787 0,-1172l491 0c51,0 91,40 91,90l0 992c0,50 -40,90 -91,90l-491 0z"/>
+                                <path class="chart-airplane-fuselage chart-airplane-outline" d="M31475 7478l-518 -63c45,-386 102,-772 168,-1155l480 53c46,6 80,45 80,89 0,4 0,8 0,12l-113 985c-5,45 -44,80 -90,80 -4,0 -7,-1 -7,-1z"/>
+                                <text x="4000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine1</text>
+                                <text x="50000" y="27601" class="chart-airplane-label">@Resources.ChartLabelEngine2</text>
+                            </g>
+                        </svg>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="layout-flex-cell layout-flex-cell-half">
+    <div class="layout">
+        <div class="layout-row">
+            <div class="layout-cell tile">
+                <div class="tile-header">
+                    <h3>
+                        @Resources.TileHeadingSensorHistory
+                    </h3>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 chart-container">
+                            <h4>@Resources.TileHeadingSensor9</h4>
+                            <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor1Data">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 chart-container">
+                            <h4>@Resources.TileHeadingSensor11</h4>
+                            <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor2Data">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 chart-container">
+                            <h4>@Resources.TileHeadingSensor14</h4>
+                            <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor3Data">
+                            </div>
+                        </div>
+                        <div class="col-md-6 chart-container">
+                            <h4>@Resources.TileHeadingSensor15</h4>
+                            <div class="chart chart-linechart" data-bind="telemetryLineChart: sensor4Data">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layout-row">
+            <div class="layout">
+                <div class="layout-row">
+                    <div class="layout-cell layout-cell-half tile">
+                        <div class="tile-header">
+                            <h3>
+                                @Resources.TileHeadingRul
+                                <sub>@Resources.TileHeadingSubheadingInCycles</sub>
+                            </h3>
+                        </div>
+                        <div class="tile-body">
+                            <div class="tile-metric">
+                                <div class="tile-metric-value" data-bind="text: engine1Rul(), css: { 'tile-metric-value-warning': engine1RulWarning() }"></div>
+                                <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
+                            </div>
+                            <div class="tile-metric">
+                                <div class="tile-metric-value" data-bind="text: engine2Rul(), css: { 'tile-metric-value-warning': engine2RulWarning() }"></div>
+                                <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layout-cell layout-cell-half tile">
+                        <div class="tile-header">
+                            <h3>
+                                @Resources.TileHeadingCycles
+                                <sub>#</sub>
+                            </h3>
+                        </div>
+                        <div class="tile-body">
+                            <div class="tile-metric">
+                                <div class="tile-metric-value" data-bind="text: engine1Cycles()"></div>
+                                <div class="tile-metric-unit">@Resources.ChartLabelEngine1</div>
+                            </div>
+                            <div class="tile-metric">
+                                <div class="tile-metric-value" data-bind="text: engine2Cycles()"></div>
+                                <div class="tile-metric-unit">@Resources.ChartLabelEngine2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layout-row">
+            <div class="layout-cell tile">
+                <div class="tile-header">
+                    <h3>
+                        @Resources.TileHeadingRulHistory
+                        <sub>@Resources.TileHeadingSubheadingInCycles</sub>
+                    </h3>
+                </div>
+                <div class="chart-container">
+                    <div class="chart chart-linechart" data-bind="predictionLineChart: rulData">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 </div>

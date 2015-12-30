@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Contracts
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Contracts
 {
     using System;
     using System.Runtime.Serialization;

@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
     using System;
     using System.Net;

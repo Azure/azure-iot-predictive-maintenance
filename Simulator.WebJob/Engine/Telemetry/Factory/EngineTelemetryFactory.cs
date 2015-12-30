@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry.Factory
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry.Factory
 {
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
+    using System.Linq;
+    using WindowsAzure.Storage;
+    using Common.Configurations;
+    using Common.Helpers;
+    using SimulatorCore.Devices;
+    using SimulatorCore.Logging;
+    using SimulatorCore.Telemetry.Factory;
+
     public class EngineTelemetryFactory : ITelemetryFactory
     {
-        private readonly ILogger _logger;
-        private readonly IConfigurationProvider _config;
+        readonly ILogger _logger;
+        readonly IConfigurationProvider _config;
 
-        private IList<ExpandoObject> _dataset;
+        readonly IList<ExpandoObject> _dataset;
 
         public EngineTelemetryFactory(ILogger logger, IConfigurationProvider config)
         {

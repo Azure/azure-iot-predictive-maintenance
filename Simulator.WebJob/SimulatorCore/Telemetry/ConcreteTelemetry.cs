@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Logging;
+
     /// <summary>
     /// Represents a static, pre-defined group of events that a
     /// simulated device will send to the cloud.
@@ -14,7 +14,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
     /// </summary>
     public class ConcreteTelemetry : ITelemetry
     {
-        private readonly ILogger _logger;
+        readonly ILogger _logger;
 
         public ConcreteTelemetry(ILogger logger)
         {
@@ -28,7 +28,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         public TimeSpan DelayBefore { get; set; }
 
         public string MessageBody { get; set; }
-
 
         public async Task SendEventsAsync(CancellationToken token, Func<object, Task> sendMessageAsync)
         {

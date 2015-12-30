@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
     using System.Reflection;
     using System.Web.Mvc;
@@ -11,7 +7,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
     using Autofac.Integration.WebApi;
     using Common.Configurations;
     using Common.Repository;
-    using Configurations;
     using global::Owin;
     using Services;
 
@@ -27,8 +22,16 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
             builder.RegisterType<TelemetryService>()
                 .As<ITelemetryService>();
 
+            builder.RegisterType<DeviceService>()
+                .As<IDeviceService>();
+
+            builder.RegisterType<SimulationService>()
+                .As<ISimulationService>();
+
             builder.RegisterType<IotHubRepository>()
-               .As<IIotHubRepository>();
+                .As<IIotHubRepository>();
+
+            builder.RegisterType<Settings>();
 
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
@@ -43,8 +46,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
             app.UseAutofacMiddleware(container);
             app.UseAutofacWebApi(HttpConfiguration);
-
-
         }
     }
 }

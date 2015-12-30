@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.ServiceBus.Messaging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
 {
-    abstract public class EventProcessor : IEventProcessor
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using ServiceBus.Messaging;
+
+    public abstract class EventProcessor : IEventProcessor
     {
-        private int _totalMessages = 0;
-        private Stopwatch _checkpointStopWatch;
+        int _totalMessages;
+        Stopwatch _checkpointStopWatch;
 
         public EventProcessor()
         {
-            this.LastMessageOffset = "-1";
+            LastMessageOffset = "-1";
         }
 
         public event EventHandler ProcessorClosed;
@@ -40,27 +40,27 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
         public Task OpenAsync(PartitionContext context)
         {
-            Trace.TraceInformation("{0}: Open : Partition : {1}", this.GetType().Name, context.Lease.PartitionId);
-            this.Context = context;
+            Trace.TraceInformation("{0}: Open : Partition : {1}", GetType().Name, context.Lease.PartitionId);
+            Context = context;
             _checkpointStopWatch = new Stopwatch();
             _checkpointStopWatch.Start();
 
-            this.IsInitialized = true;
+            IsInitialized = true;
 
             return Task.Delay(0);
         }
 
         public async Task ProcessEventsAsync(PartitionContext context, IEnumerable<EventData> messages)
         {
-            Trace.TraceInformation("{0}: In ProcessEventsAsync", this.GetType().Name);
+            Trace.TraceInformation("{0}: In ProcessEventsAsync", GetType().Name);
 
             foreach (EventData message in messages)
             {
                 try
                 {
                     // Write out message
-                    Trace.TraceInformation("{0}: {1} - Partition {2}", this.GetType().Name, message.Offset, context.Lease.PartitionId);
-                    this.LastMessageOffset = message.Offset;
+                    Trace.TraceInformation("{0}: {1} - Partition {2}", GetType().Name, message.Offset, context.Lease.PartitionId);
+                    LastMessageOffset = message.Offset;
 
                     string jsonString = Encoding.UTF8.GetString(message.GetBytes());
                     dynamic result = JsonConvert.DeserializeObject(jsonString);
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("{0}: Error in ProcessEventAsync -- {1}", this.GetType().Name, e.Message);
+                    Trace.TraceError("{0}: Error in ProcessEventAsync -- {1}", GetType().Name, e.Message);
                 }
             }
 
@@ -96,25 +96,25 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 Trace.TraceError(
                     "{0}{0}*** CheckpointAsync Exception - {1}.ProcessEventsAsync ***{0}{0}{2}{0}{0}",
                     Console.Out.NewLine,
-                    this.GetType().Name,
+                    GetType().Name,
                     ex);
             }
 
-            if (this.IsClosed)
+            if (IsClosed)
             {
-                this.IsReceivedMessageAfterClose = true;
+                IsReceivedMessageAfterClose = true;
             }
         }
 
-        abstract public Task ProcessItem(dynamic data);
+        public abstract Task ProcessItem(dynamic data);
 
         public Task CloseAsync(PartitionContext context, CloseReason reason)
         {
-            Trace.TraceInformation("{0}: Close : Partition : {1}", this.GetType().Name, context.Lease.PartitionId);
-            this.IsClosed = true;
-            this._checkpointStopWatch.Stop();
-            this.CloseReason = reason;
-            this.OnProcessorClosed();
+            Trace.TraceInformation("{0}: Close : Partition : {1}", GetType().Name, context.Lease.PartitionId);
+            IsClosed = true;
+            _checkpointStopWatch.Stop();
+            CloseReason = reason;
+            OnProcessorClosed();
 
             try
             {
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 Trace.TraceError(
                     "{0}{0}*** CheckpointAsync Exception - {1}.CloseAsync ***{0}{0}{2}{0}{0}",
                     Console.Out.NewLine,
-                    this.GetType().Name,
+                    GetType().Name,
                     ex);
 
                 return Task.Run(() => { });
@@ -134,7 +134,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
         public virtual void OnProcessorClosed()
         {
-            EventHandler handler = this.ProcessorClosed;
+            EventHandler handler = ProcessorClosed;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);

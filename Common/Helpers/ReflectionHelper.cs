@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection;
-using Microsoft.CSharp.RuntimeBinder;
-using D = Dynamitey;
+﻿using D = Dynamitey;
 
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Dynamic;
+    using System.Linq;
+    using System.Reflection;
+    using CSharp.RuntimeBinder;
+
     /// <summary>
     /// Methods related to reflection.
     /// </summary>
     public static class ReflectionHelper
     {
-        private static readonly object[] emptyArray = new object[0];
+        static readonly object[] emptyArray = new object[0];
 
         /// <summary>
         /// Gets an empty object array.
         /// </summary>
         public static object[] EmptyArray
         {
-            get
-            {
-                return emptyArray;
-            }
+            get { return emptyArray; }
         }
 
         /// <summary>
@@ -52,7 +50,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
         /// or a null reference if exceptionThrownIfNoMatch is false and
         /// propertyName does not name a property on item.
         /// </returns>
-        private static object GetNamedPropertyValue(
+        static object GetNamedPropertyValue(
             ICustomTypeDescriptor item,
             string propertyName,
             bool usesCaseSensitivePropertyNameMatch,
@@ -125,7 +123,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
         /// or a null reference if exceptionThrownIfNoMatch is false and
         /// propertyName does not name a property on item.
         /// </returns>
-        private static object GetNamedPropertyValue(
+        static object GetNamedPropertyValue(
             IDynamicMetaObjectProvider item,
             string propertyName,
             bool usesCaseSensitivePropertyNameMatch,
@@ -150,7 +148,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 }
 
                 propertyName = D.Dynamic.GetMemberNames(item, true).FirstOrDefault(
-                        t => string.Equals(t, propertyName, comparisonType));
+                    t => string.Equals(t, propertyName, comparisonType));
 
                 if (string.IsNullOrEmpty(propertyName))
                 {
@@ -216,9 +214,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             if ((dynamicProvider = item as IDynamicMetaObjectProvider) != null)
             {
                 return GetNamedPropertyValue(
-                    dynamicProvider, 
-                    propertyName, 
-                    usesCaseSensitivePropertyNameMatch, 
+                    dynamicProvider,
+                    propertyName,
+                    usesCaseSensitivePropertyNameMatch,
                     exceptionThrownIfNoMatch);
             }
             else if ((customProvider = item as ICustomTypeDescriptor) != null)
@@ -237,7 +235,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             }
 
             IEnumerable<PropertyInfo> matchingProps = item.GetType().GetProperties().Where(
-                    t => string.Equals(t.Name, propertyName, comparisonType));
+                t => string.Equals(t.Name, propertyName, comparisonType));
 
             MethodInfo methodInfo = matchingProps.Select(t => t.GetGetMethod()).FirstOrDefault(u => u != null);
 
@@ -286,9 +284,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             }
 
             Func<Type, MethodInfo> getMethodInfo =
-                FunctionalHelper.Memoize<Type, MethodInfo>(ProduceGetMethodExtractor(propertyName,usesCaseSensitivePropertyNameMatch));
+                FunctionalHelper.Memoize(ProduceGetMethodExtractor(propertyName, usesCaseSensitivePropertyNameMatch));
 
-            return (item) =>
+            return item =>
             {
                 if (object.ReferenceEquals(item, null))
                 {
@@ -483,7 +481,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             return item.ToKeyValuePairImpl();
         }
 
-        private static Func<Type, MethodInfo> ProduceGetMethodExtractor(
+        static Func<Type, MethodInfo> ProduceGetMethodExtractor(
             string propertyName,
             bool usesCaseSensitivePropertyNameMatch)
         {
@@ -495,7 +493,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 comparisonType = StringComparison.CurrentCulture;
             }
 
-            return (type) =>
+            return type =>
             {
                 if (type == null)
                 {
@@ -509,7 +507,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             };
         }
 
-        private static IEnumerable<KeyValuePair<string, object>> ToKeyValuePairImpl(this object item)
+        static IEnumerable<KeyValuePair<string, object>> ToKeyValuePairImpl(this object item)
         {
             MethodInfo getter;
 

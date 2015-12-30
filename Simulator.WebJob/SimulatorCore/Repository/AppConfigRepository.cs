@@ -1,24 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Repository
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Repository
 {
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Common.Configurations;
+    using Common.Models;
+    using Common.Repository;
+    using Logging;
+    using Properties;
+
     /// <summary>
     /// Sample repository that pulls the initial device config from the app.config file
     /// </summary>
     public class AppConfigRepository : IVirtualDeviceStorage
     {
-        private readonly string _hostName;
-        private readonly List<InitialDeviceConfig> _devices;
-        private readonly ILogger _logger;
+        readonly string _hostName;
+        readonly List<InitialDeviceConfig> _devices;
+        readonly ILogger _logger;
 
-        public AppConfigRepository(IConfigurationProvider configProvider, ILogger logger) 
+        public AppConfigRepository(IConfigurationProvider configProvider, ILogger logger)
         {
             _devices = new List<InitialDeviceConfig>();
             _hostName = configProvider.GetConfigurationSettingValue("iotHub.HostName");
@@ -31,10 +32,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             {
                 _logger.LogInfo("********** READING DEVICES FROM APP.CONFIG ********** ");
                 if (_devices.Any())
+                {
                     return _devices;
+                }
 
-                StringCollection deviceList = Properties.Settings.Default.DeviceList;
-                
+                StringCollection deviceList = Settings.Default.DeviceList;
+
                 foreach (string device in deviceList)
                 {
                     string[] deviceConfigElements = device.Split(',');
@@ -56,10 +59,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
         public Task<InitialDeviceConfig> GetDeviceAsync(string deviceId)
         {
-            return Task.Run<InitialDeviceConfig>(() => 
+            return Task.Run(() =>
             {
                 if (!_devices.Any())
+                {
                     return null;
+                }
 
                 return _devices.FirstOrDefault(x => x.DeviceId == deviceId);
             });
@@ -67,10 +72,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
         public Task AddOrUpdateDeviceAsync(InitialDeviceConfig deviceConfig)
         {
-            return Task.Run(() => 
+            return Task.Run(() =>
             {
                 if (!_devices.Any())
+                {
                     return;
+                }
 
                 var device = _devices.FirstOrDefault(x => x.DeviceId == deviceConfig.DeviceId);
 
@@ -79,7 +86,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                     device.Key = deviceConfig.Key;
                     device.HostName = deviceConfig.HostName;
                 }
-                else 
+                else
                 {
                     _devices.Add(deviceConfig);
                 }
@@ -88,10 +95,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
         public Task<bool> RemoveDeviceAsync(string deviceId)
         {
-            return Task.Run<bool>(() => 
+            return Task.Run(() =>
             {
                 if (!_devices.Any())
+                {
                     return false;
+                }
 
                 var device = _devices.FirstOrDefault(x => x.DeviceId == deviceId);
 

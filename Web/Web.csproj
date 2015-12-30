@@ -260,9 +260,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Security\PrincipalHelper.cs" />
+    <Compile Include="Services\DeviceService.cs" />
+    <Compile Include="Services\IDeviceService.cs" />
+    <Compile Include="Services\ISimulationService.cs" />
     <Compile Include="Services\ITelemetryService.cs" />
     <Compile Include="Services\PredictionRecord.cs" />
     <Compile Include="Services\DeviceEntity.cs" />
+    <Compile Include="Services\SimulationService.cs" />
     <Compile Include="Services\TelemetryEntity.cs" />
     <Compile Include="Services\TelemetryService.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -281,9 +285,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Account.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\vendor\bootstrap.min.js" />

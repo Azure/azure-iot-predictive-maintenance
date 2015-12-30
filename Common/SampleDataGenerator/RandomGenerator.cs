@@ -1,24 +1,20 @@
-﻿using System;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.SampleDataGenerator
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.SampleDataGenerator
 {
+    using System;
+
     public class RandomGenerator : IRandomGenerator
     {
-        private static readonly Random _random = BuildRandomSource();
-
-        public RandomGenerator()
-        {
-        }
+        static readonly Random Random = BuildRandomSource();
 
         public double GetRandomDouble()
         {
-            lock (_random)
+            lock (Random)
             {
-                return _random.NextDouble();
+                return Random.NextDouble();
             }
         }
 
-        private static Random BuildRandomSource()
+        static Random BuildRandomSource()
         {
             return new Random(Guid.NewGuid().GetHashCode());
         }

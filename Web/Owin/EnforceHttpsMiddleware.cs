@@ -1,7 +1,3 @@
-// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Owin
 {
     using System;
@@ -38,7 +34,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Owin
             }
             context.Response.Headers.Set("Strict-Transport-Security", "max-age=31536000"); //31536000 - approx. one year
 
-            return this.Next.Invoke(context);
+            return Next.Invoke(context);
         }
     }
 }

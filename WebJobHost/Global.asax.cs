@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.DeviceAdmin.Web
+﻿namespace WebJobHost
 {
-    public class MvcApplication : System.Web.HttpApplication
+    using System.Diagnostics;
+    using System.Web;
+
+    public class MvcApplication : HttpApplication
     {
         protected void Application_Start()
         {

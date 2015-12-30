@@ -1,15 +1,12 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
 {
+    using System;
+    using System.Net;
+    using System.Threading.Tasks;
+    using WindowsAzure.Storage;
+    using WindowsAzure.Storage.Table;
+    using Models;
+
     public static class AzureTableStorageHelper
     {
         public static async Task<CloudTable> GetTableAsync(string storageConnectionString, string tableName)
@@ -21,10 +18,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             return table;
         }
 
-        public static async Task<TableStorageResponse<TResult>> DoTableInsertOrReplaceAsync<TResult, TInput>(TInput incomingEntity, 
+        public static async Task<TableStorageResponse<TResult>> DoTableInsertOrReplaceAsync<TResult, TInput>(TInput incomingEntity,
             Func<TInput, TResult> tableEntityToModelConverter, string storageAccountConnectionString, string tableName) where TInput : TableEntity
         {
-            var table = await AzureTableStorageHelper.GetTableAsync(storageAccountConnectionString, tableName);
+            var table = await GetTableAsync(storageAccountConnectionString, tableName);
 
             // Simply doing an InsertOrReplace will not do any concurrency checking, according to 
             // http://azure.microsoft.com/en-us/blog/managing-concurrency-in-microsoft-azure-storage-2/
@@ -44,18 +41,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
                 operation = TableOperation.Insert(incomingEntity);
             }
 
-            return await PerformTableOperation<TResult, TInput>(table, operation, incomingEntity, tableEntityToModelConverter);
+            return await PerformTableOperation(table, operation, incomingEntity, tableEntityToModelConverter);
         }
 
         public static async Task<TableStorageResponse<TResult>> DoDeleteAsync<TResult, TInput>(TInput incomingEntity,
             Func<TInput, TResult> tableEntityToModelConverter, string storageAccountConnectionString, string tableName) where TInput : TableEntity
         {
-            var azureTable = await AzureTableStorageHelper.GetTableAsync(storageAccountConnectionString, tableName);
+            var azureTable = await GetTableAsync(storageAccountConnectionString, tableName);
             TableOperation operation = TableOperation.Delete(incomingEntity);
-            return await PerformTableOperation<TResult, TInput>(azureTable, operation, incomingEntity, tableEntityToModelConverter);
+            return await PerformTableOperation(azureTable, operation, incomingEntity, tableEntityToModelConverter);
         }
 
-        private static async Task<TableStorageResponse<TResult>> PerformTableOperation<TResult, TInput>(CloudTable table, 
+        static async Task<TableStorageResponse<TResult>> PerformTableOperation<TResult, TInput>(CloudTable table,
             TableOperation operation, TInput incomingEntity, Func<TInput, TResult> tableEntityToModelConverter) where TInput : TableEntity
         {
             var result = new TableStorageResponse<TResult>();
@@ -64,7 +61,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
             {
                 await table.ExecuteAsync(operation);
 
-                var nullModel = tableEntityToModelConverter((TInput)null);
+                var nullModel = tableEntityToModelConverter(null);
                 result.Entity = nullModel;
                 result.Status = TableStorageResponseStatus.Successful;
             }
@@ -87,7 +84,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
 
                 if (ex.GetType() == typeof(StorageException)
                     && (((StorageException)ex).RequestInformation.HttpStatusCode == (int)HttpStatusCode.PreconditionFailed
-                    || ((StorageException)ex).RequestInformation.HttpStatusCode == (int)HttpStatusCode.Conflict))
+                        || ((StorageException)ex).RequestInformation.HttpStatusCode == (int)HttpStatusCode.Conflict))
                 {
                     result.Status = TableStorageResponseStatus.ConflictError;
                 }

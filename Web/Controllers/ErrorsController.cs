@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
     using System.Web.Mvc;
 
@@ -12,13 +8,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         [Route("500")]
         public ActionResult Error()
         {
-            return this.View("500");
+            return View("500");
         }
 
         [Route("404")]
         public ActionResult NotFound()
         {
-            return this.View("404");
+            return View("404");
         }
     }
 }

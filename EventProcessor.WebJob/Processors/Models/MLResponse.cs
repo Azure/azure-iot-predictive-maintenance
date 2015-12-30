@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Models
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Models
 {
+    using System.Collections.Generic;
+
     public class MLResponse
     {
         public class Data
@@ -17,7 +13,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 public string[,] Values;
             }
 
-            public string type;
+            public string Type;
+
             public Value value;
         }
 

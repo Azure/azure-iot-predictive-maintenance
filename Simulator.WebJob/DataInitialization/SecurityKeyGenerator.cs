@@ -1,16 +1,16 @@
-﻿using System;
-using System.Security.Cryptography;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
 {
+    using System;
+    using System.Security.Cryptography;
+    using Common.Models;
+
     /// <summary>
     /// Service to generate a security key pair for a device
     /// </summary>
     public class SecurityKeyGenerator : ISecurityKeyGenerator
     {
         // string will be about 33% longer than this
-        private const int _lengthInBytes = 16;
+        const int _lengthInBytes = 16;
 
         /// <summary>
         /// Creates a random security key pair

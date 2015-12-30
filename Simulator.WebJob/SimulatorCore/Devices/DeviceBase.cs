@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models.Commands;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory;
-using Microsoft.Azure.Devices.Common.Exceptions;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Azure.Devices.Common.Exceptions;
+    using CommandProcessors;
+    using Common.Configurations;
+    using Common.DeviceSchema;
+    using Common.Factory;
+    using Common.Models;
+    using Logging;
+    using Telemetry;
+    using Telemetry.Factory;
+    using Transport;
+    using Transport.Factory;
+
     /// <summary>
     /// Simulates a single IoT device that sends and recieves data from a transport
     /// </summary>
     public class DeviceBase : IDevice
     {
         // pointer to the currently executing event group
-        private int _currentEventGroup = 0;
+        int _currentEventGroup;
 
         protected readonly ILogger Logger;
         protected readonly ITransportFactory TransportFactory;
@@ -39,28 +38,25 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         }
 
         public string HostName { get; set; }
+
         public string PrimaryAuthKey { get; set; }
 
-        private dynamic _deviceProperties;
-        public dynamic DeviceProperties
-        {
-            get {  return _deviceProperties; }
-            set { _deviceProperties = value; }
-        }
+        public dynamic DeviceProperties { get; set; }
 
         public dynamic Commands { get; set; }
 
-        public List<ITelemetry> TelemetryEvents { get; private set; }
+        public List<ITelemetry> TelemetryEvents { get; set; }
+
         public bool RepeatEventListForever { get; set; }
 
-        protected object _telemetryController;
+        protected object TelemetryController;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger">Logger where this device will log information to</param>
-        /// <param name="transport">Transport where the device will send and receive data to/from</param>
-        /// <param name="config">Config to start this device with</param>
+        /// <param name="transportFactory">Transport where the device will send and receive data to/from</param>
+        /// <param name="configurationProvider">Config to start this device with</param>
         public DeviceBase(ILogger logger, ITransportFactory transportFactory, ITelemetryFactory telemetryFactory, IConfigurationProvider configurationProvider)
         {
             ConfigProvider = configurationProvider;
@@ -75,7 +71,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             InitDeviceInfo(config);
 
             Transport = TransportFactory.CreateTransport(this);
-            _telemetryController = TelemetryFactory.PopulateDeviceWithTelemetryEvents(this);
+            TelemetryController = TelemetryFactory.PopulateDeviceWithTelemetryEvents(this);
 
             InitCommandProcessors();
         }
@@ -99,7 +95,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             RootCommandProcessor = pingDeviceProcessor;
         }
 
-        public async virtual Task SendDeviceInfo()
+        public virtual async Task SendDeviceInfo()
         {
             Logger.LogInfo("Sending Device Info for device {0}...", DeviceID);
             await Transport.SendEventAsync(GetDeviceInfo());
@@ -133,10 +129,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                 Transport.Open();
 
                 var loopTasks = new List<Task>
-            {
-                StartReceiveLoopAsync(token), 
-                StartSendLoopAsync(token)
-            };
+                {
+                    StartReceiveLoopAsync(token),
+                    StartSendLoopAsync(token)
+                };
 
                 // Wait both the send and receive loops
                 await Task.WhenAll(loopTasks.ToArray());
@@ -157,7 +153,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// </summary>
         /// <param name="token">Cancellation token to cancel out of the loop</param>
         /// <returns></returns>
-        private async Task StartSendLoopAsync(CancellationToken token)
+        async Task StartSendLoopAsync(CancellationToken token)
         {
             try
             {
@@ -175,22 +171,18 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
                         var eventGroup = TelemetryEvents[_currentEventGroup];
 
-                        await eventGroup.SendEventsAsync(token, async (object eventData) =>
-                        {
-                            await Transport.SendEventAsync(eventData);
-                        });
+                        await eventGroup.SendEventsAsync(token, async (object eventData) => { await Transport.SendEventAsync(eventData); });
 
                         _currentEventGroup++;
                     }
 
                     Logger.LogInfo("Device {0} finished sending all events in list...", DeviceID);
-
-                } while (RepeatEventListForever && !token.IsCancellationRequested);
+                }
+                while (RepeatEventListForever && !token.IsCancellationRequested);
 
                 Logger.LogWarning("Device {0} sent all events and is shutting down send loop. (Set RepeatEventListForever = true on the device to loop forever.)", DeviceID);
-
             }
-            catch (TaskCanceledException) 
+            catch (TaskCanceledException)
             {
                 //do nothing if the task was cancelled
             }
@@ -201,7 +193,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
             if (token.IsCancellationRequested)
             {
-                Logger.LogInfo("********** Processing Device {0} has been cancelled - StartSendLoopAsync Ending. **********", DeviceID);   
+                Logger.LogInfo("********** Processing Device {0} has been cancelled - StartSendLoopAsync Ending. **********", DeviceID);
             }
         }
 
@@ -209,18 +201,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// Starts the loop that listens for events/commands from the IoT Hub to be sent to this device
         /// </summary>
         /// <param name="token">Cancellation token that can stop the loop if needed</param>
-        private async Task StartReceiveLoopAsync(CancellationToken token)
+        async Task StartReceiveLoopAsync(CancellationToken token)
         {
-            DeserializableCommand command;
-            Exception exception;
-            CommandProcessingResult processingResult;
-
             try
             {
                 while (!token.IsCancellationRequested)
                 {
-                    command = null;
-                    exception = null;
+                    DeserializableCommand command = null;
+                    Exception exception = null;
 
                     // Pause before running through the receive loop
                     await Task.Delay(TimeSpan.FromSeconds(1), token);
@@ -236,8 +224,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                             continue;
                         }
 
-                        processingResult = 
-                        await RootCommandProcessor.HandleCommandAsync(command);
+                        var processingResult = await RootCommandProcessor.HandleCommandAsync(command);
 
                         switch (processingResult)
                         {

@@ -1,25 +1,24 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.ServiceBus.Messaging;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
 {
-    public class EventProcessorHost<TEventProcessorFactory> : IEventProcessorHost, IDisposable where TEventProcessorFactory : class, IEventProcessorFactory
-    {
-        private readonly object[] _arguments;
-        private readonly string _eventHubName;
-        private readonly string _eventHubConnectionString;
-        private readonly string _storageConnectionString;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using ServiceBus.Messaging;
 
-        private EventProcessorHost _eventProcessorHost = null;
-        private TEventProcessorFactory _factory;
-        private CancellationTokenSource _cancellationTokenSource;
-        private bool _running = false;
-        private bool _disposed = false;
+    public class EventProcessorHost<TEventProcessorFactory> : IEventProcessorHost, IDisposable
+        where TEventProcessorFactory : class, IEventProcessorFactory
+    {
+        readonly object[] _arguments;
+        readonly string _eventHubName;
+        readonly string _eventHubConnectionString;
+        readonly string _storageConnectionString;
+
+        EventProcessorHost _eventProcessorHost;
+        TEventProcessorFactory _factory;
+        CancellationTokenSource _cancellationTokenSource;
+        bool _running;
+        bool _disposed;
 
         public EventProcessorHost(string eventHubName, string eventHubConnectionString, string storageConnectionString, params object[] arguments)
         {
@@ -32,13 +31,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
         public void Start()
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            this.Start(this._cancellationTokenSource.Token);
+            Start(_cancellationTokenSource.Token);
         }
 
         public void Start(CancellationToken cancellationToken)
         {
             _running = true;
-            Task.Run(() => this.StartProcessor(cancellationToken), cancellationToken);
+            Task.Run(() => StartProcessor(cancellationToken), cancellationToken);
         }
 
         public void Stop()
@@ -70,7 +69,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
 
                 _factory = Activator.CreateInstance(typeof(TEventProcessorFactory), _arguments) as TEventProcessorFactory;
 
-                Trace.TraceInformation("{0}: Registering host...", this.GetType().Name);
+                Trace.TraceInformation("{0}: Registering host...", GetType().Name);
 
                 EventProcessorOptions options = new EventProcessorOptions();
                 options.ExceptionReceived += OptionsOnExceptionReceived;
@@ -79,7 +78,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                 // processing loop
                 while (!token.IsCancellationRequested)
                 {
-                    Trace.TraceInformation("{0}: Processing...", this.GetType().Name);
+                    Trace.TraceInformation("{0}: Processing...", GetType().Name);
                     await Task.Delay(TimeSpan.FromMinutes(5), token);
                 }
 
@@ -88,12 +87,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             }
             catch (Exception e)
             {
-                Trace.TraceInformation("Error in {0}.StartProcessor, Exception: {1}", this.GetType().Name, e.Message);
+                Trace.TraceInformation("Error in {0}.StartProcessor, Exception: {1}", GetType().Name, e.Message);
             }
             _running = false;
         }
 
-        private void OptionsOnExceptionReceived(object sender, ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+        void OptionsOnExceptionReceived(object sender, ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {
             Trace.TraceError("Received exception, action: {0}, message: {1}", exceptionReceivedEventArgs.Action, exceptionReceivedEventArgs.Exception.ToString());
         }

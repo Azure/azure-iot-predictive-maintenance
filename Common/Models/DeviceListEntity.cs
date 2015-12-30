@@ -1,7 +1,7 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
 {
+    using WindowsAzure.Storage.Table;
+
     public class DeviceListEntity : TableEntity
     {
         public DeviceListEntity(string hostName, string deviceId)
@@ -10,7 +10,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Mode
             this.RowKey = hostName;
         }
 
-        public DeviceListEntity() { }
+        public DeviceListEntity()
+        {
+        }
 
         [IgnoreProperty]
         public string HostName

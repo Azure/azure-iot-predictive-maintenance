@@ -1,23 +1,21 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Common.Configurations;
+    using Common.DeviceSchema;
+    using Common.Factory;
+    using Common.Models;
+    using Common.Repository;
+
     public class DataInitializer : IDataInitializer
     {
-        private readonly IIotHubRepository _iotHubRepository;
-        private readonly IVirtualDeviceStorage _virtualDeviceStorage;
-        private readonly IConfigurationProvider _configProvider;
-        private readonly ISecurityKeyGenerator _securityKeyGenerator;
+        readonly IIotHubRepository _iotHubRepository;
+        readonly IVirtualDeviceStorage _virtualDeviceStorage;
+        readonly IConfigurationProvider _configProvider;
+        readonly ISecurityKeyGenerator _securityKeyGenerator;
 
         public DataInitializer(
             IIotHubRepository iotHubRepository,
@@ -41,7 +39,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
                 // check if any devices are there
                 Task<bool>.Run(async () => initializationNeeded = (await _virtualDeviceStorage.GetDeviceListAsync()).Count == 0).Wait();
-                
+
                 if (!initializationNeeded)
                 {
                     Trace.TraceInformation("No initial data needed.");
@@ -56,14 +54,14 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                 Task.Run(async () => bootstrappedDevices = await BootstrapDefaultDevices()).Wait();
 
                 Trace.TraceInformation("Initial data creation completed.");
-            } 
+            }
             catch (Exception ex)
             {
                 Trace.TraceError("Failed to create initial default data: {0}", ex.ToString());
             }
         }
 
-        private async Task<List<string>> BootstrapDefaultDevices()
+        async Task<List<string>> BootstrapDefaultDevices()
         {
             List<string> sampleIds = SampleDeviceFactory.GetDefaultDeviceNames();
             foreach (string id in sampleIds)
@@ -73,7 +71,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                 try
                 {
                     await _iotHubRepository.AddDeviceAsync(device, securityKeys);
-                    await _virtualDeviceStorage.AddOrUpdateDeviceAsync(new InitialDeviceConfig()
+                    await _virtualDeviceStorage.AddOrUpdateDeviceAsync(new InitialDeviceConfig
                     {
                         DeviceId = DeviceSchemaHelper.GetDeviceID(device),
                         HostName = _configProvider.GetConfigurationSettingValue("iotHub.HostName"),
