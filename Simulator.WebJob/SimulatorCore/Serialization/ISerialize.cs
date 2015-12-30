@@ -6,6 +6,7 @@
     public interface ISerialize
     {
         byte[] SerializeObject(object Object);
+
         T DeserializeObject<T>(byte[] bytes) where T : class;
     }
 }

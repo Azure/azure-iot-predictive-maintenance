@@ -1,20 +1,19 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.CommandProcessors;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Telemetry.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices
 {
+    using CommandProcessors;
+    using Common.Configurations;
+    using SimulatorCore.CommandProcessors;
+    using SimulatorCore.Devices;
+    using SimulatorCore.Logging;
+    using SimulatorCore.Telemetry.Factory;
+    using SimulatorCore.Transport.Factory;
+    using Telemetry;
+
     /// <summary>
     /// Implementation of a specific device type that extends the BaseDevice functionality
     /// </summary>
     public class EngineDevice : DeviceBase
     {
-
         public EngineDevice(ILogger logger, ITransportFactory transportFactory,
             ITelemetryFactory telemetryFactory, IConfigurationProvider configurationProvider)
             : base(logger, transportFactory, telemetryFactory, configurationProvider)
@@ -38,15 +37,15 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
         public void StartTelemetryData()
         {
-            var PredictiveMaintenanceTelemetry = (PredictiveMaintenanceTelemetry)_telemetryController;
-            PredictiveMaintenanceTelemetry.TelemetryActive = true;
+            var predictiveMaintenanceTelemetry = (PredictiveMaintenanceTelemetry)TelemetryController;
+            predictiveMaintenanceTelemetry.TelemetryActive = true;
             Logger.LogInfo("Device {0}: Telemetry has started", DeviceID);
         }
 
         public void StopTelemetryData()
         {
-            var PredictiveMaintenanceTelemetry = (PredictiveMaintenanceTelemetry)_telemetryController;
-            PredictiveMaintenanceTelemetry.TelemetryActive = false;
+            var predictiveMaintenanceTelemetry = (PredictiveMaintenanceTelemetry)TelemetryController;
+            predictiveMaintenanceTelemetry.TelemetryActive = false;
             Logger.LogInfo("Device {0}: Telemetry has stopped", DeviceID);
         }
     }

@@ -1,16 +1,16 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.WindowsAzure.Storage.Table;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
 {
+    using System.Threading.Tasks;
+    using WindowsAzure.Storage.Table;
+    using Helpers;
+
     public class StateTableEntity : TableEntity
     {
         public string State { get; set; }
 
         public static async Task Write(string device, string state, string connectionString, string table)
         {
-            StateTableEntity entry = new StateTableEntity()
+            StateTableEntity entry = new StateTableEntity
             {
                 PartitionKey = device,
                 RowKey = "State", // Arbitrary constant; we're only storing one value per device

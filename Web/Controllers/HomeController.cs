@@ -1,7 +1,3 @@
-// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
     using System.Web.Mvc;
@@ -11,7 +7,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     {
         public ActionResult Index()
         {
-            return this.View();
+            return View();
         }
     }
 }

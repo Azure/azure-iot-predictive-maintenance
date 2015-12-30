@@ -1,40 +1,37 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Devices.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.Engine.Telemetry.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices.Factory;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport.Factory;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator
 {
-    using Configurations;
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Autofac;
+    using Common.Configurations;
+    using Common.Execution;
+    using Common.Repository;
+    using WebJob;
+    using WebJob.DataInitialization;
+    using WebJob.Engine.Devices.Factory;
+    using WebJob.Engine.Telemetry.Factory;
+    using WebJob.SimulatorCore.Devices.Factory;
+    using WebJob.SimulatorCore.Logging;
+    using WebJob.SimulatorCore.Repository;
+    using WebJob.SimulatorCore.Serialization;
+    using WebJob.SimulatorCore.Transport.Factory;
 
     public static class Program
     {
-        static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        static readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         static IContainer simulatorContainer;
-
-        private static Timer _timer;
+        static Timer _timer;
 
         static void Main(string[] args)
         {
             try
             {
                 BuildContainer();
-                simulatorContainer.Resolve<IShutdownFileWatcher>().Run(() => {
+                simulatorContainer.Resolve<IShutdownFileWatcher>().Run(() =>
+                {
                     StartDataInitializationAsNeeded();
                     StartSimulator();
                 }, cancellationTokenSource);

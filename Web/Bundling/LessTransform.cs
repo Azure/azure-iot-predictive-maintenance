@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Bundling
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Bundling
 {
     using System.IO;
     using System.Web.Optimization;
@@ -10,17 +6,17 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Bundlin
 
     public sealed class LessTransform : IBundleTransform
     {
-        private readonly string path;
+        readonly string _path;
 
         public LessTransform(string path)
         {
-            this.path = path;
+            this._path = path;
         }
 
         public void Process(BundleContext context, BundleResponse response)
         {
             var oldPath = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(this.path);
+            Directory.SetCurrentDirectory(this._path);
 
             response.Content = Less.Parse(response.Content);
             Directory.SetCurrentDirectory(oldPath);

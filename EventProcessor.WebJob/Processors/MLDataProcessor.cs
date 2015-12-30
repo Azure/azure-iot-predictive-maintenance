@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors
 {
-    public class MLDataProcessor : Generic.EventProcessor
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Threading.Tasks;
+    using Common.Configurations;
+    using Common.Helpers;
+    using Generic;
+    using Models;
+    using Newtonsoft.Json;
+
+    public class MLDataProcessor : EventProcessor
     {
-        private const string ML_ENDPOINT = "/execute?api-version=2.0&details=true";
-        private readonly string[] ML_REQUEST_COLUMNS = { "id", "cycle", "s9", "s11", "s14", "s15" };
-        private const int RUL_COLUMN = 2;
+        const string ML_ENDPOINT = "/execute?api-version=2.0&details=true";
+        readonly string[] ML_REQUEST_COLUMNS = { "id", "cycle", "s9", "s11", "s14", "s15" };
+        const int RUL_COLUMN = 2;
 
-        private readonly IConfigurationProvider _configurationProvider;
+        readonly IConfigurationProvider _configurationProvider;
 
-        public MLDataProcessor(IConfigurationProvider configurationProvider) : base()
+        public MLDataProcessor(IConfigurationProvider configurationProvider)
         {
             _configurationProvider = configurationProvider;
         }
@@ -40,7 +36,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             // even though we only get one value at a time, so the request
             // requires an array of inputs
             MLRequest mlRequest = new MLRequest(ML_REQUEST_COLUMNS, new string[,]
-                { {
+            {
+                {
                     // The id is required to be numeric, so we hash the actual device id
                     eventData.deviceid.ToString().GetHashCode().ToString(),
                     // The remaining entries are string representations of the numeric values
@@ -49,8 +46,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
                     eventData.sensor11.ToString(),
                     eventData.sensor14.ToString(),
                     eventData.sensor15.ToString()
-                } }
-            );
+                }
+            }
+                );
 
             HttpClient http = new HttpClient();
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configurationProvider.GetConfigurationSettingValue("MLApiKey"));
@@ -61,19 +59,19 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             {
                 MLResponse result = JsonConvert.DeserializeObject<MLResponse>(await response.Content.ReadAsStringAsync());
 
-                RulTableEntity entry = new RulTableEntity()
+                RulTableEntity entry = new RulTableEntity
                 {
                     PartitionKey = eventData.deviceid.ToString(),
                     RowKey = eventData.cycle.ToString(),
                     // Extract the single relevant RUL value from the JSON output
-                    Rul = result.Results["data"].value.Values[0, RUL_COLUMN].ToString(),
+                    Rul = result.Results["data"].value.Values[0, RUL_COLUMN],
                     // Since the simulator might replay data, ensure we can overwrite table values
                     ETag = "*"
                 };
 
                 // We don't need a data model to represent the result of this operation,
                 // so we use a stub table/model convertor
-                await AzureTableStorageHelper.DoTableInsertOrReplaceAsync<object, RulTableEntity>(entry, (RulTableEntity e) => { return null; },
+                await AzureTableStorageHelper.DoTableInsertOrReplaceAsync<object, RulTableEntity>(entry, (RulTableEntity e) => null,
                     _configurationProvider.GetConfigurationSettingValue("eventHub.StorageConnectionString"),
                     _configurationProvider.GetConfigurationSettingValue("MLResultTableName"));
             }

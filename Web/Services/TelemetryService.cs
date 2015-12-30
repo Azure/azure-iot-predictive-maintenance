@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Services
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Services
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +6,6 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
     using System.Linq;
     using System.Threading.Tasks;
     using WindowsAzure.Storage.Table;
-    using Common.Configurations;
     using Common.Helpers;
     using Contracts;
 
@@ -20,21 +15,21 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
         const int MaxRecordsToSend = 50;
         const int MaxRecordsToReceive = 200;
 
-        readonly IConfigurationProvider configurationProvider;
+        readonly Settings _settings;
 
-        public TelemetryService(IConfigurationProvider configurationProvider)
+        public TelemetryService(Settings settings)
         {
-            this.configurationProvider = configurationProvider;
+            _settings = settings;
         }
 
         public async Task<IEnumerable<Telemetry>> GetLatestTelemetry(string deviceId)
         {
-            var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
-            var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicetelemetry");
-            var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
+            var storageConnectionString = _settings.StorageConnectionString;
+            var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, _settings.TelemetryTableName);
+            var startTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
             var deviceFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId);
-            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime);
+            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, startTime);
             var filter = TableQuery.CombineFilters(deviceFilter, TableOperators.And, timestampFilter);
 
             TableQuery<TelemetryEntity> query = new TableQuery<TelemetryEntity>()
@@ -67,13 +62,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Service
 
         public async Task<IEnumerable<Prediction>> GetLatestPrediction(string deviceId)
         {
-            var storageConnectionString = this.configurationProvider.GetConfigurationSettingValue("device.StorageConnectionString");
-            var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, "devicemlresult");
-
-            var dateTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
+            var storageConnectionString = _settings.StorageConnectionString;
+            var table = await AzureTableStorageHelper.GetTableAsync(storageConnectionString, _settings.PredictionTableName);
+            var startTime = DateTimeOffset.Now.AddSeconds(-TimeOffsetInSeconds).DateTime;
 
             var deviceFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, deviceId);
-            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, dateTime);
+            var timestampFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, startTime);
             var filter = TableQuery.CombineFilters(deviceFilter, TableOperators.And, timestampFilter);
 
             TableQuery<PredictionRecord> query = new TableQuery<PredictionRecord>()

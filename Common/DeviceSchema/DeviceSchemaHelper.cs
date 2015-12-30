@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Exceptions;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Newtonsoft.Json.Linq;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
 {
+    using System;
+    using Exceptions;
+    using Models;
+    using Newtonsoft.Json.Linq;
+
     /// <summary>
     /// Helper class to encapsulate interactions with the device schema.
     /// 
@@ -177,7 +177,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Devi
         /// and try to fix incorrect formats if possible.
         /// </summary>
         /// <param name="device"></param>
-        private static void FixHubEnabledStateFormat(dynamic device)
+        static void FixHubEnabledStateFormat(dynamic device)
         {
             dynamic props = GetDeviceProperties(device);
             if (props.HubEnabledState != null && props.HubEnabledState == 1)
@@ -197,9 +197,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Devi
         /// helper method to handle that specific type of data.
         /// </summary>
         /// <param name="device"></param>
-        private static void RemoveUnwantedAsaEventProperties(dynamic device)
+        static void RemoveUnwantedAsaEventProperties(dynamic device)
         {
-            if(device.GetType() == typeof(JObject))
+            if (device.GetType() == typeof(JObject))
             {
                 RemoveUnwantedAsaEventPropertiesFromJObject((JObject)device);
             }
@@ -209,7 +209,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Devi
         /// Remove unwanted properties that were added by ASA to a Json representation of a device.
         /// </summary>
         /// <param name="device"></param>
-        private static void RemoveUnwantedAsaEventPropertiesFromJObject(JObject device)
+        static void RemoveUnwantedAsaEventPropertiesFromJObject(JObject device)
         {
             device.Remove("EventProcessedUtcTime");
             device.Remove("EventEnqueuedUtcTime");

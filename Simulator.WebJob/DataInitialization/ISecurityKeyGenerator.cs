@@ -1,7 +1,7 @@
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-
 namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization
 {
+    using Common.Models;
+
     public interface ISecurityKeyGenerator
     {
         /// <summary>

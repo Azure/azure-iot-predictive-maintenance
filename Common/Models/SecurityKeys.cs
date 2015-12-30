@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class SecurityKeys
     {
         public SecurityKeys(string primaryKey, string secondaryKey)
@@ -18,8 +18,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Mode
     public enum SecurityKey
     {
         None = 0,
+
         [Display(Name = "primary")]
         Primary,
+
         [Display(Name = "secondary")]
         Secondary
     }

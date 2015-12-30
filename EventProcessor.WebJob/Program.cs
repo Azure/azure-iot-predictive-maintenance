@@ -1,18 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob
 {
-    using System.IO;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using Autofac;
+    using Common.Execution;
+    using Processors;
 
     public static class Program
     {
-        static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         static IContainer eventProcessorContainer;
 
         static void Main(string[] args)
@@ -20,11 +17,13 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
             try
             {
                 BuildContainer();
-                eventProcessorContainer.Resolve<IShutdownFileWatcher>().Run(StartMLDataProcessorHost, cancellationTokenSource);
+                eventProcessorContainer
+                    .Resolve<IShutdownFileWatcher>()
+                    .Run(StartMLDataProcessorHost, CancellationTokenSource);
             }
             catch (Exception ex)
             {
-                cancellationTokenSource.Cancel();
+                CancellationTokenSource.Cancel();
                 Trace.TraceError("Webjob terminating: {0}", ex.ToString());
             }
         }
@@ -39,7 +38,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
         static void StartMLDataProcessorHost()
         {
             Trace.TraceInformation("Starting ML Data Processor");
-            eventProcessorContainer.Resolve<IMLDataProcessorHost>().Start(cancellationTokenSource.Token);
+            eventProcessorContainer.Resolve<IMLDataProcessorHost>().Start(CancellationTokenSource.Token);
         }
     }
 }

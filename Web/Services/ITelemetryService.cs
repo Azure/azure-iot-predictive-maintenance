@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Services
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Services
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;

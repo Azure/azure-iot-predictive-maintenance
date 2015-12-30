@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurations
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations
 {
     using System;
     using System.Collections.Generic;
@@ -10,25 +6,24 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
     using System.IO;
     using System.Reflection;
     using WindowsAzure.ServiceRuntime;
-    using Common.Configurations;
 
     public class ConfigurationProvider : IConfigurationProvider, IDisposable
     {
-        readonly Dictionary<string, string> configuration = new Dictionary<string, string>();
-        EnvironmentDescription environment;
+        readonly Dictionary<string, string> _configuration = new Dictionary<string, string>();
+        EnvironmentDescription _environment;
         const string ConfigToken = "config:";
         bool _disposed;
 
         public string GetConfigurationSettingValue(string configurationSettingName)
         {
-            return this.GetConfigurationSettingValueOrDefault(configurationSettingName, string.Empty);
+            return GetConfigurationSettingValueOrDefault(configurationSettingName, string.Empty);
         }
 
         public string GetConfigurationSettingValueOrDefault(string configurationSettingName, string defaultValue)
         {
             try
             {
-                if (!this.configuration.ContainsKey(configurationSettingName))
+                if (!_configuration.ContainsKey(configurationSettingName))
                 {
                     string configValue = string.Empty;
                     bool isEmulated = true;
@@ -53,17 +48,17 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
                     }
                     if (isEmulated && (configValue != null && configValue.StartsWith(ConfigToken, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (this.environment == null)
+                        if (_environment == null)
                         {
-                            this.LoadEnvironmentConfig();
+                            LoadEnvironmentConfig();
                         }
 
                         configValue =
-                            this.environment.GetSetting(configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
+                            _environment.GetSetting(configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
                     }
                     try
                     {
-                        this.configuration.Add(configurationSettingName, configValue);
+                        _configuration.Add(configurationSettingName, configValue);
                     }
                     catch (ArgumentException)
                     {
@@ -79,9 +74,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
                     throw;
                 }
 
-                this.configuration.Add(configurationSettingName, defaultValue);
+                _configuration.Add(configurationSettingName, defaultValue);
             }
-            return this.configuration[configurationSettingName];
+            return _configuration[configurationSettingName];
         }
 
         void LoadEnvironmentConfig()
@@ -95,7 +90,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
                 string fileName = executingPath.Substring(0, buildLocation) + "local.config.user";
                 if (File.Exists(fileName))
                 {
-                    this.environment = new EnvironmentDescription(fileName);
+                    _environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
@@ -112,7 +107,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
                 string fileName = executingPath.Substring(0, location) + "local.config.user";
                 if (File.Exists(fileName))
                 {
-                    this.environment = new EnvironmentDescription(fileName);
+                    _environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
@@ -122,31 +117,31 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Configurati
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this._disposed)
+            if (_disposed)
             {
                 return;
             }
 
             if (disposing)
             {
-                if (this.environment != null)
+                if (_environment != null)
                 {
-                    this.environment.Dispose();
+                    _environment.Dispose();
                 }
             }
 
-            this._disposed = true;
+            _disposed = true;
         }
 
         ~ConfigurationProvider()
         {
-            this.Dispose(false);
+            Dispose(false);
         }
     }
 }

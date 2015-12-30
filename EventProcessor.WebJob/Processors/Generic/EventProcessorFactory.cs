@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.ServiceBus.Messaging;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors.Generic
 {
-    public class EventProcessorFactory<TEventProcessor> : IEventProcessorFactory where TEventProcessor : EventProcessor
-    {
-        private readonly object[] _arguments;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using ServiceBus.Messaging;
 
-        private readonly ConcurrentDictionary<string, TEventProcessor> _eventProcessors = new ConcurrentDictionary<string, TEventProcessor>();
-        private readonly ConcurrentQueue<TEventProcessor> _closedProcessors = new ConcurrentQueue<TEventProcessor>();
+    public class EventProcessorFactory<TEventProcessor> : IEventProcessorFactory
+        where TEventProcessor : EventProcessor
+    {
+        readonly object[] _arguments;
+
+        readonly ConcurrentDictionary<string, TEventProcessor> _eventProcessors = new ConcurrentDictionary<string, TEventProcessor>();
+        readonly ConcurrentQueue<TEventProcessor> _closedProcessors = new ConcurrentQueue<TEventProcessor>();
 
         public EventProcessorFactory(params object[] arguments)
         {
@@ -38,19 +38,19 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
         {
             TEventProcessor processor = Activator.CreateInstance(typeof(TEventProcessor), _arguments) as TEventProcessor;
 
-            processor.ProcessorClosed += this.ProcessorOnProcessorClosed;
+            processor.ProcessorClosed += ProcessorOnProcessorClosed;
             _eventProcessors.TryAdd(context.Lease.PartitionId, processor);
             return processor;
         }
 
         public Task WaitForAllProcessorsInitialized(TimeSpan timeout)
         {
-            return this.WaitForAllProcessorsCondition(p => p.IsInitialized, timeout);
+            return WaitForAllProcessorsCondition(p => p.IsInitialized, timeout);
         }
 
         public Task WaitForAllProcessorsClosed(TimeSpan timeout)
         {
-            return this.WaitForAllProcessorsCondition(p => p.IsClosed, timeout);
+            return WaitForAllProcessorsCondition(p => p.IsClosed, timeout);
         }
 
         public async Task WaitForAllProcessorsCondition(Func<TEventProcessor, bool> predicate, TimeSpan timeout)
@@ -73,6 +73,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProces
         public void ProcessorOnProcessorClosed(object sender, EventArgs eventArgs)
         {
             TEventProcessor processor = sender as TEventProcessor;
+
             if (processor != null)
             {
                 _eventProcessors.TryRemove(processor.Context.Lease.PartitionId, out processor);

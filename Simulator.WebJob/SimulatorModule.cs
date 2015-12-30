@@ -1,12 +1,10 @@
-﻿using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.DataInitialization;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob
 {
-    using Configurations;
+    using Autofac;
+    using Common.Configurations;
+    using Common.Execution;
+    using Common.Repository;
+    using DataInitialization;
 
     public sealed class SimulatorModule : Module
     {

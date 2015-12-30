@@ -1,11 +1,7 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
     using System.Web.Http;
-    using Configurations;
+    using Common.Configurations;
     using global::Owin;
     using Owin;
 
@@ -20,9 +16,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 
             app.Use<EnforceHttpsMiddleware>();
 
-            this.ConfigureAuth(app, configProvider);
-            this.ConfigureAutofac(app);
-            this.ConfigureWebApi(app);
+            ConfigureAuth(app, configProvider);
+            ConfigureAutofac(app);
+            ConfigureWebApi(app);
         }
     }
 }

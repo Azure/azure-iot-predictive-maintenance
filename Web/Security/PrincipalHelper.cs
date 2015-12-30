@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Security
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Security
 {
     using System.Linq;
     using System.Security.Claims;

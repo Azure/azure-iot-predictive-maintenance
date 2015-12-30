@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Models;
+
     public interface IVirtualDeviceStorage
     {
         /// <summary>

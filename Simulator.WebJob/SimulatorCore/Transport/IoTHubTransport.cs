@@ -1,28 +1,28 @@
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization;
-using Microsoft.Azure.Devices.Client;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Client;
+    using Common.Configurations;
+    using Common.DeviceSchema;
+    using Common.Helpers;
+    using Devices;
+    using Logging;
+    using Serialization;
+
     /// <summary>
     /// Implementation of ITransport that talks to IoT Hub.
     /// </summary>
     public class IoTHubTransport : ITransport
     {
-        private readonly ISerialize _serializer;
-        private readonly ILogger _logger;
-        private readonly IConfigurationProvider _configurationProvider;
-        private readonly IDevice _device;
-        private DeviceClient _deviceClient;
-        private bool _disposed = false;
+        readonly ISerialize _serializer;
+        readonly ILogger _logger;
+        readonly IConfigurationProvider _configurationProvider;
+        readonly IDevice _device;
+        DeviceClient _deviceClient;
+        bool _disposed;
 
         public IoTHubTransport(ISerialize serializer, ILogger logger, IConfigurationProvider configurationProvider, IDevice device)
         {
@@ -50,22 +50,19 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// <summary>
         /// Builds the IoT Hub connection string
         /// </summary>
-        /// <param name="device"></param>
-        /// <returns></returns>
-        private string GetConnectionString()
+        string GetConnectionString()
         {
             string key = _device.PrimaryAuthKey;
             string deviceID = _device.DeviceID;
             string hostName = _device.HostName;
 
             var authMethod = new DeviceAuthenticationWithRegistrySymmetricKey(deviceID, key);
-            return Client.IotHubConnectionStringBuilder.Create(hostName, authMethod).ToString();
+            return IotHubConnectionStringBuilder.Create(hostName, authMethod).ToString();
         }
 
         /// <summary>
         /// Sends an event to the IoT Hub
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="eventData"></param>
         /// <returns></returns>
         public async Task SendEventAsync(dynamic eventData)
@@ -77,13 +74,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// <summary>
         /// Sends an event to IoT Hub using the provided eventId GUID
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="eventId"></param>
         /// <param name="eventData"></param>
         /// <returns></returns>
         public async Task SendEventAsync(Guid eventId, dynamic eventData)
         {
-            byte[] bytes;
             string objectType = EventSchemaHelper.GetObjectType(eventData);
             var objectTypePrefix = _configurationProvider.GetConfigurationSettingValue("ObjectTypePrefix");
 
@@ -96,9 +91,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             //string rawJson = JsonConvert.SerializeObject(eventData);
             //Trace.TraceInformation(rawJson);
 
-            bytes = _serializer.SerializeObject(eventData);
+            byte[] bytes = _serializer.SerializeObject(eventData);
 
-            var message = new Client.Message(bytes);
+            var message = new Message(bytes);
             message.Properties["EventId"] = eventId.ToString();
 
             await AzureRetryHelper.OperationWithBasicRetryAsync(async () =>
@@ -119,7 +114,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
             });
         }
 
-        public async Task SendEventBatchAsync(IEnumerable<Client.Message> messages)
+        public async Task SendEventBatchAsync(IEnumerable<Message> messages)
         {
             await _deviceClient.SendEventBatchAsync(messages);
         }
@@ -131,14 +126,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
         /// <returns>Returns a DeserializableCommand that wraps the byte array of the message from IoT Hub</returns>
         public async Task<DeserializableCommand> ReceiveAsync()
         {
-            Client.Message message = await AzureRetryHelper.OperationWithBasicRetryAsync(
+            Message message = await AzureRetryHelper.OperationWithBasicRetryAsync(
                 async () =>
                 {
-                    Exception exp;
-                    Client.Message msg;
-
-                    exp = null;
-                    msg = null;
+                    Exception exp = null;
+                    Message msg = null;
                     try
                     {
                         msg = await _deviceClient.ReceiveAsync();
@@ -230,7 +222,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
                             ex);
                     }
                 });
-            }
+        }
 
         public async Task SignalRejectedCommand(DeserializableCommand command)
         {

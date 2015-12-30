@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models.Commands;
-using Newtonsoft.Json.Linq;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.DeviceSchema
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using Helpers;
+    using Models.Commands;
+    using Newtonsoft.Json.Linq;
+
     /// <summary>
     /// Helper class to encapsulate interactions with the command schema.
     /// 
@@ -66,11 +66,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Devi
 
             result = new List<dynamic>();
 
-            obj = 
+            obj =
                 ReflectionHelper.GetNamedPropertyValue(
-                    (object)command, 
-                    "Parameters", 
-                    true, 
+                    (object)command,
+                    "Parameters",
+                    true,
                     false);
 
             if ((parameters = obj as IEnumerable) != null)
@@ -143,7 +143,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Devi
 
                 obj =
                     ReflectionHelper.GetNamedPropertyValue(
-                        (object)command,
+                        command,
                         DeviceCommandConstants.NAME,
                         true,
                         false);

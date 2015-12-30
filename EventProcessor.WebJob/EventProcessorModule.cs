@@ -1,11 +1,9 @@
-﻿using Autofac;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob.Processors;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.EventProcessor.WebJob
 {
-    using Configurations;
+    using Autofac;
+    using Common.Configurations;
+    using Common.Execution;
+    using Processors;
 
     public sealed class EventProcessorModule : Module
     {

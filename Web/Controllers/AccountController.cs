@@ -1,8 +1,4 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
     using System.Web;
     using System.Web.Mvc;
@@ -14,9 +10,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
         /// </summary>
         public ActionResult SignOut()
         {
-            this.HttpContext.GetOwinContext().Authentication.SignOut();
+            HttpContext.GetOwinContext().Authentication.SignOut();
 
-            return this.RedirectToAction("Index", "Device");
+            return RedirectToAction("Index", "Device");
         }
     }
 }

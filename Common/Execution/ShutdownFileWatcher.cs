@@ -1,20 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Execution
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public class ShutdownFileWatcher : IShutdownFileWatcher
     {
-        private const string SHUTDOWN_FILE_ENV_VAR = "WEBJOBS_SHUTDOWN_FILE";
-        private string _shutdownFile;
-        private CancellationTokenSource _cancellationTokenSource;
+        const string SHUTDOWN_FILE_ENV_VAR = "WEBJOBS_SHUTDOWN_FILE";
+        string _shutdownFile;
+        CancellationTokenSource _cancelTokenSource;
 
         public void Run(Action start, CancellationTokenSource cancellationTokenSource)
         {
-            _cancellationTokenSource = cancellationTokenSource;
+            _cancelTokenSource = cancellationTokenSource;
 
             // Cloud deploys often get staged and started to warm them up, then get a shutdown
             // signal from the framework before being moved to the production slot. We don't want
@@ -36,7 +36,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Exec
                 fileSystemWatcher.EnableRaisingEvents = true;
 
                 // In case the file had already been created before we started watching it.
-                if (System.IO.File.Exists(_shutdownFile))
+                if (File.Exists(_shutdownFile))
                 {
                     shutdownSignalReceived = true;
                 }
@@ -50,24 +50,26 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Exec
             }
         }
 
-        private void OnShutdownFileChanged(object sender, FileSystemEventArgs e)
+        void OnShutdownFileChanged(object sender, FileSystemEventArgs e)
         {
             if (e.FullPath.IndexOf(Path.GetFileName(_shutdownFile), StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                _cancellationTokenSource.Cancel();
+                _cancelTokenSource.Cancel();
             }
         }
 
-        private async Task RunAsync()
+        async Task RunAsync()
         {
-            while (!_cancellationTokenSource.Token.IsCancellationRequested)
+            while (!_cancelTokenSource.Token.IsCancellationRequested)
             {
                 Trace.TraceInformation("Running");
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromMinutes(5), _cancelTokenSource.Token);
                 }
-                catch (TaskCanceledException) { }
+                catch (TaskCanceledException)
+                {
+                }
             }
         }
     }

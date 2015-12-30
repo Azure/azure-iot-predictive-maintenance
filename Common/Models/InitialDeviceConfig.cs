@@ -10,7 +10,9 @@
         /// IoT Hub HostName
         /// </summary>
         public string HostName { get; set; }
+
         public string DeviceId { get; set; }
+
         public string Key { get; set; }
     }
 }

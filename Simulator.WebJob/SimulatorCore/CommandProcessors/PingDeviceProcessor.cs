@@ -1,20 +1,18 @@
-﻿using System;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors
 {
+    using System;
+    using System.Threading.Tasks;
+    using Devices;
+    using Transport;
+
     public class PingDeviceProcessor : CommandProcessor
     {
         public PingDeviceProcessor(IDevice device)
             : base(device)
         {
-            
         }
 
-        public async override Task<CommandProcessingResult> HandleCommandAsync(DeserializableCommand deserializableCommand)
+        public override async Task<CommandProcessingResult> HandleCommandAsync(DeserializableCommand deserializableCommand)
         {
             if (deserializableCommand.CommandName == "PingDevice")
             {

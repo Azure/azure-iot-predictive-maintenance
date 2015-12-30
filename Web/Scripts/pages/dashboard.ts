@@ -202,8 +202,9 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             this.sendingCommand(true);
 
-            startEmulationPromise.done(() => {
+            startEmulationPromise.done((state: string) => {
                 this.sendingCommand(false);
+                this.simulationState(state);
             });
 
             startEmulationPromise.fail(this.onSendCommandError);
@@ -214,8 +215,9 @@ module Microsoft.Azure.Devices.Applications.PredictiveMaintenance {
 
             this.sendingCommand(true);
 
-            stopEmulationPromise.done(() => {
+            stopEmulationPromise.done((state: string) => {
                 this.sendingCommand(false);
+                this.simulationState(state);
             });
 
             stopEmulationPromise.fail(this.onSendCommandError);

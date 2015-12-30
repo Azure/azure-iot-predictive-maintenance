@@ -3,74 +3,75 @@
 <html>
 <head lang="en">
     <title>@Resources.PageTitle</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="~/styles/img/favicon.ico" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" href="~/styles/img/favicon.ico"/>
 
     @Styles.Render("~/bundle/styles/")
     @Scripts.Render("~/bundle/scripts/")
 </head>
 
 <body class="layout layout-expand">
-    <div class="layout-row">
-        <header>
-            <nav class="navbar navbar-inverse">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">Microsoft Azure IoT Suite</a>
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#accountMenu">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                    </div>
-                    <div id="accountMenu" class="collapse navbar-collapse pull-right">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <span class="navbar-text">
+<div class="layout-row">
+    <header>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Microsoft Azure IoT Suite</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#accountMenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="accountMenu" class="collapse navbar-collapse pull-right">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <span class="navbar-text">
                                     @PrincipalHelper.GetUsername()
                                 </span>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("SignOut", "Account")">
-                                    @Resources.LinkLabelSignOut
-                                </a>
-                            </li>
-                        </ul>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("SignOut", "Account")">
+                                @Resources.LinkLabelSignOut
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <messages data-bind="foreach: errorMessages()">
+            <div class="alert alert-danger">
+                <span class="indicator indicator-danger" data-bind="text: $data"></span>
+                <button class="btn btn-close" aria-label="Close error message" data-bind="click: $root.closeMessage">
+                    <span aria-hidden="true"></span></button>
+            </div>
+        </messages>
+    </header>
+</div>
+<div class="layout-row">
+    <div class="layout-cell layout-expand">
+        <div class="layout">
+            <div class="layout-row">
+                <div class="layout-cell">
+                    <div class="layout-cell-content aside-nav">
+                        <nav>
+                            <a class="nav_dashboard selected">
+                                @Resources.LinkLabelDashboard
+                            </a>
+                        </nav>
                     </div>
                 </div>
-            </nav>
-            <messages data-bind="foreach: errorMessages()">
-                <div class="alert alert-danger">
-                    <span class="indicator indicator-danger" data-bind="text: $data"></span>
-                    <button class="btn btn-close" aria-label="Close error message" data-bind="click: $root.closeMessage"><span aria-hidden="true"></span></button>
-                </div>
-            </messages>
-        </header>
-    </div>
-    <div class="layout-row">
-        <div class="layout-cell layout-expand">
-            <div class="layout">
-                <div class="layout-row">
-                    <div class="layout-cell">
-                        <div class="layout-cell-content aside-nav">
-                            <nav>
-                                <a class="nav_dashboard selected">
-                                    @Resources.LinkLabelDashboard
-                                </a>
-                            </nav>
-                        </div>
-                    </div>
-                    <div class="layout-cell layout-expand">
-                        <div class="layout-cell-content">
-                            <main class="layout-cell-content-fit">
-                                @RenderBody()
-                            </main>
-                        </div>
+                <div class="layout-cell layout-expand">
+                    <div class="layout-cell-content">
+                        <main class="layout-cell-content-fit">
+                            @RenderBody()
+                        </main>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Logging
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// Default implementation of ILogger with the System.Diagnostics.Trace 
     /// object as the logger.

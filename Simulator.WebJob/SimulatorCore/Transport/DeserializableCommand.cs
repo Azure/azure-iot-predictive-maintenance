@@ -1,23 +1,24 @@
-using System.Diagnostics;
-﻿using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Serialization;
-using System;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport
 {
+    using System;
+    using System.Diagnostics;
+    using Client;
+    using Serialization;
+
     /// <summary>
     /// Wraps the byte array returned from the cloud so that it can be deserialized
     /// </summary>
     public class DeserializableCommand
     {
-        private readonly dynamic _command;
-        private readonly string _lockToken;
+        readonly dynamic _command;
+        readonly string _lockToken;
 
         public string CommandName
         {
             get { return _command.Name; }
         }
 
-        public DeserializableCommand(Client.Message message, ISerialize serializer)
+        public DeserializableCommand(Message message, ISerialize serializer)
         {
             if (message == null)
             {
@@ -41,15 +42,12 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.W
 
         public dynamic Command
         {
-            get { return _command;  }
+            get { return _command; }
         }
 
         public string LockToken
         {
-            get
-            {
-                return _lockToken;
-            }
+            get { return _lockToken; }
         }
     }
 }

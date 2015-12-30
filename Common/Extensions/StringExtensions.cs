@@ -1,8 +1,8 @@
-﻿using System;
-using System.Globalization;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Extensions
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Extensions
 {
+    using System;
+    using System.Globalization;
+
     public static class StringExtensions
     {
         public static string FormatInvariant(this string format, params object[] args)

@@ -153,4 +153,40 @@
   <data name="TileHeadingSubheadingInCycles" xml:space="preserve">
     <value>In cycles</value>
   </data>
+  <data name="ButtonLabelStartSimulation" xml:space="preserve">
+    <value>Start simulation</value>
+  </data>
+  <data name="ButtonLabelStopSimulation" xml:space="preserve">
+    <value>Stop simulation</value>
+  </data>
+  <data name="IndicatorLabelStarted" xml:space="preserve">
+    <value>Simulation in progress</value>
+  </data>
+  <data name="IndicatorLabelStarting" xml:space="preserve">
+    <value>Starting...</value>
+  </data>
+  <data name="IndicatorLabelStopped" xml:space="preserve">
+    <value>Simulation stopped</value>
+  </data>
+  <data name="IndicatorLabelStopping" xml:space="preserve">
+    <value>Stopping...</value>
+  </data>
+  <data name="TileHeadingAircraftMap" xml:space="preserve">
+    <value>Aircraft map</value>
+  </data>
+  <data name="TileHeadingSensor11" xml:space="preserve">
+    <value>Sensor 11</value>
+  </data>
+  <data name="TileHeadingSensor14" xml:space="preserve">
+    <value>Sensor 14</value>
+  </data>
+  <data name="TileHeadingSensor15" xml:space="preserve">
+    <value>Sensor 15</value>
+  </data>
+  <data name="TileHeadingSensor9" xml:space="preserve">
+    <value>Sensor 9</value>
+  </data>
+  <data name="TileHeadingSensorHistory" xml:space="preserve">
+    <value>Sensor history</value>
+  </data>
 </root>

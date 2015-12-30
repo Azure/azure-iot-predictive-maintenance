@@ -1,141 +1,38 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Controllers
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using WindowsAzure.Storage;
-    using WindowsAzure.Storage.Table;
-    using Common.Configurations;
-    using Common.DeviceSchema;
-    using Common.Helpers;
-    using Common.Repository;
-    using Common.Models;
-    using Common.Models.Commands;
+    using Services;
 
     [Authorize]
     public sealed class SimulationController : ApiController
     {
-        readonly IIotHubRepository iotHubRepository;
-        readonly IConfigurationProvider configurationProvider;
-        readonly string storageConnectionString;
-        readonly string telemetryTableName;
-        readonly string mlResultTableName;
-        readonly string simulatorStateTableName;
+        readonly ISimulationService _simulationService;
 
-        public SimulationController(IIotHubRepository iotHubRepository, IConfigurationProvider configProvider)
+        public SimulationController(ISimulationService simulationService)
         {
-            this.iotHubRepository = iotHubRepository;
-            this.configurationProvider = configProvider;
-            this.storageConnectionString = configProvider.GetConfigurationSettingValue("device.StorageConnectionString");
-            this.telemetryTableName = configProvider.GetConfigurationSettingValue("TelemetryStoreContainerName");
-            this.mlResultTableName = configProvider.GetConfigurationSettingValue("MLResultTableName");
-            this.simulatorStateTableName = configProvider.GetConfigurationSettingValue("SimulatorStateTableName");
+            _simulationService = simulationService;
         }
 
         [HttpPost]
         [Route("api/simulation/start")]
-        public async Task StartSimulation()
+        public async Task<string> StartSimulation()
         {
-            this.ClearTables();
-            await this.WriteState(StartStopConstants.STARTING);
-            await this.SendCommand("StartTelemetry");
+            return await _simulationService.StartSimulation();
         }
 
         [HttpPost]
         [Route("api/simulation/stop")]
-        public async Task StopSimulation()
+        public async Task<string> StopSimulation()
         {
-            await this.WriteState(StartStopConstants.STOPPING);
-            await this.SendCommand("StopTelemetry");
-        }
-
-        string[] PartitionKeys()
-        {
-            return new[]
-            {
-                "N2172FJ-1",
-                "N2172FJ-2"
-            };
-        }
-
-        void ClearTables()
-        {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.storageConnectionString);
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-            CloudTable telemetryTable = tableClient.GetTableReference(this.telemetryTableName);
-            CloudTable mlTable = tableClient.GetTableReference(this.mlResultTableName);
-
-            this.ClearTable(telemetryTable);
-            this.ClearTable(mlTable);
-        }
-
-        void ClearTable(CloudTable table)
-        {
-            foreach (var partitionKey in this.PartitionKeys())
-            {
-                TableBatchOperation batchDelete = new TableBatchOperation();
-
-                // gets all the entities in the table for this partition key
-                string partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey);
-                List<DynamicTableEntity> entities = table.ExecuteQuery(new TableQuery().Where(partitionCondition)).ToList();
-
-                entities.ForEach(e =>
-                {
-                    batchDelete.Add(TableOperation.Delete(e));
-
-                    // Azure has a limit on batch operations
-                    if (batchDelete.Count == 100)
-                    {
-                        table.ExecuteBatch(batchDelete);
-                        batchDelete = new TableBatchOperation();
-                    }
-                });
-
-                // flush out whatever is left
-                if (batchDelete.Count > 0)
-                {
-                    table.ExecuteBatch(batchDelete);
-                }
-            }
-        }
-
-        async Task SendCommand(string commandName)
-        {
-            var command = CommandSchemaHelper.CreateNewCommand(commandName);
-
-            foreach (var partitionKey in this.PartitionKeys())
-            {
-                await this.iotHubRepository.SendCommand(partitionKey, command);
-            }
-        }
-
-        private async Task WriteState(string state)
-        {
-            foreach (var partitionKey in this.PartitionKeys())
-            {
-                await StateTableEntity.Write(partitionKey, state, this.storageConnectionString, this.simulatorStateTableName);
-            }
+            return await _simulationService.StopSimulation();
         }
 
         [HttpGet]
         [Route("api/simulation/state")]
         public async Task<string> GetSimulationState()
         {
-            var table = await AzureTableStorageHelper.GetTableAsync(this.storageConnectionString, "simulatorstate");
-            var query = new TableQuery<StateTableEntity>()
-                .Take(1)
-                .Select(new[] { "State" });
-
-            var result = table.ExecuteQuery(query);
-            var stateEntity = result.FirstOrDefault();
-
-            return stateEntity != null ? stateEntity.State : StartStopConstants.STOPPED;
+            return await _simulationService.GetSimulationState();
         }
     }
 }

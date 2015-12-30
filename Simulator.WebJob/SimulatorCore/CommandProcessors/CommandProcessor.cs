@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Devices;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.Transport;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Simulator.WebJob.SimulatorCore.CommandProcessors
 {
+    using System.Threading.Tasks;
+    using Devices;
+    using Transport;
+
     /// <summary>
     /// The CommandProcessor classes implement the Gang of Four's
     /// "Chain of Responsibility" pattern that passes the command

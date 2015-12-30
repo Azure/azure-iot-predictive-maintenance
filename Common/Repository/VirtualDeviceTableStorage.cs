@@ -1,17 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Configurations;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Models;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repository
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using WindowsAzure.Storage.Table;
+    using Configurations;
+    using Helpers;
+    using Models;
+
     public class VirtualDeviceTableStorage : IVirtualDeviceStorage
     {
-        private readonly string _storageConnectionString;
-        private readonly string _deviceTableName;
+        readonly string _storageConnectionString;
+        readonly string _deviceTableName;
 
         public VirtualDeviceTableStorage(IConfigurationProvider configProvider)
         {
@@ -26,7 +25,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
             TableQuery<DeviceListEntity> query = new TableQuery<DeviceListEntity>();
             foreach (var device in devicesTable.ExecuteQuery(query))
             {
-                var deviceConfig = new InitialDeviceConfig()
+                var deviceConfig = new InitialDeviceConfig
                 {
                     HostName = device.HostName,
                     DeviceId = device.DeviceId,
@@ -75,7 +74,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
         public async Task AddOrUpdateDeviceAsync(InitialDeviceConfig deviceConfig)
         {
             var devicesTable = await AzureTableStorageHelper.GetTableAsync(_storageConnectionString, _deviceTableName);
-            var deviceEnity = new DeviceListEntity()
+            var deviceEnity = new DeviceListEntity
             {
                 DeviceId = deviceConfig.DeviceId,
                 HostName = deviceConfig.HostName,
@@ -85,10 +84,10 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Repo
             await devicesTable.ExecuteAsync(operation);
         }
 
-        private async Task<InitialDeviceConfig> GetDeviceAsync(TableQuery<DeviceListEntity> query)
+        async Task<InitialDeviceConfig> GetDeviceAsync(TableQuery<DeviceListEntity> query)
         {
             var devicesTable = await AzureTableStorageHelper.GetTableAsync(_storageConnectionString, _deviceTableName);
-            foreach (var device in devicesTable.ExecuteQuery<DeviceListEntity>(query))
+            foreach (var device in devicesTable.ExecuteQuery(query))
             {
                 // Always return first device found
                 return new InitialDeviceConfig

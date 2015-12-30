@@ -1,12 +1,6 @@
-﻿// ---------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-// ---------------------------------------------------------------
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
-    using System.Web;
     using System.Web.Optimization;
-    using Bundling;
 
     public static class BundleConfig
     {

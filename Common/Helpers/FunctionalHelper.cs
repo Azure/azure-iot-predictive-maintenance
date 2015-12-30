@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Web;
-
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
+﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Web;
+
     /// <summary>
     /// Methods related to functional programming.
     /// </summary>
@@ -36,11 +36,11 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
 
             var index = new Dictionary<K, R>();
 
-            return (key) =>
+            return key =>
             {
                 R result;
 
-                if (object.ReferenceEquals(key, null))
+                if (ReferenceEquals(key, null))
                 {
                     throw new ArgumentNullException("key");
                 }
@@ -86,9 +86,9 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Common.Help
 
             object sync = new object();
 
-            return (key) =>
+            return key =>
             {
-                if (object.ReferenceEquals(key, null))
+                if (ReferenceEquals(key, null))
                 {
                     throw new ArgumentNullException("key");
                 }
