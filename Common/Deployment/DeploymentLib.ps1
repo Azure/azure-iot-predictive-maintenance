@@ -406,7 +406,7 @@ function UploadFile()
     return $blob.Uri.ToString() + $sasToken
 }
 
-function CreateWorkSpace()
+function CreateMLWorkSpace()
 {
     param
     (
@@ -431,7 +431,7 @@ function CreateWorkSpace()
     return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $endpointId )  $global:azureUrl $body
 }
 
-function GetWorkSpace()
+function GetMLWorkSpace()
 {
     param
     (
@@ -445,7 +445,7 @@ function GetWorkSpace()
     return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $workspaceId )  $global:azureUrl
 }
 
-function GetWorkspaceByName()
+function GetMLWorkspaceByName()
 {
     param
     (
@@ -457,7 +457,7 @@ function GetWorkspaceByName()
     return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
 }
 
-function CopyExperiment()
+function CopyMLExperiment()
 {
     param
     (
@@ -469,18 +469,18 @@ function CopyExperiment()
         [string]$packageUri
     )
     $maxReties = 20
-    $copyResult = CopyExperimentToWorkspace $workspaceId $key $packageUri
+    $copyResult = CopyMLExperimentToWorkspace $workspaceId $key $packageUri
     while ($copyResult.ExperimentId -eq $null)
     {
         sleep 10
         try
         {
-            $copyResult = GetExperimentCopyResult $workspaceId $key $copyResult.ActivityId
+            $copyResult = GetMLExperimentCopyResult $workspaceId $key $copyResult.ActivityId
         }
         catch
         {
             Write-Debug "Copy exception - try again"
-            $copyResult = CopyExperimentToWorkspace $workspaceId $key $packageUri
+            $copyResult = CopyMLExperimentToWorkspace $workspaceId $key $packageUri
         }
         if ($maxReties-- -le 0)
         {
@@ -491,7 +491,7 @@ function CopyExperiment()
     return $copyResult
 }
 
-function CopyExperimentToWorkspace()
+function CopyMLExperimentToWorkspace()
 {
     param
     (
@@ -506,7 +506,7 @@ function CopyExperimentToWorkspace()
     return Invoke-RestMethod -Method "PUT" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
 }
 
-function GetExperimentCopyResult()
+function GetMLExperimentCopyResult()
 {
     param
     (
@@ -521,7 +521,7 @@ function GetExperimentCopyResult()
     return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
 }
 
-function CreateWebService()
+function CreateMLWebService()
 {
     param
     (
@@ -536,7 +536,7 @@ function CreateWebService()
     return Invoke-RestMethod -Method "POST" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
 }
 
-function GetWebServiceCreateResult()
+function GetMLWebServiceCreateResult()
 {
     param
     (
@@ -551,7 +551,7 @@ function GetWebServiceCreateResult()
     return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"x-ms-metaanalytics-authorizationtoken"=$key}
 }
 
-function GetWebServiceByName()
+function GetMLWebServiceByName()
 {
         param
     (
@@ -567,7 +567,7 @@ function GetWebServiceByName()
     return Invoke-RestMethod -Method "GET" -Uri $uri -Headers @{"Authorization"=$header;"Content-Type"="application/json"} | ?{$_.Name -eq $name}
 }
 
-function GetWebService()
+function GetMLWebService()
 {
     param
     (
@@ -598,11 +598,11 @@ function ProvisionML()
     $scoringUri = "https%3a%2f%2fstorage.azureml.net%2fdirectories%2f3df9f53c197f465ba50b02dfb9610ef7%2fitems&communityUri=https%3a%2f%2fgallery.cortanaanalytics.com%2fDetails%2fremaining-useful-life-predictive-exp-2&entityId=Remaining-Useful-Life-Predictive-Exp-2"
 
     # Check for workspace
-    $workspace = GetWorkspaceByName $name
+    $workspace = GetMLWorkspaceByName $name
     if ($workspace -eq $null)
     {
         Write-Host ("$(Get-Date –f $timeStampFormat) - Creating ML workspace: {0}" -f $name)
-        $workspace = CreateWorkSpace $name $resourceGroupName
+        $workspace = CreateMLWorkSpace $name $resourceGroupName
         if ($workspace.Id -eq $null)
         {
             Write-Host $workspace
@@ -613,11 +613,11 @@ function ProvisionML()
 
     # Get workspace
     $maxRetry = 10
-    $resolvedWorkspace = GetWorkSpace $name $workspaceId
+    $resolvedWorkspace = GetMLWorkSpace $name $workspaceId
     while ($resolvedWorkspace.AuthorizationToken -eq $null)
     {
         sleep 10
-        $resolvedWorkspace = GetWorkSpace $name $workspaceId
+        $resolvedWorkspace = GetMLWorkSpace $name $workspaceId
         if ($maxRetry-- -le 0)
         {
             Write-Host $resolvedWorkspace
@@ -628,25 +628,25 @@ function ProvisionML()
     $tokenKey = $resolvedWorkspace.AuthorizationToken.PrimaryToken
 
     # Check if webservice already exists, if so return it
-    $webService = GetWebServiceByName $workspaceId $tokenKey $experimentName
+    $webService = GetMLWebServiceByName $workspaceId $tokenKey $experimentName
     if ($webService -ne $null)
     {
         Write-Host "$(Get-Date –f $timeStampFormat) - Found existing ML Webservice"
-        return GetWebService $workspaceId $tokenKey $webService.Id
+        return GetMLWebService $workspaceId $tokenKey $webService.Id
     }
 
     # Copy experiments from gallery
     Write-Host "$(Get-Date –f $timeStampFormat) - Copying ML Experiments"
-    $trainingId = (CopyExperiment $workspaceId $tokenKey $trainingUri).ExperimentId
-    $scoringId =  (CopyExperiment $workspaceId $tokenKey $scoringUri).ExperimentId
+    $trainingId = (CopyMLExperiment $workspaceId $tokenKey $trainingUri).ExperimentId
+    $scoringId =  (CopyMLExperiment $workspaceId $tokenKey $scoringUri).ExperimentId
 
     # Create WebService
     Write-Host "$(Get-Date –f $timeStampFormat) - Creating ML Webservice"
-    $webResult = CreateWebService $workspaceId $tokenKey $scoringId
+    $webResult = CreateMLWebService $workspaceId $tokenKey $scoringId
     while ($webResult.Status -eq "pending")
     {
         sleep 10
-        $webResult = GetWebServiceCreateResult $workspaceId $tokenKey $webResult.ActivityId
+        $webResult = GetMLWebServiceCreateResult $workspaceId $tokenKey $webResult.ActivityId
     }
     if ($webResult.Status -ne "Completed")
     {
@@ -654,7 +654,7 @@ function ProvisionML()
         throw "Failed to create WebService"
     }
     Write-Host "$(Get-Date –f $timeStampFormat) - ML Webservice created"
-    return GetWebService $workspaceId $tokenKey $webResult.WebServiceGroupId
+    return GetMLWebService $workspaceId $tokenKey $webResult.WebServiceGroupId
 }
 
 function EnvSettingExists()
