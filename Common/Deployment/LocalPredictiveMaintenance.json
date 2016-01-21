@@ -57,7 +57,8 @@
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
         "iotHubKeyName": "iothubowner",
         "iotHubKeyResource": "[resourceId('Microsoft.Devices/Iothubs/Iothubkeys', parameters('iotHubName'), variables('iotHubKeyName'))]",
-        "telemetryCGName": "telemetrycg"
+        "telemetryCGName": "telemetrycg",
+        "suiteType": "LocalPredictiveMaintenance"
     },
     "resources": [
         {
@@ -79,6 +80,9 @@
                 "tier": "[variables('iotHubTier')]",
                 "capacity": 1
             },
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "location": "[variables('location')]"
             }
@@ -96,6 +100,9 @@
             "name": "[parameters('sbName')]",
             "type": "Microsoft.Eventhub/namespaces",
             "location": "[variables('location')]",
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "messagingSku": 1,
                 "region": "[variables('location')]"
@@ -126,6 +133,9 @@
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "sku": {
                     "name": "standard"

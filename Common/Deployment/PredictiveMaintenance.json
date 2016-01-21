@@ -102,7 +102,8 @@
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
         "iotHubKeyName": "iothubowner",
         "iotHubKeyResource": "[resourceId('Microsoft.Devices/Iothubs/Iothubkeys', parameters('iotHubName'), variables('iotHubKeyName'))]",
-        "telemetryCGName": "telemetrycg"
+        "telemetryCGName": "telemetrycg",
+        "suiteType": "PredictiveMaintenance"
     },
     "resources": [
         {
@@ -124,6 +125,9 @@
                 "tier": "[variables('iotHubTier')]",
                 "capacity": 1
             },
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "location": "[variables('location')]"
             }
@@ -141,6 +145,9 @@
             "name": "[parameters('sbName')]",
             "type": "Microsoft.Eventhub/namespaces",
             "location": "[variables('location')]",
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "messagingSku": 1,
                 "region": "[variables('location')]"
@@ -171,6 +178,9 @@
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "sku": {
                     "name": "standard"
@@ -256,6 +266,9 @@
             "name": "[variables('webPlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[variables('location')]",
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "name": "[variables('webPlanName')]",
                 "sku": "[variables('webSku')]",
@@ -268,6 +281,9 @@
             "name": "[variables('webJobPlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[variables('location')]",
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "name": "[variables('webJobPlanName')]",
                 "sku": "[variables('webJobSku')]",
@@ -288,6 +304,9 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
                 "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]"
             ],
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "serverFarmId": "[variables('webPlanName')]",
                 "siteConfig": {
@@ -363,6 +382,9 @@
                 "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
                 "[resourceId('Microsoft.StreamAnalytics/streamingjobs', concat(parameters('suiteName'), '-Telemetry'))]"
             ],
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
             "properties": {
                 "serverFarmId": "[variables('webJobPlanName')]",
                 "siteConfig": {
