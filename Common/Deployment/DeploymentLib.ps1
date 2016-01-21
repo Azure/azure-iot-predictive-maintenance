@@ -38,11 +38,16 @@ function LoadLibrary()
     if($packageDirectories.Length -eq 0)
     {
         Write-Host ("{0} Library Nuget doesn't exist. Downloading now ..." -f $library) -ForegroundColor Yellow
-        $nugetDownloadExpression = "& '$nugetPath\nuget.exe' install $library -OutputDirectory '$nugetPath' | out-null"
+        $nugetDownloadExpression = "& '$nugetPath\nuget.exe' install $library -OutputDirectory '$nugetPath' -Source https://www.nuget.org/api/v2 | out-null"
         Invoke-Expression $nugetDownloadExpression
         $packageDirectories = (Get-ChildItem -Path $nugetPath -Filter ("{0}*" -f $library) -Directory)
+        if ($packageDirectories.Length -eq 0)
+        {
+            Write-Error ("Unable to find package {0} on Nuget.org" -f $library)
+            return $false
+        }
     }
-    $assemblies = (Get-ChildItem ("{0}.dll" -f $dllName) -Path $packageDirectories[$packageDirectories.length-1].FullName -Recurse)
+    $assemblies = (Get-ChildItem ("{0}.dll" -f $dllName) -Path ($packageDirectories |sort Name -desc)[0].FullName -Recurse)
     if ($assemblies -eq $null)
     {
         Write-Error ("Unable to find {0}.dll assembly for {0} library, is the dll a different name?" -f $library)
@@ -187,8 +192,12 @@ function UpdateResourceGroupState()
             {
                 $tag.Value = $state
                 $updated = $true
-                break
-            }
+			}
+			if ($tag.Name -eq "IoTSuiteVersion" -and $tag.Value -ne $global:version)
+			{
+                $tag.Value = $global:version
+                $updated = $true
+			}
         }
         if (!$updated)
         {
@@ -921,7 +930,10 @@ function InitializeEnvironment()
         throw "Suite name '$environmentName' must be between 3-62 characters"
     }
 
-    $null = ImportLibraries
+    if(!(ImportLibraries))
+    {
+        throw "Failed to load dependent libraries"
+    }
     $global:environmentName = $environmentName
     $null = Get-AzureResourceGroup -ErrorAction SilentlyContinue -ErrorVariable credError
     if ($credError -ne $null)
@@ -1030,7 +1042,7 @@ $global:timeStampFormat = "o"
 $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
-$global:version = "v1.0.0"
+$global:version = "v0.9.0"
 $global:aadLoginUrl = "https://login.windows.net/"
 $global:azureUrl = "https://management.core.windows.net/"
 $global:studioApiUrl = "https://studioapi.azureml.net/"
