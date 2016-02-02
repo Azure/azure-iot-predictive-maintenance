@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using WindowsAzure.Storage.Table;
@@ -49,10 +50,10 @@
                     DeviceId = entity.PartitionKey,
                     RecordId = entity.RowKey,
                     Timestamp = entity.Timestamp.DateTime,
-                    Sensor1 = Math.Round(double.Parse(entity.sensor11)),
-                    Sensor2 = Math.Round(double.Parse(entity.sensor14)),
-                    Sensor3 = Math.Round(double.Parse(entity.sensor15)),
-                    Sensor4 = Math.Round(double.Parse(entity.sensor9))
+                    Sensor1 = Math.Round(double.Parse(entity.sensor11, CultureInfo.InvariantCulture)),
+                    Sensor2 = Math.Round(double.Parse(entity.sensor14, CultureInfo.InvariantCulture)),
+                    Sensor3 = Math.Round(double.Parse(entity.sensor15, CultureInfo.InvariantCulture)),
+                    Sensor4 = Math.Round(double.Parse(entity.sensor9, CultureInfo.InvariantCulture))
                 };
                 result.Add(telemetry);
             }
@@ -86,13 +87,13 @@
                 {
                     DeviceId = entity.PartitionKey,
                     Timestamp = entity.Timestamp.DateTime,
-                    RemainingUsefulLife = (int)double.Parse(entity.Rul),
-                    Cycles = int.Parse(entity.RowKey)
+                    RemainingUsefulLife = (int)double.Parse(entity.Rul, CultureInfo.InvariantCulture),
+                    Cycles = int.Parse(entity.RowKey, CultureInfo.InvariantCulture)
                 };
-                result.Add(prediction);
-            }
+            result.Add(prediction);
+        }
 
             return result.OrderBy(x => x.Cycles);
         }
-    }
+}
 }
