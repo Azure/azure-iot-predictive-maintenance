@@ -25,16 +25,25 @@
                     </button>
                 </div>
                 <div id="accountMenu" class="collapse navbar-collapse pull-right">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <span class="navbar-text">
-                                    @PrincipalHelper.GetUsername()
-                                </span>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("SignOut", "Account")">
-                                @Resources.LinkLabelSignOut
+                    <ul class="nav navbar-nav ">
+                        <li class="dropdown open">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                @PrincipalHelper.GetUsername() <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu account-menu" role="menu" aria-labelledby="account-menu">
+                                <li role="presentation">
+                                    <a href="https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade" role="menuitem">Help &amp; Support</a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="http://feedback.azure.com/forums/321918-azure-iot" role="menuitem">Give feedback</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li role="presentation">
+                                    <a href="@Url.Action("SignOut", "Account")">
+                                        @Resources.LinkLabelSignOut
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
