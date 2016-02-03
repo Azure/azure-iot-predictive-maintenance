@@ -116,7 +116,7 @@ function SendRequest()
         [Parameter(Mandatory=$false)]
         [string]$xmsversion = "2014-10-01"
     )
-    $subscription = Get-AzureSubscription -Current
+    $subscription = Get-AzureSubscription -SubscriptionId $global:SubscriptionId
     $authResult = GetAuthenticationResult $subscription.TenantId $global:aadLoginUrl $application $subscription.DefaultAccount
     $header = $authResult.CreateAuthorizationHeader()
     write-verbose ("Sending request to: {0} {1}" -f $method, $uri)
@@ -166,10 +166,10 @@ function GetResourceGroup()
         [Parameter(Mandatory=$true,Position=0)] [string] $name,
         [Parameter(Mandatory=$true,Position=1)] [string] $type
     )
-    $resourceGroup = Get-AzureResourceGroup -Tag @{Name="IotSuiteType";Value=$type} | ?{$_.ResourceGroupName -eq $name}
+    $resourceGroup = Find-AzureRmResourceGroup -Tag @{Name="IotSuiteType";Value=$type} | ?{$_.ResourceGroupName -eq $name}
     if ($resourceGroup -eq $null)
     {
-        $resourceGroup = New-AzureResourceGroup -Name $name -Location $global:AllocationRegion -Tag @{Name="IoTSuiteType";Value=$type}, @{Name="IoTSuiteVersion";Value=$global:version}, @{Name="IoTSuiteState";Value="Created"}
+        $resourceGroup = New-AzureRmResourceGroup -Name $name -Location $global:AllocationRegion -Tag @{Name="IoTSuiteType";Value=$type}, @{Name="IoTSuiteVersion";Value=$global:version}, @{Name="IoTSuiteState";Value="Created"}
     }
     return $resourceGroup
 }
@@ -181,7 +181,7 @@ function UpdateResourceGroupState()
         [Parameter(Mandatory=$true,Position=1)] [string] $state
     )
 
-    $resourceGroup = Get-AzureResourceGroup -ResourceGroupName $resourceGroupName
+    $resourceGroup = Get-AzureRmResourceGroup -ResourceGroupName $resourceGroupName
     if ($resourceGroup -ne $null)
     {
         $tags = $resourceGroup.Tags
@@ -203,7 +203,7 @@ function UpdateResourceGroupState()
         {
             $tags += @{Name="IoTSuiteState";Value=$state}
         }
-        $resourceGroup = Set-AzureResourceGroup -Name $resourceGroupName -Tag $tags
+        $resourceGroup = Set-AzureRmResourceGroup -Name $resourceGroupName -Tag $tags
     }
 }
 
@@ -216,12 +216,12 @@ function ValidateResourceName()
     )
 
     # Return name for existing resource if exists
-    $resources = Get-AzureResource -ResourceGroupName $resourceGroupName -ResourceType $resourceType -OutputObjectFormat New
+    $resources = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType $resourceType -ResourceNameContains $resourceBaseName
     if ($resources -ne $null)
     {
         foreach($resource in $resources)
         {
-            if ($resource.Name.ToLowerInvariant().StartsWith($resourceBaseName.ToLowerInvariant()))
+            if ($resource.ResourceGroupName -eq $resourceGroupName -and $resource.Name.ToLowerInvariant().StartsWith($resourceBaseName.ToLowerInvariant()))
             {
                 return $resource.Name
             }
@@ -287,11 +287,11 @@ function GetAzureStorageAccount()
     )
     $storageTempName = $storageBaseName.ToLowerInvariant().Replace('-','')
     $storageAccountName = ValidateResourceName $storageTempName.Substring(0, [System.Math]::Min(19, $storageTempName.Length)) Microsoft.Storage/storageAccounts $resourceGroupName
-    $storage = Get-AzureStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -ErrorAction SilentlyContinue
+    $storage = Get-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -ErrorAction SilentlyContinue
     if ($storage -eq $null)
     {
         Write-Host "$(Get-Date –f $timeStampFormat) - Creating new storage account: $storageAccountName"
-        $storage = New-AzureStorageAccount -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -Location $location -Type Standard_GRS
+        $storage = New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -Location $location -Type Standard_GRS
     }
     return $storage
 }
@@ -328,7 +328,7 @@ function StopExistingStreamAnalyticsJobs()
     Param(
         [Parameter(Mandatory=$true,Position=0)] [string] $resourceGroupName
     )
-    $sasJobs = Get-AzureResource -ResourceGroupName $resourceGroupName -ResourceType Microsoft.StreamAnalytics/streamingjobs -OutputObjectFormat New
+    $sasJobs = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType Microsoft.StreamAnalytics/streamingjobs
     if ($sasJobs -eq $null)
     {
         return $false
@@ -337,12 +337,14 @@ function StopExistingStreamAnalyticsJobs()
     $returnValue = $true
     foreach ($sasJob in $sasJobs)
     {
-        $null = Stop-AzureStreamAnalyticsJob -Name $sasJob.ResourceName -ResourceGroupName $resourceGroupName
-        $job = Get-AzureStreamAnalyticsJob -Name $sasJob.ResourceName -ResourceGroupName $resourceGroupName
-        if ($job.Properties.LastOutputEventTime -eq $null)
-        {
-            # If the job never has seen data, use JobStartTime
-            $returnValue = $false
+        if ($sasJob.ResourceGroupName -eq $resourceGroupName) {
+            $null = Stop-AzureRmStreamAnalyticsJob -Name $sasJob.ResourceName -ResourceGroupName $resourceGroupName
+            $job = Get-AzureRmStreamAnalyticsJob -Name $sasJob.ResourceName -ResourceGroupName $resourceGroupName
+            if ($job.Properties.LastOutputEventTime -eq $null)
+            {
+                # If the job never has seen data, use JobStartTime
+                $returnValue = $false
+            }
         }
     }
     return $returnValue
@@ -361,7 +363,7 @@ function UploadFile()
     $containerName = $containerName.ToLowerInvariant()
     $file = Get-Item -Path $filePath
     $fileName = $file.Name.ToLowerInvariant()
-    $storageAccountKey = (Get-AzureStorageAccountKey -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName).Key1
+    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName).Key1
     $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
     if (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
     {
@@ -430,13 +432,12 @@ function CreateMLWorkSpace()
         "North Europe"{$mlLocation = "West Europe"}
         "East Asia"{$mlLocation = "Southeast Asia"}
     }
-    $subscription = Get-AzureSubscription -Current
-    $environment = Get-AzureEnvironment $subscription.Environment
-    $storageAccount = GetAzureStorageAccount $("ml" + $suiteName) $resourceGroupName $mlLocation
-    $storageAccountKey = (Get-AzureStorageAccountKey -StorageAccountName $storageAccount.Name -ResourceGroupName $resourceGroupName).Key1
-    $liveId = (Get-AzureSubscription -Current).DefaultAccount
+    $subscription = Get-AzureSubscription -SubscriptionId $global:SubscriptionId
+    $storageAccount = GetAzureStorageAccount $("ml" + $name) $resourceGroupName $mlLocation
+    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccount.StorageAccountName -ResourceGroupName $resourceGroupName).Key1
+    $liveId = $subscription.DefaultAccount
     $endpointId = [System.Guid]::NewGuid()
-    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""OwnerId"":""{4}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.Name, $storageAccountKey, $liveId 
+    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""OwnerId"":""{4}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $liveId 
     return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $endpointId )  $global:azureUrl $body
 }
 
@@ -449,8 +450,7 @@ function GetMLWorkSpace()
         [Parameter(Mandatory=$true, Position=1)]
         [string]$workspaceId
     )
-    $subscription = Get-AzureSubscription -Current
-    $environment = Get-AzureEnvironment $subscription.Environment
+    $subscription = Get-AzureRmSubscription -SubscriptionId $global:SubscriptionId;
     return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $workspaceId )  $global:azureUrl
 }
 
@@ -461,8 +461,7 @@ function GetMLWorkspaceByName()
         [Parameter(Mandatory=$true, Position=0)]
         [string]$name
     )
-    $subscription = Get-AzureSubscription -Current
-    $environment = Get-AzureEnvironment $subscription.Environment
+    $subscription = Get-AzureRmSubscription -SubscriptionId $global:SubscriptionId;
     return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
 }
 
@@ -760,17 +759,25 @@ function LoadAzureAssembly()
 
 function GetAzureAccountInfo()
 {
-    $account = $null
-    $maxRetry = 1
-    while ($account -eq $null)
+    $account = Get-AzureAccount
+    if ($account -eq $null)
     {
+        Write-Host "Signing you into Azure..."
         $account = Add-AzureAccount
-        if ($maxRetry-- -le 0)
-        {
-            throw "No valid user name provided"
-        }
     }
-    return $account.Id
+    else 
+    {
+        Write-Host "Signed into Azure already"
+    }
+    Write-Host "Checking if you're signed into Azure Resource Manager; if you aren't, expect an error"
+    $subscription = Get-AzureRmSubscription
+    if ($subscription -eq $null) {
+        $rmAccount = Login-AzureRmAccount
+    } else {
+        Write-Host "Already signed in"
+    }
+    $id = $account.Id
+    return $id
 }
 
 function HostEntryExists()
@@ -808,8 +815,7 @@ function ReplaceFileParameters()
 
 function GetAADTenant()
 {
-    $account = Get-AzureAccount $global:AzureAccountName
-    $tenants = ($account.Tenants -replace '(?:\r\n)',',').split(",")
+    $tenants = Get-AzureRmTenant
     if ($tenants.Count -eq 0)
     {
         Write-Error "No Active Directory domains found for '$global:AzureAccountName)'"
@@ -817,15 +823,16 @@ function GetAADTenant()
     }
     if ($tenants.Count -eq 1)
     {
-        [string]$tenantId = $tenants[0]
+        [string]$tenantId = $tenants[0].TenantId
     }
     else
     {
         # List Active directories associated with account
         Write-Host "Available Active directories:"
         $directories = @()
-        foreach ($tenant in $tenants)
+        foreach ($tenantObj in $tenants)
         {
+            $tenant = $tenantObj.TenantId
             $uri = "https://graph.windows.net/{0}/me?api-version=1.6" -f $tenant
             $authResult = GetAuthenticationResult $tenant $global:aadLoginUrl "https://graph.windows.net/" $global:AzureAccountName -Prompt "Auto"
             $header = $authResult.CreateAuthorizationHeader()
@@ -842,12 +849,12 @@ function GetAADTenant()
         # Can't determine AADTenant, so prompt
         [string]$tenantId = "notset"
         write-host ($directories | Out-String)
-        while (!(($tenants | ?{$_ -eq $tenantId}) -ne $null))
+        while (!(($tenants | ?{$_.TenantId -eq $tenantId}) -ne $null))
         {
             [string]$tenantId = Read-Host "Please select a valid TenantId from list"
         }
     }
-
+    
     # Configure Application
     $uri = "https://graph.windows.net/{0}/applications?api-version=1.6" -f $tenantId
     $searchUri = "{0}&`$filter=identifierUris/any(uri:uri%20eq%20'{1}{2}')" -f $uri, [System.Web.HttpUtility]::UrlEncode($global:site), $global:appName
@@ -935,11 +942,7 @@ function InitializeEnvironment()
         throw "Failed to load dependent libraries"
     }
     $global:environmentName = $environmentName
-    $null = Get-AzureResourceGroup -ErrorAction SilentlyContinue -ErrorVariable credError
-    if ($credError -ne $null)
-    {
-        $global:AzureAccountName = GetAzureAccountInfo
-    }
+    $global:AzureAccountName = GetAzureAccountInfo
 
     # Validate environment variables
     $global:environmentSettingsFile = "{0}\..\..\{1}.config.user" -f $global:azurePath, $environmentName
@@ -954,18 +957,9 @@ function InitializeEnvironment()
         $global:envSettingsXml = [xml](cat $global:environmentSettingsFile)
     }
 
-    if (!(Test-Path variable:AzureAccountName) -or ((get-azureaccount $global:AzureAccountName) -eq $null))
-    {
-        $global:AzureAccountName = GetOrSetEnvSetting "AzureAccountName" "GetAzureAccountInfo"
-    }
-
     if (!(Test-Path variable:SubscriptionId))
     {
-        $accounts = Get-AzureSubscription -ErrorAction SilentlyContinue
-        if ($accounts -eq $null)
-        {
-            $accounts = Get-AzureSubscription -ErrorAction Stop
-        }
+        $accounts = Get-AzureRmSubscription
         $global:SubscriptionId = GetEnvSetting "SubscriptionId"
         if ([string]::IsNullOrEmpty($global:SubscriptionId))
         {
@@ -979,7 +973,7 @@ function InitializeEnvironment()
         }
         UpdateEnvSetting "SubscriptionId" $global:SubscriptionId
     }
-    Select-AzureSubscription -SubscriptionId $global:SubscriptionId
+    Select-AzureRmSubscription -SubscriptionId $global:SubscriptionId
 
     if (!(Test-Path variable:AllocationRegion))
     {
@@ -990,20 +984,10 @@ function InitializeEnvironment()
     if ($environmentName -ne "local")
     {
         $webResource = $null
-        $resourceGroup = Get-AzureResourceGroup $environmentName -ErrorAction SilentlyContinue
+        $resourceGroup = Get-AzureRmResourceGroup -Name $environmentName -ErrorAction SilentlyContinue
         if ($resourceGroup -ne $null)
         {
-            $webResources = Get-AzureResource -ResourceType Microsoft.Web/sites -ResourceGroupName $environmentName -OutputObjectFormat New
-            if ($webResources -ne $null)
-            {
-                foreach($resource in $webResources)
-                {
-                    if ($resource.Name -eq $environmentName)
-                    {
-                        $webResource = $resource
-                    }
-                }
-            }
+            $webResource = Get-AzureRmResource -ResourceType Microsoft.Web/sites -ResourceGroupName $environmentName -ResourceName $environmentName -ErrorAction SilentlyContinue
         }
         if ($webResource -eq $null)
         {
