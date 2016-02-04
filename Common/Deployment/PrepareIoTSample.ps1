@@ -4,27 +4,6 @@
     [Parameter(Mandatory=$True,Position=1)]
     $configuration
     )
-    
-# Check version
-
-$module = Get-Module -ListAvailable | Where-Object{ $_.Name -eq 'Azure' }
-$moduleNumber = $module.Version
-$expected = @{}
-$expected.Major = 1
-$expected.Minor = 0
-$expected.Build = 3
-if ($moduleNumber.Major -lt $expected.Major -or $moduleNumber.Minor -lt $expected.Minor -or $moduleNumber.Build -lt $expected.Build)
-{
-    Write-Host "This script Azure Cmdlets requires $($expected.Major).$($expected.Minor).$($expected.Build)"
-    Write-Host "Found $($moduleNumber.Major).$($moduleNumber.Minor).$($moduleNumber.Build) installed."
-    Write-Host "Try updating and running again."
-    return
-}
-if ($moduleNumber.Major -gt $expected.Major -or $moduleNumber.Minor -gt $expected.Minor -or $moduleNumber.Build -gt $expected.Build)
-{
-    Write-Warning "This script Azure Cmdlets was tested with $($expected.Major).$($expected.Minor).$($expected.Build)"
-    Write-Warning "Found $($moduleNumber.Major).$($moduleNumber.Minor).$($moduleNumber.Build) installed; continuing, but errors might occur"
-}
 
 # Initialize library
 . "$(Split-Path $MyInvocation.MyCommand.Path)\DeploymentLib.ps1"

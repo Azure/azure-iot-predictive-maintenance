@@ -248,6 +248,7 @@ function ValidateResourceName()
         "microsoft.eventhub/namespaces"
         {
             $resourceUrl = "servicebus.windows.net"
+            $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(40, $resourceBaseName.Length))
         }
         "microsoft.web/sites"
         {
@@ -450,8 +451,7 @@ function GetMLWorkSpace()
         [Parameter(Mandatory=$true, Position=1)]
         [string]$workspaceId
     )
-    $subscription = Get-AzureRmSubscription -SubscriptionId $global:SubscriptionId;
-    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $subscription.SubscriptionId, $name, $workspaceId )  $global:azureUrl
+    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureUrl, $global:SubscriptionId, $name, $workspaceId )  $global:azureUrl
 }
 
 function GetMLWorkspaceByName()
@@ -461,8 +461,7 @@ function GetMLWorkspaceByName()
         [Parameter(Mandatory=$true, Position=0)]
         [string]$name
     )
-    $subscription = Get-AzureRmSubscription -SubscriptionId $global:SubscriptionId;
-    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $subscription.SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
+    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureUrl, $global:SubscriptionId, $name)  $global:azureUrl) | ?{$_.Name -eq $name}
 }
 
 function CopyMLExperiment()
@@ -760,6 +759,7 @@ function LoadAzureAssembly()
 function GetAzureAccountInfo()
 {
     $account = Get-AzureAccount
+    
     if ($account -eq $null)
     {
         Write-Host "Signing you into Azure..."
@@ -769,13 +769,21 @@ function GetAzureAccountInfo()
     {
         Write-Host "Signed into Azure already"
     }
-    Write-Host "Checking if you're signed into Azure Resource Manager; if you aren't, expect an error"
-    $subscription = Get-AzureRmSubscription
-    if ($subscription -eq $null) {
-        $rmAccount = Login-AzureRmAccount
-    } else {
-        Write-Host "Already signed in"
+    
+    $profilePath = Join-Path $PSScriptRoot "..\..\$($account.Id).user"
+    $rmProfileLoaded = $false
+    
+    if (test-path $profilePath) {
+        Write-Host "Trying to use saved profile $($profilePath)"
+        $rmProfileLoaded = (Select-AzureRmProfile -Path $profilePath) -ne $null
     }
+    
+    if ($rmProfileLoaded -ne $true) {
+        Write-Host "Logging in"
+        Login-AzureRmAccount | Out-Null
+        Save-AzureRmProfile -Path $profilePath
+    }
+    
     $id = $account.Id
     return $id
 }
@@ -973,6 +981,7 @@ function InitializeEnvironment()
         }
         UpdateEnvSetting "SubscriptionId" $global:SubscriptionId
     }
+    Select-AzureSubscription -SubscriptionId $global:SubscriptionId
     Select-AzureRmSubscription -SubscriptionId $global:SubscriptionId
 
     if (!(Test-Path variable:AllocationRegion))
@@ -1019,7 +1028,7 @@ function FixWebJobZip()
 
     $zip.Dispose()
 }
-
+    
 # Variable initialization
 [int]$global:envSettingsChanges = 0;
 $global:timeStampFormat = "o"
@@ -1027,10 +1036,26 @@ $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
 $global:version = "v0.9.0"
+$global:azureVersion = "1.0.3"
 $global:aadLoginUrl = "https://login.windows.net/"
 $global:azureUrl = "https://management.core.windows.net/"
 $global:studioApiUrl = "https://studioapi.azureml.net/"
 $global:locations = @("East US", "North Europe", "East Asia")
+
+# Check version
+$module = Get-Module -ListAvailable | Where-Object{ $_.Name -eq 'Azure' }
+$expected = New-Object System.Version($global:azureVersion)
+$comparison = $expected.CompareTo($module.Version)
+
+if ($comparison -eq 1)
+{
+    throw "Version $($module.Version.Major).$($module.Version.Minor).$($module.Version.Build); update to $($global:azureVersion) and run again."
+}
+elseif ($comparison -eq -1)
+{
+    Write-Warning "This script Azure Cmdlets was tested with $($global:azureVersion)"
+    Write-Warning "Found $($module.Version.Major).$($module.Version.Minor).$($module.Version.Build) installed; continuing, but errors might occur"
+}
 
 # Load System.Web
 Add-Type -AssemblyName System.Web
