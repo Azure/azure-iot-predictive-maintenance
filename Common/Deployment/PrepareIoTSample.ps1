@@ -7,7 +7,7 @@
 
 # Initialize library
 . "$(Split-Path $MyInvocation.MyCommand.Path)\DeploymentLib.ps1"
-Clear-DnsClientCache
+ClearDNSCache
 
 # Sets Azure Accounts, Region, Name validation, and AAD application
 InitializeEnvironment $environmentName
@@ -122,7 +122,7 @@ if ($environmentName -ne "local")
         while (!(HostEntryExists $webEndpoint))
         {
             Write-Host "." -NoNewline
-            Clear-DnsClientCache
+            ClearDNSCache
             if ($maxSleep-- -le 0)
             {
                 Write-Host

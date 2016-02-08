@@ -34,39 +34,43 @@ function LoadLibrary()
         [string]$dllName = $library
     )
     $success = $true
-    $packageDirectories = (Get-ChildItem -Path $nugetPath -Filter ("{0}*" -f $library) -Directory)
-    if($packageDirectories.Length -eq 0)
+    if (([appdomain]::CurrentDomain.GetAssemblies() | ?{$_.ManifestModule.Name -eq "$dllName.dll"}) -eq $null)
     {
-        Write-Host ("{0} Library Nuget doesn't exist. Downloading now ..." -f $library) -ForegroundColor Yellow
-        $nugetDownloadExpression = "& '$nugetPath\nuget.exe' install $library -OutputDirectory '$nugetPath' -Source https://www.nuget.org/api/v2 | out-null"
-        Invoke-Expression $nugetDownloadExpression
+        Write-Host ("Library {0} not found, loading..." -f $library)  -ForegroundColor Yellow
         $packageDirectories = (Get-ChildItem -Path $nugetPath -Filter ("{0}*" -f $library) -Directory)
-        if ($packageDirectories.Length -eq 0)
+        if($packageDirectories.Length -eq 0)
         {
-            Write-Error ("Unable to find package {0} on Nuget.org" -f $library)
+            Write-Host ("{0} Library Nuget doesn't exist. Downloading now ..." -f $library) -ForegroundColor Yellow
+            $nugetDownloadExpression = "& '$nugetPath\nuget.exe' install $library -OutputDirectory '$nugetPath' -Source https://www.nuget.org/api/v2 | out-null"
+            Invoke-Expression $nugetDownloadExpression
+            $packageDirectories = (Get-ChildItem -Path $nugetPath -Filter ("{0}*" -f $library) -Directory)
+            if ($packageDirectories.Length -eq 0)
+            {
+                Write-Error ("Unable to find package {0} on Nuget.org" -f $library)
+                return $false
+            }
+        }
+        $assemblies = (Get-ChildItem ("{0}.dll" -f $dllName) -Path ($packageDirectories |sort Name -desc)[0].FullName -Recurse)
+        if ($assemblies -eq $null)
+        {
+            Write-Error ("Unable to find {0}.dll assembly for {0} library, is the dll a different name?" -f $library)
             return $false
         }
-    }
-    $assemblies = (Get-ChildItem ("{0}.dll" -f $dllName) -Path ($packageDirectories |sort Name -desc)[0].FullName -Recurse)
-    if ($assemblies -eq $null)
-    {
-        Write-Error ("Unable to find {0}.dll assembly for {0} library, is the dll a different name?" -f $library)
-        return $false
-    }
 
-    # Should figure out how to get correct version
-    $assembly = $assemblies[0]
-    if($assembly.Length -gt 0)
-    {
-        Write-Host ("Loading {0} Assembly ..." -f $assembly.Name) -ForegroundColor Green
-        [System.Reflection.Assembly]::LoadFrom($assembly.FullName) | out-null
-    }
-    else
-    {
-        Write-Host ("Fixing {0} package directories ..." -f $library) -ForegroundColor Yellow
-        $packageDirectories | Remove-Item -Recurse -Force | Out-Null
-        Write-Error ("Not able to load {0} assembly. Restart PowerShell session and try again ..." -f $library)
-        $success = $false
+        # Should figure out how to get correct version
+        $assembly = $assemblies[0]
+        if($assembly.Length -gt 0)
+        {
+            Write-Host ("Loading {0} Assembly ..." -f $assembly.Name) -ForegroundColor Green
+            [System.Reflection.Assembly]::LoadFrom($assembly.FullName) | out-null
+        }
+        else
+        {
+            Write-Host ("Fixing {0} package directories ..." -f $library) -ForegroundColor Yellow
+            $packageDirectories | Remove-Item -Recurse -Force | Out-Null
+            Write-Error ("Not able to load {0} assembly. Restart PowerShell session and try again ..." -f $library)
+            $success = $false
+        }
     }
     return $success
 }
@@ -215,19 +219,6 @@ function ValidateResourceName()
         [Parameter(Mandatory=$true,Position=2)] [string] $resourceGroupName
     )
 
-    # Return name for existing resource if exists
-    $resources = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType $resourceType -ResourceNameContains $resourceBaseName
-    if ($resources -ne $null)
-    {
-        foreach($resource in $resources)
-        {
-            if ($resource.ResourceGroupName -eq $resourceGroupName -and $resource.Name.ToLowerInvariant().StartsWith($resourceBaseName.ToLowerInvariant()))
-            {
-                return $resource.Name
-            }
-        }
-    }
-
     # Generate a unique name
     $resourceUrl = " "
     switch ($resourceType.ToLowerInvariant())
@@ -248,7 +239,7 @@ function ValidateResourceName()
         "microsoft.eventhub/namespaces"
         {
             $resourceUrl = "servicebus.windows.net"
-            $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(40, $resourceBaseName.Length))
+            $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(35, $resourceBaseName.Length))
         }
         "microsoft.web/sites"
         {
@@ -256,6 +247,20 @@ function ValidateResourceName()
         }
         default {}
     }
+    
+    # Return name for existing resource if exists
+    $resources = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType $resourceType -ResourceNameContains $resourceBaseName
+    if ($resources -ne $null)
+    {
+        foreach($resource in $resources)
+        {
+            if ($resource.ResourceGroupName -eq $resourceGroupName -and $resource.Name.ToLowerInvariant().StartsWith($resourceBaseName.ToLowerInvariant()))
+            {
+                return $resource.Name
+            }
+        }
+    }
+    
     return GetUniqueResourceName $resourceBaseName $resourceUrl
 }
 
@@ -275,7 +280,7 @@ function GetUniqueResourceName()
             throw ("Unable to create unique name for resource {0} for url {1}" -f $resourceBaseName, $resourceUrl)
         }
     }
-    Clear-DnsClientCache
+    ClearDNSCache
     return $name
 }
 
@@ -372,7 +377,7 @@ function UploadFile()
         while (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
         {
             Write-Host "." -NoNewline
-            Clear-DnsClientCache
+            ClearDNSCache
             sleep 3
         }
         Write-Host
@@ -432,7 +437,7 @@ function CreateMLWorkSpace()
     {
         "North Europe"{$mlLocation = "West Europe"}
         "East Asia"{$mlLocation = "Southeast Asia"}
-    }
+}
     $subscription = Get-AzureSubscription -SubscriptionId $global:SubscriptionId
     $storageAccount = GetAzureStorageAccount $("ml" + $name) $resourceGroupName $mlLocation
     $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccount.StorageAccountName -ResourceGroupName $resourceGroupName).Key1
@@ -807,6 +812,40 @@ function HostEntryExists()
     return $false
 }
 
+function ClearDNSCache()
+{
+    if ($global:ClearDns -eq $null)
+    {
+        $global:ClearDns = CommandExists Clear-DnsClientCache
+    }
+    if ($global:ClearDns)
+    {
+        Clear-DnsClientCache
+    }
+}
+
+function CommandExists()
+{
+    Param(
+        [Parameter(Mandatory=$true,Position=0)] $command
+    )
+    $oldPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'stop'
+    try
+    {
+        if (Get-Command $command)
+        {
+            return $true
+        }
+    }
+    catch {}
+    finally
+    {
+        $ErrorActionPreference = $oldPreference
+    }
+    return $false
+}
+
 function ReplaceFileParameters()
 {
     Param(
@@ -1028,14 +1067,14 @@ function FixWebJobZip()
 
     $zip.Dispose()
 }
-    
+
 # Variable initialization
 [int]$global:envSettingsChanges = 0;
 $global:timeStampFormat = "o"
 $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
-$global:version = "v0.9.0"
+$global:version = "v1.1.0"
 $global:azureVersion = "1.0.3"
 $global:aadLoginUrl = "https://login.windows.net/"
 $global:azureUrl = "https://management.core.windows.net/"
