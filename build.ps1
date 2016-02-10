@@ -30,11 +30,11 @@ function Build() {
 
 # Package - see :Package in build.cmd
 function Package() {
-    &$msbuild ("Web\Web.csproj", "/v:m", "/t:Package")
+    &$msbuild ("Web\Web.csproj", "/v:m", "/p:Configuration=$configuration", "/t:Package")
     If (-Not($?)) {
         throw "Packaging Web\Web.csproj failed"
     }
-    &$msbuild ("WebJobHost\WebJobHost.csproj", "/v:m", "/t:Package")
+    &$msbuild ("WebJobHost\WebJobHost.csproj", "/v:m", "/p:Configuration=$configuration", "/t:Package")
     If (-Not($?)) {
         throw "Packaging WebJobHost\WebJobHost.csproj failed"
     }
