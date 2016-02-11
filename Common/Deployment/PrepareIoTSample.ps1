@@ -7,8 +7,7 @@
 
 # Initialize library
 . "$(Split-Path $MyInvocation.MyCommand.Path)\DeploymentLib.ps1"
-Switch-AzureMode AzureResourceManager
-Clear-DnsClientCache
+ClearDNSCache
 
 # Sets Azure Accounts, Region, Name validation, and AAD application
 InitializeEnvironment $environmentName
@@ -28,7 +27,6 @@ if ($environmentName -ne "local")
     $suiteType = "PredictiveMaintenance"
     $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance.json"
     $global:site = "https://{0}.azurewebsites.net/" -f $environmentName
-    #[string]$branch = "$(git symbolic-ref --short -q HEAD)"
     $cloudDeploy = $true
 }
 $resourceGroupName = (GetResourceGroup -Name $suiteName -Type $suiteType).ResourceGroupName
@@ -55,12 +53,12 @@ UpdateEnvSetting "MLHelpUrl" $machineLearningService.HelpLocation
 UpdateResourceGroupState $resourceGroupName ProvisionAzure
 $params = @{ `
     suiteName=$suitename; `
-    storageName=$($storageAccount.Name); `
+    storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
     sbName=$sevicebusName}
 
 Write-Host "Suite name: $suitename"
-Write-Host "Storage Name: $($storageAccount.Name)"
+Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
 Write-Host "IotHub Name: $iotHubName"
 Write-Host "Servicebus Name: $sevicebusName"
 Write-Host "AAD Tenant: $($global:AADTenant)"
@@ -70,9 +68,9 @@ Write-Host "Deployment template path: $deploymentTemplatePath"
 # Upload WebPackages
 if ($cloudDeploy)
 {
-    $webPackage = UploadFile ("$projectRoot\Web\obj\{0}\Package\Web.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
+    $webPackage = UploadFile ("$projectRoot\Web\obj\{0}\Package\Web.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
     FixWebJobZip ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration)
-    $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.Name $resourceGroupName "WebDeploy" $true
+    $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
     $params += @{ `
         aadTenant=$($global:AADTenant); `
         packageUri=$webPackage; `
@@ -83,7 +81,7 @@ if ($cloudDeploy)
 }
 
 # Upload simulator data
-UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.Name $resourceGroupName "simulatordata" $false
+UploadFile "$projectRoot\Simulator.WebJob\Engine\Data\$simulatorDataFileName" $storageAccount.StorageAccountName $resourceGroupName "simulatordata" $false
 
 # Stream analytics does not auto stop, and if already exists should be set to LastOutputEventTime to not lose data
 if (StopExistingStreamAnalyticsJobs $resourceGroupName)
@@ -92,17 +90,17 @@ if (StopExistingStreamAnalyticsJobs $resourceGroupName)
 }
 
 Write-Host "Provisioning resources, if this is the first time, this operation can take up 10 minutes..."
-$result = New-AzureResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $deploymentTemplatePath -TemplateParameterObject $params -Verbose
+$result = New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $deploymentTemplatePath -TemplateParameterObject $params -Verbose
 
 if ($result.ProvisioningState -ne "Succeeded")
 {
     UpdateResourceGroupState $resourceGroupName Failed
-    throw "Provisioing failed"
+    throw "Provisioning failed"
 }
 
 # Set Config file variables
 UpdateResourceGroupState $resourceGroupName Complete
-UpdateEnvSetting "ServiceStoreAccountName" $storageAccount.Name
+UpdateEnvSetting "ServiceStoreAccountName" $storageAccount.StorageAccountName
 UpdateEnvSetting "ServiceStoreAccountConnectionString" $result.Outputs['storageConnectionString'].Value
 UpdateEnvSetting "ServiceSBName" $sevicebusName
 UpdateEnvSetting "ServiceSBConnectionString" $result.Outputs['ehConnectionString'].Value
@@ -124,7 +122,7 @@ if ($environmentName -ne "local")
         while (!(HostEntryExists $webEndpoint))
         {
             Write-Host "." -NoNewline
-            Clear-DnsClientCache
+            ClearDNSCache
             if ($maxSleep-- -le 0)
             {
                 Write-Host
