@@ -1125,7 +1125,7 @@ $global:azureVersion = "1.0.3"
 $global:aadLoginUrl = "https://login.windows.net/"
 $global:azureUrl = "https://management.core.windows.net/"
 $global:studioApiUrl = "https://studioapi.azureml.net/"
-$global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "South East Asia")
+$global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "Southeast Asia")
 
 # Machine Learning is only available in a subset of regions, so we need to do fallback to the correct region
 # See CreateMLWorkSpace for usage
@@ -1134,8 +1134,8 @@ $global:mlRegionFallback = @{
     "West US"           = "South Central US";
     "North Europe"      = "West Europe";
     "West Europe"       = "West Europe";
-    "East Asia"         = "South East Asia";
-    "South East Asia"   = "South East Asia";
+    "East Asia"         = "Southeast Asia";
+    "Southeast Asia"    = "Southeast Asia";
 }
 
 # Check version
