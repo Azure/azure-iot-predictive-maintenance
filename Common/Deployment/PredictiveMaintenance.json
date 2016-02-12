@@ -89,7 +89,7 @@
         "webJobWorkerCount": "2",
         "webJobPlanName": "[concat(parameters('suiteName'), '-jobsplan')]",
         "webJobSiteName": "[concat(parameters('suiteName'), '-jobhost')]",
-        "webSku": "Standard",
+        "webSku": "Premium",
         "webWorkerSize": "0",
         "webWorkerCount": "2",
         "webPlanName": "[concat(parameters('suiteName'), '-plan')]",
