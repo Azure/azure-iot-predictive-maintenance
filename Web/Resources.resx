@@ -119,74 +119,98 @@
   </resheader>
   <data name="BrandingTitle" xml:space="preserve">
     <value>Predictive maintenance</value>
+    <comment>Site branding title.</comment>
   </data>
   <data name="BrandingTitlePrefix" xml:space="preserve">
     <value>Microsoft Azure IoT</value>
+    <comment>Site branding title prefix.</comment>
   </data>
   <data name="TileHeadingCycles" xml:space="preserve">
     <value>Cycles</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingRul" xml:space="preserve">
     <value>Remaining Useful Life (RUL)</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingRulHistory" xml:space="preserve">
     <value>Remaining Useful Life (RUL) history</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="ChartLabelEngine1" xml:space="preserve">
     <value>Engine #1</value>
+    <comment>Chart label.</comment>
   </data>
   <data name="ChartLabelEngine2" xml:space="preserve">
     <value>Engine #2</value>
+    <comment>Chart label.</comment>
   </data>
   <data name="LinkLabelDashboard" xml:space="preserve">
     <value>Dashboard</value>
+    <comment>Hyperlink label.</comment>
   </data>
   <data name="LinkLabelSignOut" xml:space="preserve">
     <value>Sign Out</value>
+    <comment>Hyperlink label.</comment>
   </data>
   <data name="PageTitle" xml:space="preserve">
     <value>Microsoft Azure IoT - Predictive maintenance</value>
+    <comment>Page title.</comment>
   </data>
   <data name="PageTitleDashboard" xml:space="preserve">
     <value>Dashboard</value>
+    <comment>Page title.</comment>
   </data>
   <data name="TileHeadingSubheadingInCycles" xml:space="preserve">
     <value>In cycles</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="ButtonLabelStartSimulation" xml:space="preserve">
     <value>Start simulation</value>
+    <comment>Button label.</comment>
   </data>
   <data name="ButtonLabelStopSimulation" xml:space="preserve">
     <value>Stop simulation</value>
+    <comment>Button label.</comment>
   </data>
   <data name="IndicatorLabelStarted" xml:space="preserve">
     <value>Simulation in progress</value>
+    <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStarting" xml:space="preserve">
     <value>Starting...</value>
+    <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStopped" xml:space="preserve">
     <value>Simulation stopped</value>
+    <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStopping" xml:space="preserve">
     <value>Stopping...</value>
+    <comment>Indicator label.</comment>
   </data>
   <data name="TileHeadingAircraftMap" xml:space="preserve">
     <value>Aircraft map</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor11" xml:space="preserve">
     <value>Sensor 11</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor14" xml:space="preserve">
     <value>Sensor 14</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor15" xml:space="preserve">
     <value>Sensor 15</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor9" xml:space="preserve">
     <value>Sensor 9</value>
+    <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensorHistory" xml:space="preserve">
     <value>Sensor history</value>
+    <comment>Tile heading.</comment>
   </data>
 </root>
