@@ -8,15 +8,22 @@ Each preconfigured solution implements a common IoT scenario and is a complete, 
 ##Predictive Maintenance pre-configured solution
 The predictive maintenance pre-configured solution illustrates how you can predict the point when failure is likely to occur. The solution combines key Azure IoT Suite services, including an ML workspace complete with experiments for predicting the Remaining Useful Life (RUL) of an aircraft engine, based on a public sample data set. 
 
-#### Wiki: 
-* Do you want to know how to deploy this preconfigured solution locally and to the cloud? Take a look at our [Wiki](https://github.com/Azure/azure-iot-predictive-maintenance/wiki) for answers.
-* Have ideas for how we can improve Azure IoT? Give us [Feedback](http://feedback.azure.com/forums/321918-azure-iot).
-
 ##Contents of this repository
-#### Web folder:
+
+### Docs folder:
+
+  * [Set up development environment (Windows)](Docs/dev-setup.md) outlines the prerequisites for deploying the remote monitoring preconfigured solution.
+  * [Cloud deployment](Docs/cloud-deployment.md) describes building and deploying the remote monitoring preconfigured solution fully on Azure.
+  * [Tutorial: modify the Remaining Useful Life predictive experiment](Docs/tutorial-rul.md) is a short walk through on modifying the Azure ML model slightly and making appropriate modifications to accommodate this.
+  
+Other useful [IoT Suite documentation](https://azure.microsoft.com/documentation/suites/iot-suite/):
+  * [Frequently asked questions for IoT Suite](https://azure.microsoft.com/documentation/articles/iot-suite-faq/)
+  * [Permissions on the azureiotsuite.com site](https://azure.microsoft.com/documentation/articles/iot-suite-permissions/)
+  
+### Web folder:
   * ASP.NET MVC 5 website containing user dashboard and device portal to manage IoT devices (add, remove, view, etc)
 
-#### Infrastructure folder:
+### Infrastructure folder:
   * APIs and application logic to support telemetry and device operations
  
 ### Simulator folder:
@@ -28,4 +35,6 @@ The predictive maintenance pre-configured solution illustrates how you can predi
 ### Visual Studio solution:
   * **PredictiveMaintenance:** contains both the Dashboard web app, the EventProcessor worker role, and the Simulator worker role.
 
+## Feedback 
 
+Have ideas for how we can improve Azure IoT? Give us [Feedback](http://feedback.azure.com/forums/321918-azure-iot).
