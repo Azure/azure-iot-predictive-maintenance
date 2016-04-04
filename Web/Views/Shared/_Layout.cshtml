@@ -1,5 +1,6 @@
 ﻿@using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_GlobalResources
 @using Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Security
+@model Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.ViewModels.IndexModel
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -26,27 +27,51 @@
                     </button>
                 </div>
                 <div id="accountMenu" class="collapse navbar-collapse pull-right">
-                    <ul class="nav navbar-nav ">
-                        <li class="dropdown open">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                                @PrincipalHelper.GetUsername() <span class="caret"></span>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="icon-language"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="account-menu">
+                                @foreach (var language in Model.AvailableLanguages)
+                                {
+                                    if (language.Name == Model.CurrentLanguageName)
+                                    {
+                                        <li role="presentation" class="active">
+                                            <a>@language.Name</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li role="presentation">
+                                            <a href="@Url.Action("SetCulture", "Home", new { cultureName = language.CultureName})">@language.Name</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                        <li class="dropdown account-dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="account-avatar"></span>
+                                <span class="account">
+                                    <span class="account-name">@Model.Username</span>
+                                </span>
                             </a>
                             <ul class="dropdown-menu account-menu" role="menu" aria-labelledby="account-menu">
                                 <li role="presentation">
-                                    <a href="https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade" role="menuitem">Help &amp; Support</a>
-                                </li>
-                                <li role="presentation">
-                                    <a href="http://feedback.azure.com/forums/321918-azure-iot" role="menuitem">Give feedback</a>
+                                    <a href="@Url.Action("SignOut", "Account")" role="menuitem">@Resources.LinkLabelSignOut</a>
                                 </li>
                                 <li role="separator" class="divider"></li>
                                 <li role="presentation">
-                                    <a href="@Url.Action("SignOut", "Account")">
-                                        @Resources.LinkLabelSignOut
-                                    </a>
+                                    <a href="https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade" target="_blank" role="menuitem">@Resources.LinkLabelHelpAndSupport</a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="http://feedback.azure.com/forums/321918-azure-iot" target="_blank" role="menuitem">@Resources.LinkLabelHelpGiveFeedback</a>
                                 </li>
                             </ul>
                         </li>
                     </ul>
+
                 </div>
             </div>
         </nav>

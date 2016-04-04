@@ -1,6 +1,8 @@
 ﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
+    using System.Web;
     using System.Web.Optimization;
+    using Bundling;
 
     public static class BundleConfig
     {
@@ -14,16 +16,16 @@
                 .Include("~/scripts/vendor/bootstrap.min.js")
                 .Include("~/scripts/app.js"));
 
-            //var lessBundle = new Bundle("~/bundle/styles/")
-            //    .Include("~/Styles/app.less");
+            var lessBundle = new Bundle("~/bundle/styles/")
+                .Include("~/Styles/app.less");
 
-            //lessBundle.Transforms.Add(new LessTransform(HttpContext.Current.Server.MapPath("~/styles")));
-            //lessBundle.Transforms.Add(new CssMinify());
+            lessBundle.Transforms.Add(new LessTransform(HttpContext.Current.Server.MapPath("~/styles")));
+            lessBundle.Transforms.Add(new CssMinify());
 
-            //bundles.Add(lessBundle);
+            bundles.Add(lessBundle);
 
             bundles.Add(new StyleBundle("~/bundle/styles/")
-                .Include("~/Styles/app.css"));
+                .Include("~/Styles/app.less"));
         }
     }
 }

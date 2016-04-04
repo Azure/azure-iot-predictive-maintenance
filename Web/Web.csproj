@@ -338,7 +338,9 @@
     <Compile Include="Bundling\LessTransform.cs" />
     <Compile Include="Controllers\SimulationController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Globalization\Constants.cs" />
     <Compile Include="Globalization\CultureHelper.cs" />
+    <Compile Include="ViewModels\IndexModel.cs" />
     <Compile Include="Owin\EnforceHttpsMiddleware.cs" />
     <Compile Include="App_GlobalResources\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -374,6 +376,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ViewModels\LanguageModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\vendor\bootstrap.min.js" />
@@ -413,9 +416,11 @@
     <Content Include="Styles\bootstrap\mixins\text-overflow.less" />
     <Content Include="Styles\bootstrap\mixins\vendor-prefixes.less" />
     <Content Include="Styles\img\favicon.ico" />
+    <Content Include="Styles\img\icon-account.png" />
     <Content Include="Styles\img\icon-close.svg" />
     <Content Include="Styles\img\icon-error.svg" />
     <Content Include="Styles\img\icon-exclamation.svg" />
+    <Content Include="Styles\img\icon-globe.png" />
     <Content Include="Styles\img\icon_dashboard.svg" />
     <Content Include="Styles\img\icon_warning.svg" />
     <Content Include="Styles\visuals.less" />

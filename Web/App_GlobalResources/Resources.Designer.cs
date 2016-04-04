@@ -161,6 +161,24 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_Glo
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Help &amp; Support.
+        /// </summary>
+        public static string LinkLabelHelpAndSupport {
+            get {
+                return ResourceManager.GetString("LinkLabelHelpAndSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Give feedback.
+        /// </summary>
+        public static string LinkLabelHelpGiveFeedback {
+            get {
+                return ResourceManager.GetString("LinkLabelHelpGiveFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sign Out.
         /// </summary>
         public static string LinkLabelSignOut {
