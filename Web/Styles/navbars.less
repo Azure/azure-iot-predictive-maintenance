@@ -80,7 +80,7 @@ img#infoLinkImg {
     border-radius: 0px;
     margin-bottom: 0px;
     border-bottom: none;
-    
+
 
     .navbar-brand {
         width: 380px;
@@ -242,4 +242,27 @@ img#infoLinkImg {
     height: 35px;
     display: block;
     float: right;
+}
+
+.navbar-header {
+    position: initial;
+}
+
+.navbar-brand {
+    font-size: 20px;
+
+    @media (min-width: @screen-sm) {
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        display: block;
+        margin-top: auto;
+        margin-bottom: auto;
+        white-space: nowrap;
+    }
+}
+
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #fff;
 }
