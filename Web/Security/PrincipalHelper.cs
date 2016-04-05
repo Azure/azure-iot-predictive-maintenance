@@ -3,10 +3,11 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Web;
-    using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
 
     public static class PrincipalHelper
     {
+        const string DisplayNameClaim = "http://schemas.microsoft.com/identity/claims/displayname";
+
         public static string GetUsername()
         {
             var principal = HttpContext.Current.User;
@@ -27,7 +28,7 @@
             }
 
             // try to fish out the email claim
-            var emailAddressClaim = claimsPrincipal.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Email);
+            var emailAddressClaim = claimsPrincipal.Claims.SingleOrDefault(c => c.Type == DisplayNameClaim);
 
             if (emailAddressClaim == null)
             {
