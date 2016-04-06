@@ -7,8 +7,7 @@
     using System.Web.Mvc;
     using System.Web.Optimization;
     using System.Web.Routing;
-    using WindowsAzure.Storage.Shared.Protocol;
-    using Globalization;
+    using Helpers;
 
     public class MvcApplication : HttpApplication
     {

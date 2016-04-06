@@ -2,7 +2,7 @@
 //  Copyright (c) Microsoft Corporation. All rights reserved.
 // ---------------------------------------------------------------
 
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Globalization
+namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
     public static class Constants
     {

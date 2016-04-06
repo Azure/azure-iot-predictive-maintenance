@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Control
     using System.Collections.ObjectModel;
     using System.Web;
     using System.Web.Mvc;
-    using Globalization;
+    using Helpers;
     using Security;
     using ViewModels;
 

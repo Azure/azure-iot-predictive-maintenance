@@ -2,7 +2,7 @@
 //  Copyright (c) Microsoft Corporation. All rights reserved.
 // ---------------------------------------------------------------
 
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Globalization
+namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Helpers
 {
     using System;
     using System.Collections.Generic;
