@@ -38,9 +38,6 @@ $simulatorDataFileName = "data.csv"
 # Setup AAD for webservice
 UpdateResourceGroupState $resourceGroupName ProvisionAAD
 $global:AADTenant = GetOrSetEnvSetting "AADTenant" "GetAADTenant"
-UpdateEnvSetting "AADMetadataAddress" ("https://login.windows.net/{0}/FederationMetadata/2007-06/FederationMetadata.xml" -f $global:AADTenant)
-UpdateEnvSetting "AADAudience" ($global:site + $global:appName)
-UpdateEnvSetting "AADRealm" ($global:site + $global:appName)
 
 # Provision Machine Learning workspace
 $experimentName = "Remaining Useful Life [Predictive Exp.]"
@@ -55,7 +52,9 @@ $params = @{ `
     suiteName=$suitename; `
     storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
-    sbName=$sevicebusName}
+    sbName=$sevicebusName; `
+	aadTenant=$($global:AADTenant); `
+	aadClientId=$($global:AADClientId)}
 
 Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
@@ -72,7 +71,6 @@ if ($cloudDeploy)
     FixWebJobZip ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
     $params += @{ `
-        aadTenant=$($global:AADTenant); `
         packageUri=$webPackage; `
         webJobPackageUri=$webJobPackage; `
         simulatorDataFileName=$simulatorDataFileName; `
