@@ -100,7 +100,7 @@
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
         "sbVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
-        "sbResourceId": "[resourceId('Microsoft.Eventhub/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
+        "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
         "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
         "saVersion": "2015-10-01",
         "webVersion": "2015-04-01",
@@ -162,7 +162,7 @@
         {
             "apiVersion": "[variables('sbVersion')]",
             "name": "[parameters('sbName')]",
-            "type": "Microsoft.Eventhub/namespaces",
+            "type": "Microsoft.Servicebus/namespaces",
             "location": "[variables('location')]",
             "tags": {
                 "IotSuiteType": "[variables('suiteType')]"
@@ -178,7 +178,7 @@
                     "type": "eventHubs",
                     "location": "[variables('location')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]"
+                        "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'))]"
                     ],
                     "properties": {
                         "path": "[variables('ehDataName')]",
@@ -193,7 +193,7 @@
             "name": "[concat(parameters('suiteName'), '-Telemetry')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]",
+                "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
