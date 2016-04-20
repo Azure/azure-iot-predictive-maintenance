@@ -214,11 +214,11 @@
     <comment>Tile heading.</comment>
   </data>
   <data name="LinkLabelHelpAndSupport" xml:space="preserve">
-    <value>Help &amp; Support</value>
+    <value>Pomoc i wsparcie techniczne</value>
     <comment>Hyperlink label.</comment>
   </data>
   <data name="LinkLabelHelpGiveFeedback" xml:space="preserve">
-    <value>Give feedback</value>
+    <value>Prześlij opinię</value>
     <comment>Hyperlink label.</comment>
   </data>
 </root>

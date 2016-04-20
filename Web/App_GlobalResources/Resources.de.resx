@@ -218,7 +218,7 @@
     <comment>Hyperlink label.</comment>
   </data>
   <data name="LinkLabelHelpGiveFeedback" xml:space="preserve">
-    <value>Feedback geben</value>
+    <value>Feedback senden</value>
     <comment>Hyperlink label.</comment>
   </data>
 </root>
