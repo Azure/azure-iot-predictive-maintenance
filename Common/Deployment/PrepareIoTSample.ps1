@@ -2,15 +2,67 @@
     [Parameter(Mandatory=$True,Position=0)]
     $environmentName,
     [Parameter(Mandatory=$True,Position=1)]
-    $configuration
+    $configuration,
+    [Parameter(Mandatory=$False,Position=2)]
+    $azureEnvironmentName = "AzureCloud"
     )
+
+# Initialize Azure Cloud Environment
+switch($azureEnvironmentName)
+{
+    "AzureCloud" {
+        if ((Get-AzureEnvironment AzureCloud) -eq $null)
+        {
+            Add-AzureEnvironment –Name AzureCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.windows.net/ -GalleryUrl https://gallery.azure.com/ -ServiceManagementUrl https://management.core.windows.net/ -SqlDatabaseDnsSuffix .database.windows.net -StorageEndpointSuffix core.windows.net -ActiveDirectoryAuthority https://login.microsoftonline.com/ -GraphUrl https://graph.windows.net/ -trafficManagerDnsSuffix trafficmanager.net -AzureKeyVaultDnsSuffix vault.azure.net -AzureKeyVaultServiceEndpointResourceId https://vault.azure.net -ResourceManagerUrl https://management.azure.com/ -ManagementPortalUrl http://go.microsoft.com/fwlink/?LinkId=254433
+        }
+
+        if ((Get-AzureRMEnvironment AzureCloud) -eq $null)
+        {
+            Add-AzureRMEnvironment –Name AzureCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.windows.net/ -GalleryUrl https://gallery.azure.com/ -ServiceManagementUrl https://management.core.windows.net/ -SqlDatabaseDnsSuffix .database.windows.net -StorageEndpointSuffix core.windows.net -ActiveDirectoryAuthority https://login.microsoftonline.com/ -GraphUrl https://graph.windows.net/ -trafficManagerDnsSuffix trafficmanager.net -AzureKeyVaultDnsSuffix vault.azure.net -AzureKeyVaultServiceEndpointResourceId https://vault.azure.net -ResourceManagerUrl https://management.azure.com/ -ManagementPortalUrl http://go.microsoft.com/fwlink/?LinkId=254433
+        }
+
+        $global:iotHubSuffix = "azure-devices.net"
+        $global:docdbSuffix = "documents.azure.com"
+        $global:servicebusSuffix = "servicebus.windows.net"
+        $global:websiteSuffix = "azurewebsites.net"
+        $global:studioApiUrl = "https://studioapi.azureml.net/"
+        $global:mlManagement = "https://management.azureml.net"
+        $global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "Southeast Asia")
+    }
+    "AzureGermanyCloud" {
+        if ((Get-AzureEnvironment AzureGermanyCloud) -eq $null)
+        {
+            Add-AzureEnvironment –Name AzureGermanyCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.cloudapi.de/ -GalleryUrl https://gallery.cloudapi.de -ServiceManagementUrl https://management.core.cloudapi.de/ -SqlDatabaseDnsSuffix .database.cloudapi.de -StorageEndpointSuffix core.cloudapi.de -ActiveDirectoryAuthority https://login.microsoftonline.de/ -GraphUrl https://graph.cloudapi.de/ -trafficManagerDnsSuffix azuretrafficmanager.de -AzureKeyVaultDnsSuffix vault.microsoftazure.de -AzureKeyVaultServiceEndpointResourceId https://vault.microsoftazure.de -ResourceManagerUrl https://management.microsoftazure.de/ -ManagementPortalUrl https://portal.microsoftazure.de
+        }
+
+        if ((Get-AzureRMEnvironment AzureGermanyCloud) -eq $null)
+        {
+            Add-AzureRMEnvironment –Name AzureGermanyCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.cloudapi.de/ -GalleryUrl https://gallery.cloudapi.de -ServiceManagementUrl https://management.core.cloudapi.de/ -SqlDatabaseDnsSuffix .database.cloudapi.de -StorageEndpointSuffix core.cloudapi.de -ActiveDirectoryAuthority https://login.microsoftonline.de/ -GraphUrl https://graph.cloudapi.de/ -trafficManagerDnsSuffix azuretrafficmanager.de -AzureKeyVaultDnsSuffix vault.microsoftazure.de -AzureKeyVaultServiceEndpointResourceId https://vault.microsoftazure.de -ResourceManagerUrl https://management.microsoftazure.de/ -ManagementPortalUrl https://portal.microsoftazure.de
+        }
+
+        $global:iotHubSuffix = "azure-devices.de"
+        $global:docdbSuffix = "documents.microsoftazure.de"
+        $global:servicebusSuffix = "servicebus.cloudapi.de​"
+        $global:websiteSuffix = "azurewebsites.de"
+        $global:studioApiUrl = "https://germanycentral.studioapi.azureml.de/"
+        $global:mlManagement = "https://germanycentral.management.azureml.de"
+        $global:locations = @("Germany Central")
+    }
+    default {throw ("'{0}' is not a supported Azure Cloud environment" -f $azureEnvironmentName)}
+}
+$global:azureEnvironment = Get-AzureEnvironment $azureEnvironmentName
 
 # Initialize library
 . "$(Split-Path $MyInvocation.MyCommand.Path)\DeploymentLib.ps1"
 ClearDNSCache
 
 # Sets Azure Accounts, Region, Name validation, and AAD application
-InitializeEnvironment $environmentName
+$profileName = $environmentName
+if ($environmentName -eq "local")
+{
+    $profileName += $azureEnvironmentName
+}
+InitializeEnvironment $profileName
 
 # Set environment specific variables 
 $suitename = "LocalPM"
@@ -26,7 +78,7 @@ if ($environmentName -ne "local")
     $suiteName = $environmentName
     $suiteType = "PredictiveMaintenance"
     $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance.json"
-    $global:site = "https://{0}.azurewebsites.net/" -f $environmentName
+    $global:site = "https://{0}.{1}/" -f $environmentName, $global:websiteSuffix
     $cloudDeploy = $true
 }
 $resourceGroupName = (GetResourceGroup -Name $suiteName -Type $suiteType).ResourceGroupName
@@ -38,9 +90,8 @@ $simulatorDataFileName = "data.csv"
 # Setup AAD for webservice
 UpdateResourceGroupState $resourceGroupName ProvisionAAD
 $global:AADTenant = GetOrSetEnvSetting "AADTenant" "GetAADTenant"
-UpdateEnvSetting "AADMetadataAddress" ("https://login.windows.net/{0}/FederationMetadata/2007-06/FederationMetadata.xml" -f $global:AADTenant)
-UpdateEnvSetting "AADAudience" ($global:site + $global:appName)
-UpdateEnvSetting "AADRealm" ($global:site + $global:appName)
+$global:AADClientId = GetEnvSetting "AADClientId"
+UpdateEnvSetting "AADInstance" ($global:azureEnvironment.ActiveDirectoryAuthority + "{0}")
 
 # Provision Machine Learning workspace
 $experimentName = "Remaining Useful Life [Predictive Exp.]"
@@ -55,7 +106,8 @@ $params = @{ `
     suiteName=$suitename; `
     storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
-    sbName=$sevicebusName}
+    sbName=$sevicebusName; `
+    storageEndpointSuffix=$($global:azureEnvironment.StorageEndpointSuffix)}
 
 Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
@@ -72,12 +124,14 @@ if ($cloudDeploy)
     FixWebJobZip ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
     $params += @{ `
-        aadTenant=$($global:AADTenant); `
         packageUri=$webPackage; `
         webJobPackageUri=$webJobPackage; `
         simulatorDataFileName=$simulatorDataFileName; `
         mlApiUrl=$machineLearningService.ApiLocation; `
-        mlApiKey=$machineLearningService.PrimaryKey}
+        mlApiKey=$machineLearningService.PrimaryKey; `
+        aadTenant=$($global:AADTenant); `
+        aadInstance=$($global:azureEnvironment.ActiveDirectoryAuthority + "{0}"); `
+        aadClientId=$($global:AADClientId)}
 }
 
 # Upload simulator data
@@ -110,12 +164,12 @@ UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionStrin
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
 
-Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $environmentName)
+Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $profileName)
 
 if ($environmentName -ne "local")
 {
     $maxSleep = 40
-    $webEndpoint = "{0}.azurewebsites.net" -f $environmentName
+    $webEndpoint = "{0}.{1}" -f $environmentName, $global:websiteSuffix
     if (!(HostEntryExists $webEndpoint))
     {
         Write-Host "Waiting for website url to resolve." -NoNewline

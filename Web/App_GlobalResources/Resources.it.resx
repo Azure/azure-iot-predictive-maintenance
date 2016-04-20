@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BrandingTitle" xml:space="preserve">
-    <value>Predictive maintenance</value>
+    <value>Manutenzione predittiva</value>
     <comment>Site branding title.</comment>
   </data>
   <data name="BrandingTitlePrefix" xml:space="preserve">
@@ -126,23 +126,23 @@
     <comment>Site branding title prefix.</comment>
   </data>
   <data name="TileHeadingCycles" xml:space="preserve">
-    <value>Cycles</value>
+    <value>Cicli</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingRul" xml:space="preserve">
-    <value>Remaining Useful Life (RUL)</value>
+    <value>Vita utile rimanente</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingRulHistory" xml:space="preserve">
-    <value>Remaining Useful Life (RUL) history</value>
+    <value>Cronologia vita utile rimanente</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="ChartLabelEngine1" xml:space="preserve">
-    <value>Engine #1</value>
+    <value>Motore n. 1</value>
     <comment>Chart label.</comment>
   </data>
   <data name="ChartLabelEngine2" xml:space="preserve">
-    <value>Engine #2</value>
+    <value>Motore n. 2</value>
     <comment>Chart label.</comment>
   </data>
   <data name="LinkLabelDashboard" xml:space="preserve">
@@ -150,11 +150,11 @@
     <comment>Hyperlink label.</comment>
   </data>
   <data name="LinkLabelSignOut" xml:space="preserve">
-    <value>Sign Out</value>
+    <value>Esci</value>
     <comment>Hyperlink label.</comment>
   </data>
   <data name="PageTitle" xml:space="preserve">
-    <value>Microsoft Azure IoT - Predictive maintenance</value>
+    <value>Microsoft Azure IoT - Manutenzione predittiva</value>
     <comment>Page title.</comment>
   </data>
   <data name="PageTitleDashboard" xml:space="preserve">
@@ -162,55 +162,63 @@
     <comment>Page title.</comment>
   </data>
   <data name="TileHeadingSubheadingInCycles" xml:space="preserve">
-    <value>In cycles</value>
+    <value>Cicli in ingresso</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="ButtonLabelStartSimulation" xml:space="preserve">
-    <value>Start simulation</value>
+    <value>Avvia simulazione</value>
     <comment>Button label.</comment>
   </data>
   <data name="ButtonLabelStopSimulation" xml:space="preserve">
-    <value>Stop simulation</value>
+    <value>Arresta simulazione</value>
     <comment>Button label.</comment>
   </data>
   <data name="IndicatorLabelStarted" xml:space="preserve">
-    <value>Simulation in progress</value>
+    <value>Simulazione in corso</value>
     <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStarting" xml:space="preserve">
-    <value>Starting...</value>
+    <value>Avvio...</value>
     <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStopped" xml:space="preserve">
-    <value>Simulation stopped</value>
+    <value>Simulazione arrestata</value>
     <comment>Indicator label.</comment>
   </data>
   <data name="IndicatorLabelStopping" xml:space="preserve">
-    <value>Stopping...</value>
+    <value>Arresto...</value>
     <comment>Indicator label.</comment>
   </data>
   <data name="TileHeadingAircraftMap" xml:space="preserve">
-    <value>Aircraft map</value>
+    <value>Mappa velivolo</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor11" xml:space="preserve">
-    <value>Sensor 11</value>
+    <value>Sensore 11</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor14" xml:space="preserve">
-    <value>Sensor 14</value>
+    <value>Sensore 14</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor15" xml:space="preserve">
-    <value>Sensor 15</value>
+    <value>Sensore 15</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensor9" xml:space="preserve">
-    <value>Sensor 9</value>
+    <value>Sensore 9</value>
     <comment>Tile heading.</comment>
   </data>
   <data name="TileHeadingSensorHistory" xml:space="preserve">
-    <value>Sensor history</value>
+    <value>Cronologia sensore</value>
     <comment>Tile heading.</comment>
+  </data>
+  <data name="LinkLabelHelpAndSupport" xml:space="preserve">
+    <value>Guida e supporto</value>
+    <comment>Hyperlink label.</comment>
+  </data>
+  <data name="LinkLabelHelpGiveFeedback" xml:space="preserve">
+    <value>Invia commenti</value>
+    <comment>Hyperlink label.</comment>
   </data>
 </root>
