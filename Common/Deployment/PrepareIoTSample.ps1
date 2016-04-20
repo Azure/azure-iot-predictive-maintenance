@@ -106,7 +106,8 @@ $params = @{ `
     suiteName=$suitename; `
     storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
-    sbName=$sevicebusName}
+    sbName=$sevicebusName; `
+    storageEndpointSuffix=$($global:azureEnvironment.StorageEndpointSuffix)}
 
 Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
