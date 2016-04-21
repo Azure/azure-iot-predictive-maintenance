@@ -1209,13 +1209,18 @@ $global:azureVersion = "1.0.3"
 # Machine Learning is only available in a subset of regions, so we need to do fallback to the correct region
 # See CreateMLWorkSpace for usage
 $global:mlRegionFallback = @{
-    "East US"           = "South Central US";
-    "West US"           = "South Central US";
-    "North Europe"      = "West Europe";
-    "West Europe"       = "West Europe";
-    "East Asia"         = "Southeast Asia";
-    "Southeast Asia"    = "Southeast Asia";
-    "Germany Central"    = "Germany Central";
+    "East US"             = "South Central US";
+    "West US"             = "South Central US";
+    "North Europe"        = "West Europe";
+    "West Europe"         = "West Europe";
+    "East Asia"           = "Southeast Asia";
+    "Southeast Asia"      = "Southeast Asia";
+    "Japan East"          = "Southeast Asia";
+    "Japan West"          = "Southeast Asia";
+    "Australia East"      = "Southeast Asia";
+    "Australia Southeast" = "Southeast Asia";
+    "Germany Central"     = "Germany Central";
+    "Germany Northeast"   = "Germany Central";
 }
 
 # Check version

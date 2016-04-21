@@ -27,7 +27,7 @@ switch($azureEnvironmentName)
         $global:websiteSuffix = "azurewebsites.net"
         $global:studioApiUrl = "https://studioapi.azureml.net/"
         $global:mlManagement = "https://management.azureml.net"
-        $global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "Southeast Asia")
+        $global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "Southeast Asia", "Japan East", "Japan West", "Australia East", "Australia Southeast")
     }
     "AzureGermanyCloud" {
         if ((Get-AzureEnvironment AzureGermanyCloud) -eq $null)
@@ -46,7 +46,7 @@ switch($azureEnvironmentName)
         $global:websiteSuffix = "azurewebsites.de"
         $global:studioApiUrl = "https://germanycentral.studioapi.azureml.de/"
         $global:mlManagement = "https://germanycentral.management.azureml.de"
-        $global:locations = @("Germany Central")
+        $global:locations = @("Germany Central", "Germany Northeast")
     }
     default {throw ("'{0}' is not a supported Azure Cloud environment" -f $azureEnvironmentName)}
 }
