@@ -57,12 +57,7 @@ $global:azureEnvironment = Get-AzureEnvironment $azureEnvironmentName
 ClearDNSCache
 
 # Sets Azure Accounts, Region, Name validation, and AAD application
-$profileName = $environmentName
-if ($environmentName -eq "local")
-{
-    $profileName += $azureEnvironmentName
-}
-InitializeEnvironment $profileName
+InitializeEnvironment $environmentName
 
 # Set environment specific variables 
 $suitename = "LocalPM"
@@ -164,7 +159,7 @@ UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionStrin
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
 
-Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $profileName)
+Write-Host ("Provisioning and deployment completed successfully, see {0}.config.user for deployment values" -f $environmentName)
 
 if ($environmentName -ne "local")
 {

@@ -795,8 +795,9 @@ function GetAzureAccountInfo()
         Write-Host "Signed into Azure already, select account:"
         $global:index = 0
         $selectedIndex = -1
-        Write-Host ($accounts | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}}, Id, Subscriptions -au | Out-String)
-        Write-Host ("{0} - Use another account" -f $global:index)    
+        Write-Host (($accounts | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}}, Id, Subscriptions -au | Out-String).Trim())
+        Write-Host (("{0}" -f $global:index).PadLeft(6) + " Use another account")
+        Write-Host 
         while ($true)
         {
             try
@@ -1069,6 +1070,32 @@ function InitializeEnvironment()
 
     # Validate environment variables
     $global:environmentSettingsFile = "{0}\..\..\{1}.config.user" -f $global:azurePath, $environmentName
+
+    if ($environmentName -eq "local" -and (Test-Path $global:environmentSettingsFile))
+    {
+        $title = "Existing local config"
+        $message = "Local config already exists in {0}.  How would you like to proceed?" -f $global:azureEnvironment.Name
+        $use = New-Object System.Management.Automation.Host.ChoiceDescription "&Use existing", `
+            "Use existing config in existing cloud"
+        $new = New-Object System.Management.Automation.Host.ChoiceDescription "&New", `
+            "Delete existing config and deploy to new cloud environment"
+        $save = New-Object System.Management.Automation.Host.ChoiceDescription "&Save and Create New", `
+            "Rename existing config and deploy to new cloud environment"
+        $options = [System.Management.Automation.Host.ChoiceDescription[]]($use, $new, $save)
+        $result = $Host.UI.PromptForChoice($title, $message, $options, 0)
+        switch ($result)
+        {
+            0 {}
+            1 {Remove-Item $global:environmentSettingsFile}
+            2 {
+                $newFileName = "{0}\..\..\{1}-{2}.config.user" -f $global:azurePath, $environmentName, (get-date -Format "yyyy-MM-dd")
+                Rename-Item $global:environmentSettingsFile $newFileName
+                Write-Host ("Existing config saved as {0}" -f $newFileName)
+            }
+        }
+
+    }
+
     if (!(Test-Path $global:environmentSettingsFile))
     {
         copy ("{0}\ConfigurationTemplate.config" -f $global:azurePath) $global:environmentSettingsFile
