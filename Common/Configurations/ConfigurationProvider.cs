@@ -87,9 +87,10 @@
             int buildLocation = executingPath.IndexOf("Build_Output", StringComparison.OrdinalIgnoreCase);
             if (buildLocation >= 0)
             {
-                _environment = GetEnvironment(executingPath.Substring(0, buildLocation));
-                if (_environment != null)
+                string fileName = executingPath.Substring(0, buildLocation) + "local.config.user";
+                if (File.Exists(fileName))
                 {
+                    this._environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
@@ -103,29 +104,15 @@
             }
             if (location >= 0)
             {
-                _environment = GetEnvironment(executingPath.Substring(0, location));
-                if (_environment != null)
+                string fileName = executingPath.Substring(0, location) + "..\\local.config.user";
+                if (File.Exists(fileName))
                 {
+                    this._environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
 
             throw new ArgumentException("Unable to locate local*.config.user file.  Make sure you have run 'build.cmd local'.");
-        }
-
-        EnvironmentDescription GetEnvironment(string path)
-        {
-            EnvironmentDescription environment = null;
-            string[] files = Directory.GetFiles(path, "local*.config.user", SearchOption.TopDirectoryOnly);
-            if (files.Length > 0)
-            {
-                if (files.Length > 1)
-                {
-                    throw new Exception("More than one local config found.  Can only debug if a single match for local*.config.user is found.  Please delete or rename other local*.config.user files.");
-                }
-                environment = new EnvironmentDescription(files[0]);
-            }
-            return environment;
         }
 
         public void Dispose()
