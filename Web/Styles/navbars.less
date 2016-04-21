@@ -1,4 +1,5 @@
-﻿@import "variables.less";
+﻿//@import "bootstrap/bootstrap/variables.less";
+@import "variables.less";
 
 .header_page {
     background-color: #212528;
@@ -43,14 +44,6 @@ img#infoLinkImg {
     opacity: 1.0;
 }
 
-.account {
-    height: 50px;
-    overflow: auto;
-    font-size: .85em;
-    position: absolute;
-    right: 20px;
-}
-
 .account_login {
     float: right;
     padding-right: 80px;
@@ -74,16 +67,14 @@ img#infoLinkImg {
     color: #0077b3;
 }
 
-
-
 .navbar {
     border-radius: 0px;
     margin-bottom: 0px;
     border-bottom: none;
-    font-weight: lighter;
+
 
     .navbar-brand {
-        width: 380px;
+        white-space:nowrap;
     }
 
     &.navbar-inverse .navbar-brand {
@@ -99,15 +90,16 @@ img#infoLinkImg {
 
     a {
         display: block;
-        height: 77px;
         font-size: .6em;
         color: @text-secondary-color;
         text-align: center;
-        line-height: 110px;
+        line-height: 1.5em;
         text-decoration: none;
         text-transform: uppercase;
         background-repeat: no-repeat;
-        background-position: center 17px;
+        background-position: center 10px;
+        padding-top: 45px;
+        padding-bottom: 10px;
 
         &:hover {
             color: @anchor-nav-hover-color;
@@ -188,4 +180,75 @@ img#infoLinkImg {
     top: 18px;
     left: 7px;
     opacity: 1.0;
+}
+
+.dropdown {
+    border-right: 1px solid #666000;
+
+    .dropdown-toggle {
+        overflow: hidden;
+    }
+}
+
+.account {
+    display: block;
+    line-height: 2.5em;
+    text-align: right;
+    position: relative;
+    float: right;
+}
+
+.account-name {
+    .text-overflow();
+    display: block;
+}
+
+.account-subtitle {
+    .text-overflow();
+    text-transform: uppercase;
+    display: block;
+    font-size: 0.9em;
+}
+
+.account-avatar {
+    border-radius: 50%;
+    background-image: url(/styles/img/icon-account.png);
+    background-position: right center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    width: 35px;
+    height: 35px;
+    display: block;
+    float: right;
+    margin-left: 10px;
+}
+
+.language-icon {
+    background-image: url(/styles/img/icon-globe.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 35px;
+    height: 35px;
+    display: block;
+    float: right;
+}
+
+.navbar-header {
+    position: initial;
+}
+
+.navbar-brand {
+    font-size: 20px;
+
+    @media (min-width: @screen-sm) {
+        display: block;
+        margin-top: auto;
+        margin-bottom: auto;
+        white-space: nowrap;
+    }
+}
+
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #fff;
 }
