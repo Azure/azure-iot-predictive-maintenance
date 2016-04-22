@@ -74,7 +74,7 @@
             }
             if (location >= 0)
             {
-                string fileName = executingPath.Substring(0, location) + "..\\local.config.user";
+                string fileName = executingPath.Substring(0, location) + "local.config.user";
                 if (File.Exists(fileName))
                 {
                     this._environment = new EnvironmentDescription(fileName);
