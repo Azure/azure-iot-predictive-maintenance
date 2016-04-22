@@ -5,7 +5,6 @@
     using System.Configuration;
     using System.IO;
     using System.Reflection;
-    using WindowsAzure.ServiceRuntime;
 
     public class ConfigurationProvider : IConfigurationProvider, IDisposable
     {
@@ -21,60 +20,31 @@
 
         public string GetConfigurationSettingValueOrDefault(string configurationSettingName, string defaultValue)
         {
-            try
+            if (!_configuration.ContainsKey(configurationSettingName))
             {
-                if (!_configuration.ContainsKey(configurationSettingName))
-                {
-                    string configValue = string.Empty;
-                    bool isEmulated = true;
-                    bool isAvailable = false;
-                    try
-                    {
-                        isAvailable = RoleEnvironment.IsAvailable;
-                    }
-                    catch (TypeInitializationException)
-                    {
-                    }
-                    if (isAvailable)
-                    {
-                        configValue = RoleEnvironment.GetConfigurationSettingValue(configurationSettingName);
-                        isEmulated = RoleEnvironment.IsEmulated;
-                    }
-                    else
-                    {
-                        configValue = ConfigurationManager.AppSettings[configurationSettingName];
-                        isEmulated = Environment.CommandLine.Contains("iisexpress.exe") ||
-                            Environment.CommandLine.Contains("WebJob.vshost.exe");
-                    }
-                    if (isEmulated && (configValue != null && configValue.StartsWith(ConfigToken, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        if (_environment == null)
-                        {
-                            LoadEnvironmentConfig();
-                        }
+                string configValue = CloudConfigurationManager.GetSetting(configurationSettingName);
+                bool isEmulated = Environment.CommandLine.Contains("iisexpress.exe") ||
+                        Environment.CommandLine.Contains("WebJob.vshost.exe");
 
-                        configValue =
-                            _environment.GetSetting(configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
-                    }
-                    try
-                    {
-                        _configuration.Add(configurationSettingName, configValue);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // at this point, this key has already been added on a different
-                        // thread, so we're fine to continue
-                    }
-                }
-            }
-            catch (RoleEnvironmentException)
-            {
-                if (string.IsNullOrEmpty(defaultValue))
+                if (isEmulated && (configValue != null && configValue.StartsWith(ConfigToken, StringComparison.OrdinalIgnoreCase)))
                 {
-                    throw;
-                }
+                    if (_environment == null)
+                    {
+                        LoadEnvironmentConfig();
+                    }
 
-                _configuration.Add(configurationSettingName, defaultValue);
+                    configValue = _environment.GetSetting(
+                        configValue.Substring(configValue.IndexOf(ConfigToken, StringComparison.Ordinal) + ConfigToken.Length));
+                }
+                try
+                {
+                    _configuration.Add(configurationSettingName, configValue);
+                }
+                catch (ArgumentException)
+                {
+                    // at this point, this key has already been added on a different
+                    // thread, so we're fine to continue
+                }
             }
             return _configuration[configurationSettingName];
         }
@@ -90,7 +60,7 @@
                 string fileName = executingPath.Substring(0, buildLocation) + "local.config.user";
                 if (File.Exists(fileName))
                 {
-                    _environment = new EnvironmentDescription(fileName);
+                    this._environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
@@ -107,12 +77,12 @@
                 string fileName = executingPath.Substring(0, location) + "local.config.user";
                 if (File.Exists(fileName))
                 {
-                    _environment = new EnvironmentDescription(fileName);
+                    this._environment = new EnvironmentDescription(fileName);
                     return;
                 }
             }
 
-            throw new ArgumentException("Unable to locate local.config.user file.  Make sure you have run 'build.cmd local'.");
+            throw new ArgumentException("Unable to locate local*.config.user file.  Make sure you have run 'build.cmd local'.");
         }
 
         public void Dispose()

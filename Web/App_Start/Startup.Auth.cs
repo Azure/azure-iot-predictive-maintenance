@@ -1,71 +1,45 @@
 ﻿namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web
 {
-    using System;
-    using System.IdentityModel.Tokens;
     using Common.Configurations;
     using global::Owin;
     using Microsoft.Owin.Security;
-    using Microsoft.Owin.Security.ActiveDirectory;
     using Microsoft.Owin.Security.Cookies;
-    using Microsoft.Owin.Security.WsFederation;
+    using System.Configuration;
+    using System.Globalization;
+    using Microsoft.Owin.Security.OpenIdConnect;
+    using System.Threading.Tasks;
 
     public partial class Startup
     {
         public void ConfigureAuth(IAppBuilder app, IConfigurationProvider configProvider)
         {
+            string aadClientId = configProvider.GetConfigurationSettingValue("ida.AADClientId");
+            string aadInstance = configProvider.GetConfigurationSettingValue("ida.AADInstance");
+            string aadTenant = configProvider.GetConfigurationSettingValue("ida.AADTenant");
+            string authority = string.Format(CultureInfo.InvariantCulture, aadInstance, aadTenant);
+
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
-            // Primary authentication method for web site to Azure AD via the WsFederation below
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
 
-            string federationMetadataAddress = configProvider.GetConfigurationSettingValue("ida.FederationMetadataAddress");
-            string federationRealm = configProvider.GetConfigurationSettingValue("ida.FederationRealm");
-
-            if (string.IsNullOrEmpty(federationMetadataAddress) || string.IsNullOrEmpty(federationRealm))
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
-                throw new ApplicationException("Config issue: Unable to load required federation values from web.config or other configuration source.");
-            }
-
-            // check for default values that will cause app to fail to startup with an unhelpful 404 exception
-            if (federationMetadataAddress.StartsWith("-- ", StringComparison.Ordinal) ||
-                federationRealm.StartsWith("-- ", StringComparison.Ordinal))
-            {
-                throw new ApplicationException("Config issue: Default federation values from web.config need to be overridden or replaced.");
-            }
-
-            app.UseWsFederationAuthentication(
-                new WsFederationAuthenticationOptions
+                ClientId = aadClientId,
+                Authority = authority,
+                Notifications = new OpenIdConnectAuthenticationNotifications
                 {
-                    MetadataAddress = federationMetadataAddress,
-                    Wtrealm = federationRealm
-                });
-
-            string aadTenant = configProvider.GetConfigurationSettingValue("ida.AADTenant");
-            string aadAudience = configProvider.GetConfigurationSettingValue("ida.AADAudience");
-
-            if (string.IsNullOrEmpty(aadTenant) || string.IsNullOrEmpty(aadAudience))
-            {
-                throw new ApplicationException("Config issue: Unable to load required AAD values from web.config or other configuration source.");
-            }
-
-            // check for default values that will cause failure
-            if (aadTenant.StartsWith("-- ", StringComparison.Ordinal) ||
-                aadAudience.StartsWith("-- ", StringComparison.Ordinal))
-            {
-                throw new ApplicationException("Config issue: Default AAD values from web.config need to be overridden or replaced.");
-            }
-
-            // Fallback authentication method to allow "Authorization: Bearer <token>" in the header for WebAPI calls
-            app.UseWindowsAzureActiveDirectoryBearerAuthentication(
-                new WindowsAzureActiveDirectoryBearerAuthenticationOptions
-                {
-                    Tenant = aadTenant,
-                    TokenValidationParameters = new TokenValidationParameters
+                    AuthenticationFailed = context =>
                     {
-                        ValidAudience = aadAudience,
-                        RoleClaimType = "http://schemas.microsoft.com/identity/claims/scope" // Used to unwrap token roles and provide them to [Authorize(Roles="")] attributes
+                        string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
+
+                        context.ProtocolMessage.RedirectUri = appBaseUrl + "/";
+                        context.HandleResponse();
+                        context.Response.Redirect(context.ProtocolMessage.RedirectUri);
+
+                        return Task.FromResult(0);
                     }
-                });
+                }
+            });
         }
     }
 }

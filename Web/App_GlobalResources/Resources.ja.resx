@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BrandingTitle" xml:space="preserve">
+    <value>予測メンテナンス</value>
+    <comment>Site branding title.</comment>
+  </data>
+  <data name="BrandingTitlePrefix" xml:space="preserve">
+    <value>Microsoft Azure IoT</value>
+    <comment>Site branding title prefix.</comment>
+  </data>
+  <data name="TileHeadingCycles" xml:space="preserve">
+    <value>サイクル</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingRul" xml:space="preserve">
+    <value>残存耐用年数 (RUL)</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingRulHistory" xml:space="preserve">
+    <value>残存耐用年数 (RUL) 履歴</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="ChartLabelEngine1" xml:space="preserve">
+    <value>エンジン #1</value>
+    <comment>Chart label.</comment>
+  </data>
+  <data name="ChartLabelEngine2" xml:space="preserve">
+    <value>エンジン #2</value>
+    <comment>Chart label.</comment>
+  </data>
+  <data name="LinkLabelDashboard" xml:space="preserve">
+    <value>ダッシュボード</value>
+    <comment>Hyperlink label.</comment>
+  </data>
+  <data name="LinkLabelSignOut" xml:space="preserve">
+    <value>サインアウト</value>
+    <comment>Hyperlink label.</comment>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Microsoft Azure IoT - 予測メンテナンス</value>
+    <comment>Page title.</comment>
+  </data>
+  <data name="PageTitleDashboard" xml:space="preserve">
+    <value>ダッシュボード</value>
+    <comment>Page title.</comment>
+  </data>
+  <data name="TileHeadingSubheadingInCycles" xml:space="preserve">
+    <value>サイクル単位</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="ButtonLabelStartSimulation" xml:space="preserve">
+    <value>シミュレーションの開始</value>
+    <comment>Button label.</comment>
+  </data>
+  <data name="ButtonLabelStopSimulation" xml:space="preserve">
+    <value>シミュレーションの停止</value>
+    <comment>Button label.</comment>
+  </data>
+  <data name="IndicatorLabelStarted" xml:space="preserve">
+    <value>シミュレーションが進行中</value>
+    <comment>Indicator label.</comment>
+  </data>
+  <data name="IndicatorLabelStarting" xml:space="preserve">
+    <value>開始しています...</value>
+    <comment>Indicator label.</comment>
+  </data>
+  <data name="IndicatorLabelStopped" xml:space="preserve">
+    <value>シミュレーションを停止しました</value>
+    <comment>Indicator label.</comment>
+  </data>
+  <data name="IndicatorLabelStopping" xml:space="preserve">
+    <value>停止しています...</value>
+    <comment>Indicator label.</comment>
+  </data>
+  <data name="TileHeadingAircraftMap" xml:space="preserve">
+    <value>航空地図</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingSensor11" xml:space="preserve">
+    <value>センサー 11</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingSensor14" xml:space="preserve">
+    <value>センサー 14</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingSensor15" xml:space="preserve">
+    <value>センサー 15</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingSensor9" xml:space="preserve">
+    <value>センサー 9</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="TileHeadingSensorHistory" xml:space="preserve">
+    <value>センサー履歴</value>
+    <comment>Tile heading.</comment>
+  </data>
+  <data name="LinkLabelHelpAndSupport" xml:space="preserve">
+    <value>ヘルプとサポート</value>
+    <comment>Hyperlink label.</comment>
+  </data>
+  <data name="LinkLabelHelpGiveFeedback" xml:space="preserve">
+    <value>フィードバックの送信</value>
+    <comment>Hyperlink label.</comment>
+  </data>
+</root>
