@@ -1234,7 +1234,7 @@ if ($comparison -eq 1)
 }
 elseif ($comparison -eq -1)
 {
-    if ($module.Version.Major -ne $expected.Major -or $module.Version.Minor -ne $expected.Minor)
+    if ($module.Version.Major -ne $expected.Major)
     {
         Write-Warning "This script Azure Cmdlets was tested with $($global:azureVersion)"
         Write-Warning "Found $($module.Version.Major).$($module.Version.Minor).$($module.Version.Build) installed; continuing, but errors might occur"
