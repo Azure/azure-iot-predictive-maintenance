@@ -500,7 +500,7 @@ function CopyMLExperiment()
         [Parameter(Mandatory=$true, Position=2)]
         [string]$packageUri
     )
-    $maxReties = 20
+    $maxReties = 50
     $copyResult = CopyMLExperimentToWorkspace $workspaceId $key $packageUri
     while ($copyResult.ExperimentId -eq $null)
     {
