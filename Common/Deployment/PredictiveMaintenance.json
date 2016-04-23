@@ -53,11 +53,11 @@
         },
         "packageUri": {
             "type": "string",
-            "defaultValue": "http://aka.ms/azureiot/predictivepaintenance/web"
+            "defaultValue": "http://aka.ms/azureiot/predictivemaintenance/web"
         },
         "webJobPackageUri": {
             "type": "string",
-            "defaultValue": "http://aka.ms/azureiot/predictivepaintenance/webjob"
+            "defaultValue": "http://aka.ms/azureiot/predictivemaintenance/webjob"
         },
         "asaStartBehavior": {
             "type": "string",
