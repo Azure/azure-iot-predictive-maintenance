@@ -3,10 +3,10 @@
 ## Local deployment IoT services
 
 The build.cmd script in the repository builds the solution code and also deploys the required IoT services to your Azure subscription. Local deployment creates the following:
-* IotHub - S2
-* Storage - Standard GRS
-* Servicebus namespace/ 1 Eventhub - Basic throughput unit
-* 1 Stream Analytics jobs
+* 1 x IotHub - S2
+* 1 x Storage - Standard GRS
+* 1 x Servicebus namespace/ 1 Eventhub - Basic throughput unit
+* 1 x Stream Analytics job
 
 ## Steps for local deployment
 1. Use your Git client to pull the latest version of the solution from this repository. 
