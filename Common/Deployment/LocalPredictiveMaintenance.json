@@ -8,6 +8,12 @@
                 "description": "The name of the suite"
             }
         },
+        "storageEndpointSuffix": {
+            "type": "string",
+            "metadata": {
+                "description": "Suffix added to Azure Storage hostname (examples: core.windows.net, core.cloudapi.de)"
+            }
+        },
         "storageName": {
             "type": "string",
             "metadata": {
@@ -48,7 +54,7 @@
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
         "sbVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
-        "sbResourceId": "[resourceId('Microsoft.Eventhub/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
+        "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
         "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
         "saVersion": "2015-10-01",
         "iotHubVersion": "2015-08-15-preview",
@@ -98,7 +104,7 @@
         {
             "apiVersion": "[variables('sbVersion')]",
             "name": "[parameters('sbName')]",
-            "type": "Microsoft.Eventhub/namespaces",
+            "type": "Microsoft.Servicebus/namespaces",
             "location": "[variables('location')]",
             "tags": {
                 "IotSuiteType": "[variables('suiteType')]"
@@ -114,7 +120,7 @@
                     "type": "eventHubs",
                     "location": "[variables('location')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]"
+                        "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'))]"
                     ],
                     "properties": {
                         "path": "[variables('ehDataName')]",
@@ -129,7 +135,7 @@
             "name": "[concat(parameters('suiteName'), '-Telemetry')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Eventhub/namespaces/', parameters('sbName'))]",
+                "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'), '/eventHubs/', variables('ehDataName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
@@ -228,7 +234,7 @@
         },
         "storageConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
         },
         "ehDataName": {
             "type": "string",

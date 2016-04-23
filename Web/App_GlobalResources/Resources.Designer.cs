@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
+namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_GlobalResources {
     using System;
     
     
@@ -39,7 +39,8 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web.App_GlobalResource" +
+                            "s.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -156,6 +157,24 @@ namespace Microsoft.Azure.Devices.Applications.PredictiveMaintenance.Web {
         public static string LinkLabelDashboard {
             get {
                 return ResourceManager.GetString("LinkLabelDashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help &amp; Support.
+        /// </summary>
+        public static string LinkLabelHelpAndSupport {
+            get {
+                return ResourceManager.GetString("LinkLabelHelpAndSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Give feedback.
+        /// </summary>
+        public static string LinkLabelHelpGiveFeedback {
+            get {
+                return ResourceManager.GetString("LinkLabelHelpGiveFeedback", resourceCulture);
             }
         }
         
