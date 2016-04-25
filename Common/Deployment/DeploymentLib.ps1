@@ -463,7 +463,7 @@ function CreateMLWorkSpace()
     $liveId = $subscription.DefaultAccount
     $endpointId = [System.Guid]::NewGuid()
     $storageAccountEndpoint = ("https://{0}.blob.{1}/" -f $storageAccount.StorageAccountName, $global:azureEnvironment.StorageEndpointSuffix)
-    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""UserStorageBlobEndpoint"":""{4}"",""OwnerId"":""{5}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $storageAccountEndpoint, $liveId 
+    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""Region"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""UserStorageBlobEndpoint"":""{4}"",""OwnerId"":""{5}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $storageAccountEndpoint, $liveId 
     return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $subscription.SubscriptionId, $name, $endpointId )  $global:azureEnvironment.ServiceManagementUrl $body
 }
 
