@@ -19,6 +19,7 @@ The predictive maintenance pre-configured solution illustrates how you can predi
 Other useful [IoT Suite documentation](https://azure.microsoft.com/documentation/suites/iot-suite/):
   * [Frequently asked questions for IoT Suite](https://azure.microsoft.com/documentation/articles/iot-suite-faq/)
   * [Permissions on the azureiotsuite.com site](https://azure.microsoft.com/documentation/articles/iot-suite-permissions/)
+  * [Configuring Azure IoT Suite preconfigured solutions for demo purposes](https://github.com/Azure/azure-iot-remote-monitoring/blob/master/Docs/configure-preconfigured-demo.md) walks you through changing the footprint of the underlying Azure services for your solution.
   
 ### EventProcessor folder:
   * Azure Worker Role that hosts an Event Hub **EventProcessorHost** instance to handle the event data from the devices forwarding event data to other back-end services or to the remote monitoring site
