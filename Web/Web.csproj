@@ -304,12 +304,11 @@
     <Compile Include="ViewModels\LanguageModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Scripts\jquery-2.2.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\vendor\bootstrap.min.js" />
     <Content Include="Scripts\vendor\moment-with-locales.js" />
-    <Content Include="Styles\app.css" />
     <Content Include="Styles\app.less" />
     <Content Include="Styles\buttons.less" />
     <Content Include="Styles\animations.less" />
@@ -462,10 +461,10 @@
     <TypeScriptCompile Include="Scripts\charts\lineChart.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\Resources.cs.resx">
+    <EmbeddedResource Include="App_GlobalResources\Resources.cs.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Resources.cs.designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Resources.de.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Resources.de.designer.cs</LastGenOutput>
