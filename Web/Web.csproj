@@ -309,6 +309,7 @@
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <Content Include="Scripts\vendor\bootstrap.min.js" />
     <Content Include="Scripts\vendor\moment-with-locales.js" />
+    <Content Include="Styles\app.css" />
     <Content Include="Styles\app.less" />
     <Content Include="Styles\buttons.less" />
     <Content Include="Styles\animations.less" />
