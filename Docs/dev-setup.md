@@ -2,7 +2,7 @@
 
 The prerequisites for setting up the predictive maintenance preconfigured solution are: 
 - Visual Studio 2013 Update 4 or Visual Studio 2015
-- Azure Powershell 1.x (see [How to install and configure Azure PowerShell][powershell]) _Note: a reboot is required if you're installing updating PowerShell_
+- Azure Powershell 1.4.x (see [How to install and configure Azure PowerShell][powershell]) _Note: a reboot is required if you're installing updating PowerShell_
 - TypeScript for Visual Studio 2013 (You can download this from the [Microsoft Download Center][typescriptdownload])
 
 **Note:** You should verify that the NuGet Package Manager is configured correctly in Visual Studio before you continue:
