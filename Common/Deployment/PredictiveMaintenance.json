@@ -114,7 +114,7 @@
         "webPlanName": "[concat(parameters('suiteName'), '-plan')]",
         "webSiteName": "[parameters('suiteName')]",
         "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
-        "iotHubVersion": "2015-08-15-preview",
+        "iotHubVersion": "2016-02-03",
         "iotHubSku": "S2",
         "iotHubTier": "Standard",
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
