@@ -393,7 +393,7 @@ function UploadFile()
     $containerName = $containerName.ToLowerInvariant()
     $file = Get-Item -Path $filePath
     $fileName = $file.Name.ToLowerInvariant()
-    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName).Key1
+    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName).Value[0]
     $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
     if (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
     {
@@ -1204,7 +1204,7 @@ $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
 $global:version = Get-Content ("{0}\..\..\VERSION.txt" -f $global:azurePath)
-$global:azureVersion = "1.0.3"
+$global:azureVersion = "1.4.0"
 
 # Machine Learning is only available in a subset of regions, so we need to do fallback to the correct region
 # See CreateMLWorkSpace for usage
@@ -1234,7 +1234,7 @@ if ($comparison -eq 1)
 }
 elseif ($comparison -eq -1)
 {
-    if ($module.Version.Major -ne $expected.Major)
+    if ($module.Version.Major -ne $expected.Major -and $module.Version.Minor -ne $expected.Minor)
     {
         Write-Warning "This script Azure Cmdlets was tested with $($global:azureVersion)"
         Write-Warning "Found $($module.Version.Major).$($module.Version.Minor).$($module.Version.Build) installed; continuing, but errors might occur"

@@ -50,14 +50,14 @@
     "variables": {
         "storageAccountType": "Standard_GRS",
         "location": "[resourceGroup().location]",
-        "storageVersion": "2015-05-01-preview",
+        "storageVersion": "2016-01-01",
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
         "sbVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
         "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
         "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
         "saVersion": "2015-10-01",
-        "iotHubVersion": "2015-08-15-preview",
+        "iotHubVersion": "2016-02-03",
         "iotHubSku": "S2",
         "iotHubTier": "Standard",
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
@@ -72,8 +72,12 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('storageName')]",
             "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
+            "kind": "Storage",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
             }
         },
         {
@@ -178,7 +182,7 @@
                         "Properties": {
                             "DataSource": {
                                 "Properties": {
-                                    "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
+                                    "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).keys[0].value]",
                                     "AccountName": "[parameters('storageName')]",
                                     "BatchSize": 1,
                                     "ColumnsToRemove": [ "DeviceId", "Counter" ],
@@ -234,7 +238,7 @@
         },
         "storageConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
         },
         "ehDataName": {
             "type": "string",

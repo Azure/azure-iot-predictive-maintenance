@@ -95,7 +95,7 @@
     "variables": {
         "storageAccountType": "Standard_GRS",
         "location": "[resourceGroup().location]",
-        "storageVersion": "2015-05-01-preview",
+        "storageVersion": "2016-01-01",
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
         "sbVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
@@ -114,7 +114,7 @@
         "webPlanName": "[concat(parameters('suiteName'), '-plan')]",
         "webSiteName": "[parameters('suiteName')]",
         "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
-        "iotHubVersion": "2015-08-15-preview",
+        "iotHubVersion": "2016-02-03",
         "iotHubSku": "S2",
         "iotHubTier": "Standard",
         "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
@@ -129,8 +129,12 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('storageName')]",
             "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
+            "tags": {
+                "IotSuiteType": "[variables('suiteType')]"
+            },
+            "kind": "Storage",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
             }
         },
         {
@@ -235,7 +239,7 @@
                         "Properties": {
                             "DataSource": {
                                 "Properties": {
-                                    "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).key1]",
+                                    "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).keys[0].value]",
                                     "AccountName": "[parameters('storageName')]",
                                     "BatchSize": 1,
                                     "ColumnsToRemove": [ "DeviceId", "Counter" ],
@@ -352,7 +356,7 @@
                         },
                         {
                             "name": "device.StorageConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
                         },
                         {
                             "name": "device.TableName",
@@ -414,7 +418,7 @@
                         },
                         {
                             "name": "device.StorageConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
                         },
                         {
                             "name": "device.TableName",
@@ -430,7 +434,7 @@
                         },
                         {
                             "name": "eventHub.StorageConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
                         },
                         {
                             "name": "ObjectTypePrefix",
@@ -479,7 +483,7 @@
         },
         "storageConnectionString": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).key1)]"
+            "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
         },
         "ehDataName": {
             "type": "string",
