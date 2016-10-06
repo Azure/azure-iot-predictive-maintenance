@@ -26,10 +26,10 @@
                 "description": "The name of the iotHub"
             }
         },
-        "sbName": {
+        "ehName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the serviceBus"
+                "description": "The name of the eventHub"
             }
         },
         "asaStartBehavior": {
@@ -52,9 +52,9 @@
         "location": "[resourceGroup().location]",
         "storageVersion": "2016-01-01",
         "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
-        "sbVersion": "2014-09-01",
+        "ehVersion": "2014-09-01",
         "sbKeyName": "RootManageSharedAccessKey",
-        "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('sbName'), variables('sbKeyName'))]",
+        "ehResourceId": "[resourceId('Microsoft.Eventhub/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
         "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
         "saVersion": "2015-10-01",
         "iotHubVersion": "2016-02-03",
@@ -106,9 +106,9 @@
             ]
         },
         {
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[parameters('sbName')]",
-            "type": "Microsoft.Servicebus/namespaces",
+            "apiVersion": "[variables('ehVersion')]",
+            "name": "[parameters('ehName')]",
+            "type": "Microsoft.Eventhub/namespaces",
             "location": "[variables('location')]",
             "tags": {
                 "IotSuiteType": "[variables('suiteType')]"
@@ -119,12 +119,12 @@
             },
             "resources": [
                 {
-                    "apiVersion": "[variables('sbVersion')]",
+                    "apiVersion": "[variables('ehVersion')]",
                     "name": "[variables('ehDataName')]",
                     "type": "eventHubs",
                     "location": "[variables('location')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'))]"
+                        "[concat('Microsoft.Eventhub/namespaces/', parameters('ehName'))]"
                     ],
                     "properties": {
                         "path": "[variables('ehDataName')]",
@@ -139,7 +139,7 @@
             "name": "[concat(parameters('suiteName'), '-Telemetry')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Servicebus/namespaces/', parameters('sbName'), '/eventHubs/', variables('ehDataName'))]",
+                "[concat('Microsoft.Eventhub/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
                 "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
             ],
@@ -200,8 +200,8 @@
                             "DataSource": {
                                 "Properties": {
                                     "EventHubName": "[variables('ehDataName')]",
-                                    "ServiceBusNamespace": "[parameters('sbName')]",
-                                    "SharedAccessPolicyKey": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryKey]",
+                                    "ServiceBusNamespace": "[parameters('ehName')]",
+                                    "SharedAccessPolicyKey": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryKey]",
                                     "SharedAccessPolicyName": "[variables('sbKeyName')]",
                                     "PartitionKey": "DeviceId"
                                 },
@@ -246,7 +246,7 @@
         },
         "ehConnectionString": {
             "type": "string",
-            "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+            "value": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]"
         }
     }
 }
