@@ -118,7 +118,7 @@ function SendRequest()
         [Parameter(Mandatory=$false, Position=3)]
         $payload = $null,
         [Parameter(Mandatory=$false)]
-        [string]$xmsversion = "2014-10-01"
+        [string]$xmsversion = $global:azureManagementVersion
     )
     $subscription = Get-AzureSubscription -SubscriptionId $global:SubscriptionId
     $authResult = GetAuthenticationResult $subscription.TenantId $global:azureEnvironment.ActiveDirectoryAuthority $application $subscription.DefaultAccount
@@ -193,10 +193,10 @@ function GetResourceGroup()
         [Parameter(Mandatory=$true,Position=0)] [string] $name,
         [Parameter(Mandatory=$true,Position=1)] [string] $type
     )
-    $resourceGroup = Find-AzureRmResourceGroup -Tag @{Name="IotSuiteType";Value=$type} | ?{$_.ResourceGroupName -eq $name}
+    $resourceGroup = Find-AzureRmResourceGroup -Tag @{"IotSuiteType" = $type} | ?{$_.ResourceGroupName -eq $name}
     if ($resourceGroup -eq $null)
     {
-        $resourceGroup = New-AzureRmResourceGroup -Name $name -Location $global:AllocationRegion -Tag @{Name="IoTSuiteType";Value=$type}, @{Name="IoTSuiteVersion";Value=$global:version}, @{Name="IoTSuiteState";Value="Created"}
+        $resourceGroup = New-AzureRmResourceGroup -Name $name -Location $global:AllocationRegion -Tag @{"IoTSuiteType" = $type ; "IoTSuiteVersion" = $global:version ; "IoTSuiteState" = "Created"}
     }
     return $resourceGroup
 }
@@ -213,22 +213,19 @@ function UpdateResourceGroupState()
     {
         $tags = $resourceGroup.Tags
         $updated = $false
-        foreach ($tag in $tags)
+        if ($tags.ContainsKey("IoTSuiteState"))
         {
-            if ($tag.Name -eq "IoTSuiteState")
-            {
-                $tag.Value = $state
-                $updated = $true
-            }
-            if ($tag.Name -eq "IoTSuiteVersion" -and $tag.Value -ne $global:version)
-            {
-                $tag.Value = $global:version
-                $updated = $true
-            }
+            $tags.IoTSuiteState = $state
+            $updated = $true
+        }
+        if ($tags.ContainsKey("IoTSuiteVersion") -and $tags.IoTSuiteVersion -ne $global:version)
+        {
+            $tags.IoTSuiteVersion = $global:version
+            $updated = $true
         }
         if (!$updated)
         {
-            $tags += @{Name="IoTSuiteState";Value=$state}
+            $tags += @{"IoTSuiteState"=$state}
         }
         $resourceGroup = Set-AzureRmResourceGroup -Name $resourceGroupName -Tag $tags
     }
@@ -459,12 +456,12 @@ function CreateMLWorkSpace()
     $mlLocation = $global:mlRegionFallback.Get_Item($global:AllocationRegion)
     $subscription = Get-AzureSubscription -SubscriptionId $global:SubscriptionId
     $storageAccount = GetAzureStorageAccount $("ml" + $name) $resourceGroupName $mlLocation
-    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccount.StorageAccountName -ResourceGroupName $resourceGroupName).Key1
+    $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccount.StorageAccountName -ResourceGroupName $resourceGroupName).Value[0]
     $liveId = $subscription.DefaultAccount
     $endpointId = [System.Guid]::NewGuid()
     $storageAccountEndpoint = ("https://{0}.blob.{1}/" -f $storageAccount.StorageAccountName, $global:azureEnvironment.StorageEndpointSuffix)
     $body = "{{""Name"":""{0}"",""Location"":""{1}"",""Region"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""UserStorageBlobEndpoint"":""{4}"",""OwnerId"":""{5}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $storageAccountEndpoint, $liveId 
-    return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $subscription.SubscriptionId, $name, $endpointId )  $global:azureEnvironment.ServiceManagementUrl $body
+    return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}?api-version={4}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $subscription.SubscriptionId, $name, $endpointId, $global:azureManagementVersion )  $global:azureEnvironment.ServiceManagementUrl $body
 }
 
 function GetMLWorkSpace()
@@ -476,7 +473,7 @@ function GetMLWorkSpace()
         [Parameter(Mandatory=$true, Position=1)]
         [string]$workspaceId
     )
-    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $global:SubscriptionId, $name, $workspaceId )  $global:azureEnvironment.ServiceManagementUrl
+    return SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}?api-version={4}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $global:SubscriptionId, $name, $workspaceId, $global:azureManagementVersion )  $global:azureEnvironment.ServiceManagementUrl
 }
 
 function GetMLWorkspaceByName()
@@ -486,7 +483,7 @@ function GetMLWorkspaceByName()
         [Parameter(Mandatory=$true, Position=0)]
         [string]$name
     )
-    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $global:SubscriptionId, $name)  $global:azureEnvironment.ServiceManagementUrl) | ?{$_.Name -eq $name}
+    return (SendRequest "GET" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/?api-version={3}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $global:SubscriptionId, $name, $global:azureManagementVersion)  $global:azureEnvironment.ServiceManagementUrl) | ?{$_.Name -eq $name}
 }
 
 function CopyMLExperiment()
@@ -1204,7 +1201,8 @@ $global:resourceNotFound = "ResourceNotFound"
 $global:serviceNameToken = "ServiceName"
 $global:azurePath = Split-Path $MyInvocation.MyCommand.Path
 $global:version = Get-Content ("{0}\..\..\VERSION.txt" -f $global:azurePath)
-$global:azureVersion = "1.4.0"
+$global:azureVersion = "2.0.0"
+$global:azureManagementVersion = "2014-10-01"
 
 # Machine Learning is only available in a subset of regions, so we need to do fallback to the correct region
 # See CreateMLWorkSpace for usage
