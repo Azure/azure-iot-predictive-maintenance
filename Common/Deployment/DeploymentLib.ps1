@@ -218,7 +218,6 @@ function UpdateResourceGroupState()
             $tags.IoTSuiteState = $state
             $updated = $true
         }
-        {
         if ($tags.ContainsKey("IoTSuiteVersion") -and $tags.IoTSuiteVersion -ne $global:version)
 		{
             $tags.IoTSuiteVersion = $global:version
