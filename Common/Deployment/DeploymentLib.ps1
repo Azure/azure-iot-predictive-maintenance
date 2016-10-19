@@ -13,9 +13,6 @@
     # ActiveDirectory library
     $success = $success -and (LoadLibrary "Microsoft.IdentityModel.Clients.ActiveDirectory" $nugetPath)
 
-    # Servicebus library
-    $success = $success -and (LoadLibrary "WindowsAzure.ServiceBus" $nugetPath "Microsoft.ServiceBus")
-
     # Storage Library
     $success = $success -and (LoadLibrary "WindowsAzure.Storage" $nugetPath "Microsoft.WindowsAzure.Storage")
 
@@ -256,9 +253,9 @@ function ValidateResourceName()
         {
             $resourceUrl = $global:docdbSuffix
         }
-        "microsoft.servicebus/namespaces"
+        "microsoft.eventhub/namespaces"
         {
-            $resourceUrl = $global:servicebusSuffix
+            $resourceUrl = $global:eventhubSuffix
             $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(35, $resourceBaseName.Length))
         }
         "microsoft.web/sites"
@@ -340,13 +337,13 @@ function GetAzureIotHubName()
     return ValidateResourceName $baseName Microsoft.Devices/iotHubs $resourceGroupName
 }
 
-function GetAzureServicebusName()
+function GetAzureEventhubName()
 {
     Param(
         [Parameter(Mandatory=$true,Position=0)] [string] $baseName,
         [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName
     )
-    return ValidateResourceName ($baseName.PadRight(6,"x")) Microsoft.Servicebus/namespaces $resourceGroupName
+    return ValidateResourceName ($baseName.PadRight(6,"x")) Microsoft.Eventhub/namespaces $resourceGroupName
 }
 
 function StopExistingStreamAnalyticsJobs()

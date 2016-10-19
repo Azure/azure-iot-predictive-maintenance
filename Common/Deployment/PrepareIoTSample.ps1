@@ -23,7 +23,7 @@ switch($azureEnvironmentName)
 
         $global:iotHubSuffix = "azure-devices.net"
         $global:docdbSuffix = "documents.azure.com"
-        $global:servicebusSuffix = "servicebus.windows.net"
+        $global:eventhubSuffix = "servicebus.windows.net"
         $global:websiteSuffix = "azurewebsites.net"
         $global:studioApiUrl = "https://studioapi.azureml.net/"
         $global:mlManagement = "https://management.azureml.net"
@@ -42,7 +42,7 @@ switch($azureEnvironmentName)
 
         $global:iotHubSuffix = "azure-devices.de"
         $global:docdbSuffix = "documents.microsoftazure.de"
-        $global:servicebusSuffix = "servicebus.cloudapi.de​"
+        $global:eventhubSuffix = "servicebus.cloudapi.de​"
         $global:websiteSuffix = "azurewebsites.de"
         $global:studioApiUrl = "https://germanycentral.studioapi.azureml.de/"
         $global:mlManagement = "https://germanycentral.management.azureml.de"
@@ -79,7 +79,7 @@ if ($environmentName -ne "local")
 $resourceGroupName = (GetResourceGroup -Name $suiteName -Type $suiteType).ResourceGroupName
 $storageAccount = GetAzureStorageAccount $suiteName $resourceGroupName
 $iotHubName = GetAzureIotHubName $suitename $resourceGroupName
-$sevicebusName = GetAzureServicebusName $suitename $resourceGroupName
+$eventhubName = GetAzureEventhubName $suitename $resourceGroupName
 $simulatorDataFileName = "data.csv"
 
 # Setup AAD for webservice
@@ -101,13 +101,13 @@ $params = @{ `
     suiteName=$suitename; `
     storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
-    sbName=$sevicebusName; `
+    ehName=$eventhubName; `
     storageEndpointSuffix=$($global:azureEnvironment.StorageEndpointSuffix)}
 
 Write-Host "Suite name: $suitename"
 Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
 Write-Host "IotHub Name: $iotHubName"
-Write-Host "Servicebus Name: $sevicebusName"
+Write-Host "Servicebus Name: $eventhubName"
 Write-Host "AAD Tenant: $($global:AADTenant)"
 Write-Host "ResourceGroup Name: $resourceGroupName"
 Write-Host "Deployment template path: $deploymentTemplatePath"
@@ -151,7 +151,7 @@ if ($result.ProvisioningState -ne "Succeeded")
 UpdateResourceGroupState $resourceGroupName Complete
 UpdateEnvSetting "ServiceStoreAccountName" $storageAccount.StorageAccountName
 UpdateEnvSetting "ServiceStoreAccountConnectionString" $result.Outputs['storageConnectionString'].Value
-UpdateEnvSetting "ServiceSBName" $sevicebusName
+UpdateEnvSetting "ServiceSBName" $eventhubName
 UpdateEnvSetting "ServiceSBConnectionString" $result.Outputs['ehConnectionString'].Value
 UpdateEnvSetting "ServiceEHName" $result.Outputs['ehDataName'].Value
 UpdateEnvSetting "IotHubName" $result.Outputs['iotHubHostName'].Value
