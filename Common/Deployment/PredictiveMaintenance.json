@@ -253,12 +253,12 @@
                             "DataSource": {
                                 "Properties": {
                                     "EventHubName": "[variables('ehDataName')]",
-                                    "EventHubNamespace": "[parameters('ehName')]",
+                                    "ServiceBusNamespace": "[parameters('ehName')]",
                                     "SharedAccessPolicyKey": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryKey]",
                                     "SharedAccessPolicyName": "[variables('ehKeyName')]",
                                     "PartitionKey": "DeviceId"
                                 },
-                                "Type": "Microsoft.EventHub/EventHub"
+                                "Type": "Microsoft.ServiceBus/EventHub"
                             },
                             "Serialization": {
                                 "Properties": {
