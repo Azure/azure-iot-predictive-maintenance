@@ -138,27 +138,27 @@ function GetSuiteLocation()
         $regions += $region
         $index += 1
     }
-    
+
     Write-Host ($regions | Out-String)
-    
+
     $region = "notset"
     while ($region -eq "notset" -or !(ValidateLocation $region))
     {
-        try 
+        try
         {
             [int]$selectedIndex = Read-Host 'Select an option from the above list'
         }
-        catch 
+        catch
         {
             Write-Host "Must be a number"
             continue
         }
-        
+
         if ($selectedIndex -lt 1 -or $selectedIndex -ge $index)
         {
             continue
         }
-        
+
         $region = $locations[$selectedIndex - 1]
     }
     return $region
@@ -167,7 +167,7 @@ function GetSuiteLocation()
 function ValidateLocation()
 {
     param ([Parameter(Mandatory=$true)][string]$location)
-        
+
     foreach ($loc in $global:locations)
     {
         if ($loc.Replace(' ', '').ToLowerInvariant() -eq $location.Replace(' ', '').ToLowerInvariant())
@@ -251,8 +251,12 @@ function ValidateResourceName()
         }
         "microsoft.documentdb/databaseaccounts"
         {
+            # DocDB’s documentation says it allows 3-50 chars, but their actual
+            # length limit varies per-region (bug 846765). Restrict to 24 chars
+            # based on their dev’s recommendation, allowing for the 5-character
+            # random string appended by GetUniqueResourceName:
             $resourceUrl = $global:docdbSuffix
-            $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(19, $resourceBaseName.Length))
+            $resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(24 - 5, $resourceBaseName.Length))
         }
         "microsoft.eventhub/namespaces"
         {
@@ -265,7 +269,7 @@ function ValidateResourceName()
         }
         default {}
     }
-    
+
     # Return name for existing resource if exists
     $resources = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType $resourceType -ResourceNameContains $resourceBaseName
     if ($resources -ne $null)
@@ -278,7 +282,7 @@ function ValidateResourceName()
             }
         }
     }
-    
+
     return GetUniqueResourceName $resourceBaseName $resourceUrl
 }
 
@@ -458,7 +462,7 @@ function CreateMLWorkSpace()
     $liveId = $subscription.DefaultAccount
     $endpointId = [System.Guid]::NewGuid()
     $storageAccountEndpoint = ("https://{0}.blob.{1}/" -f $storageAccount.StorageAccountName, $global:azureEnvironment.StorageEndpointSuffix)
-    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""Region"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""UserStorageBlobEndpoint"":""{4}"",""OwnerId"":""{5}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $storageAccountEndpoint, $liveId 
+    $body = "{{""Name"":""{0}"",""Location"":""{1}"",""Region"":""{1}"",""StorageAccountName"":""{2}"",""StorageAccountKey"":""{3}"",""UserStorageBlobEndpoint"":""{4}"",""OwnerId"":""{5}"",""ImmediateActivation"":true,""Source"":""SolutionAccelerator""}}" -f $name, $mlLocation, $storageAccount.StorageAccountName, $storageAccountKey, $storageAccountEndpoint, $liveId
     return SendRequest "PUT" ("{0}{1}/cloudservices/{2}/resources/machinelearning/~/workspaces/{3}?api-version={4}" -f $global:azureEnvironment.ActiveDirectoryServiceEndpointResourceId, $subscription.SubscriptionId, $name, $endpointId, $global:azureManagementVersion )  $global:azureEnvironment.ServiceManagementUrl $body
 }
 
@@ -779,20 +783,20 @@ function LoadAzureAssembly()
 function GetAzureAccountInfo()
 {
     $accounts = Get-AzureAccount
-    
+
     if ($accounts -eq $null)
     {
         Write-Host "Signing you into Azure..."
         $account = Add-AzureAccount
     }
-    else 
+    else
     {
         Write-Host "Signed into Azure already, select account:"
         $global:index = 0
         $selectedIndex = -1
         Write-Host (($accounts | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}}, Id, Subscriptions -au | Out-String).Trim())
         Write-Host (("{0}" -f $global:index).PadLeft(6) + " Use another account")
-        Write-Host 
+        Write-Host
         while ($true)
         {
             try
@@ -810,12 +814,12 @@ function GetAzureAccountInfo()
                 $account = Add-AzureAccount
                 break;
             }
-                
+
             if ($selectedIndex -lt 1 -or $selectedIndex -gt $accounts.length)
             {
                 continue
             }
-                
+
             $account = $accounts[$selectedIndex - 1]
             break;
         }
@@ -845,7 +849,7 @@ function ValidateLoginCredentials()
         $rmProfile = Select-AzureRmProfile -Path $profilePath
         $rmProfileLoaded = ($rmProfile -ne $null) -and ($rmProfile.Context -ne $null) -and ((Get-AzureRmSubscription) -ne $null)
     }
-    
+
     if ($rmProfileLoaded -ne $true) {
         Write-Host "Logging in"
         Login-AzureRmAccount -EnvironmentName $global:azureEnvironment.Name | Out-Null
@@ -971,7 +975,7 @@ function GetAADTenant()
         }
         $tenantId = $tenants[$selectedIndex - 1].TenantId
     }
-    
+
     # Configure Application
     $uri = "{0}{1}/applications?api-version=1.6" -f $global:azureEnvironment.GraphUrl, $tenantId
     $searchUri = "{0}&`$filter=identifierUris/any(uri:uri%20eq%20'{1}{2}')" -f $uri, [System.Web.HttpUtility]::UrlEncode($global:site), $global:appName
@@ -1108,7 +1112,7 @@ function InitializeEnvironment()
     if ([string]::IsNullOrEmpty($global:SubscriptionId))
     {
         $global:SubscriptionId = GetEnvSetting "SubscriptionId"
-        
+
         if ([string]::IsNullOrEmpty($global:SubscriptionId) -or $global:SubscriptionId -eq "not set")
         {
             $global:SubscriptionId = "not set"
@@ -1117,7 +1121,7 @@ function InitializeEnvironment()
                 $global:index = 0
                 $selectedIndex = -1
                 $subscriptions | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}},SubscriptionName, SubscriptionId -au
-            
+
             while (!$subscriptions.SubscriptionId.Contains($global:SubscriptionId))
             {
                 try
@@ -1129,12 +1133,12 @@ function InitializeEnvironment()
                     Write-Host "Must be a number"
                     continue
                 }
-                
+
                 if ($selectedIndex -lt 1 -or $selectedIndex -gt $subscriptions.length)
                 {
                     continue
                 }
-                
+
                 $global:SubscriptionId = $subscriptions[$selectedIndex - 1].SubscriptionId
             }
             UpdateEnvSetting "SubscriptionId" $global:SubscriptionId
