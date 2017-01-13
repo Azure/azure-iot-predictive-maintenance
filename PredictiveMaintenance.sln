@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{5959C109-5369-4FF7-8B55-605A79FDF200}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{2101F5D8-84ED-47BC-8254-6505819E17C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventProcessor.WebJob", "EventProcessor.WebJob\EventProcessor.WebJob.csproj", "{588C29C8-3BF8-4CF6-89A7-33D611388E0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RClient", "RClient\RClient.csproj", "{BEAF05D3-9259-453C-A67E-86EAF315118A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{588C29C8-3BF8-4CF6-89A7-33D611388E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{588C29C8-3BF8-4CF6-89A7-33D611388E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{588C29C8-3BF8-4CF6-89A7-33D611388E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEAF05D3-9259-453C-A67E-86EAF315118A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEAF05D3-9259-453C-A67E-86EAF315118A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEAF05D3-9259-453C-A67E-86EAF315118A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEAF05D3-9259-453C-A67E-86EAF315118A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
