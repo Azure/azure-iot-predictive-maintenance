@@ -85,7 +85,7 @@
       "type": "string"
     },
     "packageUri": {
-      "defaultValue": "http://aka.ms/azureiot/predictivemaintenance-r/web",
+      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/Web.zip",
       "type": "string"
     },
     "ehName": {
@@ -124,7 +124,7 @@
       "type": "string"
     },
     "webJobPackageUri": {
-      "defaultValue": "http://aka.ms/azureiot/predictivemaintenance-r/webjob",
+      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/WebJobHost.zip",
       "type": "string"
     },
     "rServerVMAdminUserName": {
@@ -646,7 +646,7 @@
         "typeHandlerVersion": "1.8",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": [ "https://iotsuiteshare.blob.core.windows.net/template/pmdeploy.ps1" ]
+          "fileUris": [ "https://iotsuiteshare.blob.core.windows.net/pmtemplate/pmdeploy.ps1" ]
         },
         "protectedSettings": {
           "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'pmdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
