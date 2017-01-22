@@ -127,37 +127,41 @@
       "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/WebJobHost.zip",
       "type": "string"
     },
+    "analyticsType": {
+      "defaultValue": "MRS",
+      "type": "string"
+    },
     "rServerVMAdminUserName": {
       "defaultValue": "rsadmin",
-      "type": "String"
+      "type": "string"
     },
     "rServerVMAdminPassword": {
       "defaultValue": "MRSPassw0rd!",
-      "type": "String"
+      "type": "string"
     },
     "rServerAdminPassword": {
       "defaultValue": "MRSPassw0rd!",
-      "type": "String"
+      "type": "string"
     },
     "rServerVMName": {
       "defaultValue": "iotpmmrs-vm",
-      "type": "String"
+      "type": "string"
     },
     "rServerNetworkInterfaceName": {
       "defaultValue": "iotpmmrs-nic-1",
-      "type": "String"
+      "type": "string"
     },
     "rServerNetworkSecurityGroupName": {
       "defaultValue": "iotpmmrs-nsg-1",
-      "type": "String"
+      "type": "string"
     },
     "rServerPublicIpName": {
       "defaultValue": "iotpmmrs-publicip-1",
-      "type": "String"
+      "type": "string"
     },
     "rServerNetworkName": {
       "defaultValue": "iotpmmrs-vnet-1",
-      "type": "String"
+      "type": "string"
     },
     "rServerVMSize": {
       "defaultValue": "Standard_D12_v2",
@@ -466,6 +470,9 @@
             "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
             "MLApiUrl": "[parameters('mlApiUrl')]",
             "MLApiKey": "[parameters('mlApiKey')]",
+            "MRSApiUrl": "[concat('http://', variables('rServerVMFQDN'), ':12800')]",
+            "MRSPassword": "[parameters('rServerAdminPassword')]",
+            "AnalyticsType": "[parameters('analyticsType')]",
             "deployr.endpoint": "[concat('http://', variables('rServerVMFQDN'), ':12800')]"
           },
           "type": "config"
