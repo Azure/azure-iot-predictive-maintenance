@@ -472,8 +472,7 @@
             "MLApiKey": "[parameters('mlApiKey')]",
             "MRSApiUrl": "[concat('http://', variables('rServerVMFQDN'), ':12800')]",
             "MRSPassword": "[parameters('rServerAdminPassword')]",
-            "AnalyticsType": "[parameters('analyticsType')]",
-            "deployr.endpoint": "[concat('http://', variables('rServerVMFQDN'), ':12800')]"
+            "AnalyticsType": "[parameters('analyticsType')]"
           },
           "type": "config"
         }
