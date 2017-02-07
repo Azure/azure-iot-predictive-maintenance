@@ -22,9 +22,13 @@
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
     },
-    "rServerUrl": {
+    "mrsApiUrl": {
       "type": "string",
       "value": "[concat('http://', variables('rServerVMFQDN'), ':12800')]"
+    },
+    "mrsPassword": {
+      "type": "string",
+      "value": "[parameters('rServerAdminPassword')]"
     }
   },
   "parameters": {
@@ -70,24 +74,6 @@
       },
       "type": "string"
     },
-    "mlApiKey": {
-      "defaultValue": "iotpmmrs-ApiKey",
-      "metadata": {
-        "description": "The machine learning API key"
-      },
-      "type": "string"
-    },
-    "mlApiUrl": {
-      "defaultValue": "http://aka.ms/azureiot/testmrsApiUrl",
-      "metadata": {
-        "description": "The machine learning API location"
-      },
-      "type": "string"
-    },
-    "packageUri": {
-      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/Web.zip",
-      "type": "string"
-    },
     "ehName": {
       "defaultValue": "iotpmmrssb",
       "metadata": {
@@ -123,6 +109,10 @@
       },
       "type": "string"
     },
+    "packageUri": {
+      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/Web.zip",
+      "type": "string"
+    },
     "webJobPackageUri": {
       "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/WebJobHost.zip",
       "type": "string"
@@ -141,26 +131,6 @@
     },
     "rServerAdminPassword": {
       "defaultValue": "MRSPassw0rd!",
-      "type": "string"
-    },
-    "rServerVMName": {
-      "defaultValue": "iotpmmrs-vm",
-      "type": "string"
-    },
-    "rServerNetworkInterfaceName": {
-      "defaultValue": "iotpmmrs-nic-1",
-      "type": "string"
-    },
-    "rServerNetworkSecurityGroupName": {
-      "defaultValue": "iotpmmrs-nsg-1",
-      "type": "string"
-    },
-    "rServerPublicIpName": {
-      "defaultValue": "iotpmmrs-publicip-1",
-      "type": "string"
-    },
-    "rServerNetworkName": {
-      "defaultValue": "iotpmmrs-vnet-1",
       "type": "string"
     },
     "rServerVMSize": {
@@ -468,8 +438,6 @@
             "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
             "ObjectTypePrefix": "",
             "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
-            "MLApiUrl": "[parameters('mlApiUrl')]",
-            "MLApiKey": "[parameters('mlApiKey')]",
             "MRSApiUrl": "[concat('http://', variables('rServerVMFQDN'), ':12800')]",
             "MRSPassword": "[parameters('rServerAdminPassword')]",
             "AnalyticsType": "[parameters('analyticsType')]"
@@ -484,7 +452,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('rServerVMName')]",
+      "name": "[variables('rServerVMName')]",
       "apiVersion": "2015-06-15",
       "location": "[variables('location')]",
       "properties": {
@@ -499,17 +467,17 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[parameters('rServerVMName')]",
+            "name": "[variables('rServerVMName')]",
             "createOption": "FromImage",
             "vhd": {
-              "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), uniqueString(parameters('rServerVMName')), '.vhd')]"
+              "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), uniqueString(variables('rServerVMName')), '.vhd')]"
             },
             "caching": "ReadWrite"
           },
           "dataDisks": [ ]
         },
         "osProfile": {
-          "computerName": "[parameters('rServerVMName')]",
+          "computerName": "[variables('rServerVMName')]",
           "adminUsername": "[parameters('rServerVMAdminUserName')]",
           "adminPassword": "[parameters('rServerVMAdminPassword')]",
           "windowsConfiguration": {
@@ -521,19 +489,19 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('rServerNetworkInterfaceName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('rServerNetworkInterfaceName'))]"
             }
           ]
         }
       },
       "resources": [ ],
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', parameters('rServerNetworkInterfaceName'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('rServerNetworkInterfaceName'))]"
       ]
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[parameters('rServerNetworkInterfaceName')]",
+      "name": "[variables('rServerNetworkInterfaceName')]",
       "apiVersion": "2016-03-30",
       "location": "[variables('location')]",
       "properties": {
@@ -544,10 +512,10 @@
               "privateIPAddress": "10.0.0.4",
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('rServerPublicIpName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('rServerPublicIpName'))]"
               },
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('rServerNetworkName')), '/subnets/default')]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('rServerNetworkName')), '/subnets/default')]"
               }
             }
           }
@@ -555,19 +523,19 @@
         "dnsSettings": { },
         "enableIPForwarding": false,
         "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('rServerNetworkSecurityGroupName'))]"
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('rServerNetworkSecurityGroupName'))]"
         }
       },
       "resources": [ ],
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('rServerPublicIpName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('rServerNetworkName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('rServerNetworkSecurityGroupName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('rServerPublicIpName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('rServerNetworkName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('rServerNetworkSecurityGroupName'))]"
       ]
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('rServerNetworkSecurityGroupName')]",
+      "name": "[variables('rServerNetworkSecurityGroupName')]",
       "apiVersion": "2016-03-30",
       "location": "[variables('location')]",
       "properties": {
@@ -605,13 +573,13 @@
     },
     {
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('rServerPublicIpName')]",
+      "name": "[variables('rServerPublicIpName')]",
       "apiVersion": "2016-03-30",
       "location": "[variables('location')]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[toLower(parameters('rServerVMName'))]"
+          "domainNameLabel": "[toLower(variables('rServerVMName'))]"
         },
         "idleTimeoutInMinutes": 4
       },
@@ -620,7 +588,7 @@
     },
     {
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('rServerNetworkName')]",
+      "name": "[variables('rServerNetworkName')]",
       "apiVersion": "2016-03-30",
       "location": "[variables('location')]",
       "properties": {
@@ -642,7 +610,7 @@
       "dependsOn": [ ]
     },
     {
-      "name": "[concat(parameters('rServerVMName'),'/pmdeploy')]",
+      "name": "[concat(variables('rServerVMName'),'/pmdeploy')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[variables('location')]",
       "apiVersion": "2015-06-15",
@@ -659,7 +627,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('rServerVMName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('rServerVMName'))]"
       ]
     }
   ],
@@ -693,6 +661,11 @@
     "webVersion": "2015-04-01",
     "webWorkerCount": "2",
     "webWorkerSize": "0",
-    "rServerVMFQDN": "[toLower(concat(parameters('rServerVMName'), '.', resourceGroup().location, '.cloudapp.azure.com'))]"
+    "rServerVMName": "[concat(parameters('suiteName'), '-vm')]",
+    "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), '-nic-1')]",
+    "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), '-nsg-1')]",
+    "rServerPublicIpName": "[concat(parameters('suiteName'), '-publicip-1')]",
+    "rServerNetworkName": "[concat(parameters('suiteName'), '-vnet-1')]",
+    "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, '.cloudapp.azure.com'))]"
   }
 }
