@@ -1055,11 +1055,11 @@ function GetAnalyticsType()
     $aml | Add-Member -MemberType NoteProperty -Name "AnalyticsType" -Value "AML"
     $aml | Add-Member -MemberType NoteProperty -Name "Description" -Value "Azure Machine Learning"
     $analyticsTypes += $aml
-    $mrs = New-Object System.Object
-    $mrs | Add-Member -MemberType NoteProperty -Name "Option" -Value 2
-    $mrs | Add-Member -MemberType NoteProperty -Name "AnalyticsType" -Value "MRS"
-    $mrs | Add-Member -MemberType NoteProperty -Name "Description" -Value "Microsoft R Server"
-    $analyticsTypes += $mrs
+    $rserver = New-Object System.Object
+    $rserver | Add-Member -MemberType NoteProperty -Name "Option" -Value 2
+    $rserver | Add-Member -MemberType NoteProperty -Name "AnalyticsType" -Value "RServer"
+    $rserver | Add-Member -MemberType NoteProperty -Name "Description" -Value "R Server"
+    $analyticsTypes += $rserver
     Write-Host ($analyticsTypes | Out-String)
 
     $global:index = 0

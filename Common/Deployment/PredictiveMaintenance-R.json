@@ -661,11 +661,11 @@
     "webVersion": "2015-04-01",
     "webWorkerCount": "2",
     "webWorkerSize": "0",
-    "rServerVMName": "[concat(parameters('suiteName'), '-vm')]",
-    "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), '-nic-1')]",
-    "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), '-nsg-1')]",
-    "rServerPublicIpName": "[concat(parameters('suiteName'), '-publicip-1')]",
-    "rServerNetworkName": "[concat(parameters('suiteName'), '-vnet-1')]",
+    "rServerVMName": "[concat(parameters('suiteName'), 'rvm')]",
+    "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), 'rnic')]",
+    "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), 'rnsg')]",
+    "rServerPublicIpName": "[concat(parameters('suiteName'), 'rip')]",
+    "rServerNetworkName": "[concat(parameters('suiteName'), 'rvnet')]",
     "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, '.cloudapp.azure.com'))]"
   }
 }

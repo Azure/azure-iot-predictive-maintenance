@@ -79,7 +79,7 @@ if ($environmentName -ne "local")
         "AML" {
             $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance.json"
         }
-        "MRS" {
+        "RServer" {
             $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance-R.json"
         }
     }
@@ -142,7 +142,7 @@ if ($cloudDeploy)
                     aadInstance=$($global:azureEnvironment.ActiveDirectoryAuthority + "{0}"); `
                     aadClientId=$($global:AADClientId)}
         }
-        "MRS" {
+        "RServer" {
                 $params += @{ `
                     packageUri=$webPackage; `
                     webJobPackageUri=$webJobPackage; `
@@ -185,7 +185,7 @@ UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionStrin
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
 
-if ($global:AnalyticsType -eq 'MRS') {
+if ($global:AnalyticsType -eq 'RServer') {
     UpdateEnvSetting "MRSApiUrl" $result.Outputs['mrsApiUrl'].Value
     UpdateEnvSetting "MRSPassword" $result.Outputs['mrsPassword'].Value
 }
