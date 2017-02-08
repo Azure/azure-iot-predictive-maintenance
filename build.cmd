@@ -50,6 +50,10 @@
     @Set PublishCmd=%PublishCmd% -azureEnvironmentName %AzureEnvironmentName%)
 
 @IF /I '%AnalyticsType%' NEQ '' (
+    @IF /I '%AnalyticsType%' NEQ 'AML' (
+        @IF /I '%AnalyticsType%' NEQ 'MSR' (
+            @ECHO Invalid AnalyticsType '%AnalyticsType%'
+            @GOTO :Error))
     @Set PublishCmd=%PublishCmd% -analyticsType %AnalyticsType%)
 
 @%PowerShellCmd% "if (!('%EnvironmentName%' -match '^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{3,49}[a-zA-Z0-9]{1,1}$')) { throw 'Invalid EnvironmentName' }"
