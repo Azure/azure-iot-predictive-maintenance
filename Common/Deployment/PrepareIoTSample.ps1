@@ -4,9 +4,7 @@
     [Parameter(Mandatory=$True,Position=1)]
     $configuration,
     [Parameter(Mandatory=$False,Position=2)]
-    $azureEnvironmentName = "AzureCloud",
-    [Parameter(Mandatory=$False,Position=3)]
-    $analyticsType = "AML"
+    $azureEnvironmentName = "AzureCloud"
     )
 
 # Initialize Azure Cloud Environment
@@ -70,11 +68,14 @@ $global:appName = "iotsuite"
 $cloudDeploy = $false
 $projectRoot = Join-Path $PSScriptRoot "..\.." -Resolve
 
+# Setup Analytics Type
+$global:AnalyticsType = GetOrSetEnvSetting "AnalyticsType" "GetAnalyticsType"
+
 if ($environmentName -ne "local")
 {
     $suiteName = $environmentName
     $suiteType = "PredictiveMaintenance"
-    switch($analyticsType){
+    switch($global:AnalyticsType){
         "AML" {
             $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance.json"
         }
@@ -99,7 +100,7 @@ UpdateEnvSetting "AADInstance" ($global:azureEnvironment.ActiveDirectoryAuthorit
 
 # Provision Machine Learning workspace
 $experimentName = "Remaining Useful Life [Predictive Exp.]"
-if ($analyticsType -eq "AML") {
+if ($global:AnalyticsType -eq "AML") {
     $machineLearningService = ProvisionML $suiteName $resourceGroupName $experimentName
     UpdateEnvSetting "MLApiUrl" $machineLearningService.ApiLocation
     UpdateEnvSetting "MLApiKey" $machineLearningService.PrimaryKey
@@ -129,7 +130,7 @@ if ($cloudDeploy)
     $webPackage = UploadFile ("$projectRoot\Web\obj\{0}\Package\Web.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
     FixWebJobZip ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration)
     $webJobPackage = UploadFile ("$projectRoot\WebJobHost\obj\{0}\Package\WebJobHost.zip" -f $configuration) $storageAccount.StorageAccountName $resourceGroupName "WebDeploy" $true
-    switch($analyticsType){
+    switch($global:AnalyticsType){
         "AML" {
                $params += @{ `
                     packageUri=$webPackage; `
@@ -183,8 +184,8 @@ UpdateEnvSetting "IotHubName" $result.Outputs['iotHubHostName'].Value
 UpdateEnvSetting "IotHubConnectionString" $result.Outputs['iotHubConnectionString'].Value
 UpdateEnvSetting "DeviceTableName" "DeviceList"
 UpdateEnvSetting "SimulatorDataFileName" $simulatorDataFileName
-UpdateEnvSetting "AnalyticsType" $analyticsType
-if ($analyticsType -eq 'MRS') {
+
+if ($global:AnalyticsType -eq 'MRS') {
     UpdateEnvSetting "MRSApiUrl" $result.Outputs['mrsApiUrl'].Value
     UpdateEnvSetting "MRSPassword" $result.Outputs['mrsPassword'].Value
 }

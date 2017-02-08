@@ -1046,6 +1046,45 @@ function GetAADTenant()
     return $tenantId
 }
 
+function GetAnalyticsType()
+{
+    Write-Host "Available analytics types:";
+    $analyticsTypes = @();
+    $aml = New-Object System.Object
+    $aml | Add-Member -MemberType NoteProperty -Name "Option" -Value 1
+    $aml | Add-Member -MemberType NoteProperty -Name "AnalyticsType" -Value "AML"
+    $aml | Add-Member -MemberType NoteProperty -Name "Description" -Value "Azure Machine Learning"
+    $analyticsTypes += $aml
+    $mrs = New-Object System.Object
+    $mrs | Add-Member -MemberType NoteProperty -Name "Option" -Value 2
+    $mrs | Add-Member -MemberType NoteProperty -Name "AnalyticsType" -Value "MRS"
+    $mrs | Add-Member -MemberType NoteProperty -Name "Description" -Value "Microsoft R Server"
+    $analyticsTypes += $mrs
+    Write-Host ($analyticsTypes | Out-String)
+
+    $global:index = 0
+    $selectedIndex = -1
+    while ($true)
+    {
+        try
+        {
+            [int]$selectedIndex = Read-Host "Select an option from the above list (Please choose option available in target cloud environment)"
+        }
+        catch
+        {
+            Write-Host "Must be a number"
+            continue
+        }
+
+        if ($selectedIndex -lt 1 -or $selectedIndex -gt $analyticsTypes.length)
+        {
+            continue
+        }
+
+        return $analyticsTypes[$selectedIndex - 1].AnalyticsType
+    }
+}
+
 function InitializeEnvironment()
 {
     Param(

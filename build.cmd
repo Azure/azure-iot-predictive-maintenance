@@ -15,9 +15,6 @@
 @IF /I '%4' NEQ '' (
     Set AzureEnvironmentName=%4)
 
-@IF /I '%5' NEQ '' (
-    Set AnalyticsType=%5)
-
 @REM ----------------------------------------------
 @REM Validate arguments
 @REM ----------------------------------------------
@@ -47,14 +44,8 @@
 @SET PublishCmd=%PowerShellCmd% "& ""%DeploymentScripts%\PrepareIoTSample.ps1""" -environmentName %EnvironmentName% -configuration %Configuration%
 
 @IF /I '%AzureEnvironmentName%' NEQ '' (
-    @Set PublishCmd=%PublishCmd% -azureEnvironmentName %AzureEnvironmentName%)
-
-@IF /I '%AnalyticsType%' NEQ '' (
-    @IF /I '%AnalyticsType%' NEQ 'AML' (
-        @IF /I '%AnalyticsType%' NEQ 'MSR' (
-            @ECHO Invalid AnalyticsType '%AnalyticsType%'
-            @GOTO :Error))
-    @Set PublishCmd=%PublishCmd% -analyticsType %AnalyticsType%)
+    @Set PublishCmd=%PublishCmd% -azureEnvironmentName %AzureEnvironmentName%
+    )
 
 @%PowerShellCmd% "if (!('%EnvironmentName%' -match '^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{3,49}[a-zA-Z0-9]{1,1}$')) { throw 'Invalid EnvironmentName' }"
 @IF /I '%ERRORLEVEL%' NEQ '0' (
@@ -107,19 +98,15 @@ msbuild WebJobHost\WebJobHost.csproj /v:m /T:Package
 @REM ----------------------------------------------
 @REM Help on errors
 @REM ----------------------------------------------
-@ECHO Arguments: build.cmd "Command" "Configuration" "EnvironmentName" "AzureEnvironment" "AnalyticsType"
+@ECHO Arguments: build.cmd "Command" "Configuration" "EnvironmentName" "AzureEnvironment"
 @ECHO   Command: build (just builds); local (config local); cloud (config cloud, build, and deploy)
 @ECHO   Configuration: build configuration either Debug or Release; default is Debug
 @ECHO   EnvironmentName: Name of cloud environment to deploy - default is local
 @ECHO   AzureEnvironment: Name of the Azure Environment to deploy to - default is AzureCloud
-@ECHO   AnalyticsType: Type of Analytics: AML(Azure Machine Learning), MRS(Microsoft R Server) - default is AML
 @ECHO
 @ECHO eg.
-@ECHO   build without deployment:       build.cmd build
-@ECHO   local deployment:               build.cmd local
-@ECHO   cloud deployment:               build.cmd cloud release mydeployment
-@ECHO   cloud deployment with R Server: build.cmd cloud release mydeployment AzureCloud MRS
+@ECHO   build - build.cmd build
+@ECHO   local deployment: build.cmd local
+@ECHO   cloud deployment: build.cmd cloud release mydeployment
 @ECHO   national cloud deployment: same as above but include CloudName at end (eg. build.cmd local debug AzureGermanyCloud or build.cmd cloud release mydeployment AzureGermanyCloud)
 :End
-
-
