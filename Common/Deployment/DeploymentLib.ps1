@@ -782,7 +782,7 @@ function GetAzureAccountInfo()
     if ($accounts -eq $null)
     {
         Write-Host "Signing you into Azure..."
-        $account = Add-AzureAccount
+        $account = Add-AzureAccount -Environment $global:environmentName
     }
     else 
     {
@@ -804,9 +804,9 @@ function GetAzureAccountInfo()
                 continue
             }
 
-            if ($selectedIndex -eq $accounts.length + 1)
+            if ($selectedIndex -eq $accounts.length)
             {
-                $account = Add-AzureAccount
+                $account = Add-AzureAccount -Environment $global:environmentName
                 break;
             }
                 

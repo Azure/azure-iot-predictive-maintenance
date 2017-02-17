@@ -48,6 +48,26 @@ switch($azureEnvironmentName)
         $global:mlManagement = "https://germanycentral.management.azureml.de"
         $global:locations = @("Germany Central", "Germany Northeast")
     }
+    "AzureChinaCloud" {
+        if ((Get-AzureEnvironment AzureChinaCloud) -eq $null)
+        {
+            Add-AzureEnvironment –Name AzureChinaCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.chinacloudapi.cn/ -GalleryUrl https://gallery.cloudapi.cn -ServiceManagementUrl https://management.core.chinacloudapi.cn/ -SqlDatabaseDnsSuffix .database.chinacloudapi.cn -StorageEndpointSuffix core.chinacloudapi.cn -ActiveDirectoryAuthority https://login.chinacloudapi.cn/ -GraphUrl https://graph.chinacloudapi.cn/ -trafficManagerDnsSuffix azuretrafficmanager.cn -AzureKeyVaultDnsSuffix vault.azure.cn -AzureKeyVaultServiceEndpointResourceId https://vault.microsoftazure.cn -ResourceManagerUrl https://management.microsoftazure.cn/ -ManagementPortalUrl https://portal.microsoftazure.cn
+        }
+
+        if ((Get-AzureRMEnvironment AzureChinaCloud) -eq $null)
+        {
+            Add-AzureRMEnvironment –Name AzureChinaCloud -EnableAdfsAuthentication $False -ActiveDirectoryServiceEndpointResourceId https://management.core.chinacloudapi.cn/ -GalleryUrl https://gallery.chinacloudapi.cn -ServiceManagementUrl https://management.core.chinacloudapi.cn/ -SqlDatabaseDnsSuffix .database.chinacloudapi.cn -StorageEndpointSuffix core.chinacloudapi.cn -ActiveDirectoryAuthority https://login.chinacloudapi.cn/ -GraphUrl https://graph.chinacloudapi.cn/ -trafficManagerDnsSuffix trafficmanager.cn -AzureKeyVaultDnsSuffix vault.chinacloudapi.cn -AzureKeyVaultServiceEndpointResourceId https://vault.chinacloudapi.cn -ResourceManagerUrl https://management.chinacloudapi.cn/ -ManagementPortalUrl https://portal.azure.cn
+        }
+
+        $global:iotHubSuffix = "azure-devices.cn"
+        $global:docdbSuffix = "documents.azure.cn"
+        $global:eventhubSuffix = "servicebus.chinacloudapi.cn"
+        $global:websiteSuffix = "chinacloudsites.cn"
+        # currently AML does not land on China cloud, this is just a place holder.
+        $global:studioApiUrl = "https://chinanorth.studioapi.azureml.cn/"
+        $global:mlManagement = "https://chinanorth.management.azureml.cn"
+        $global:locations = @("China North", "China East")
+    }
     default {throw ("'{0}' is not a supported Azure Cloud environment" -f $azureEnvironmentName)}
 }
 $global:azureEnvironment = Get-AzureEnvironment $azureEnvironmentName
