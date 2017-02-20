@@ -25,7 +25,7 @@ switch($azureEnvironmentName)
         $global:docdbSuffix = "documents.azure.com"
         $global:eventhubSuffix = "servicebus.windows.net"
         $global:websiteSuffix = "azurewebsites.net"
-        $global:vmEndpointSuffix = ".cloudapp.azure.com"
+        $global:vmEndpointSuffix = "cloudapp.azure.com"
         $global:studioApiUrl = "https://studioapi.azureml.net/"
         $global:mlManagement = "https://management.azureml.net"
         $global:locations = @("East US", "North Europe", "East Asia", "West US", "West Europe", "Southeast Asia", "Japan East", "Japan West", "Australia East", "Australia Southeast")
@@ -45,7 +45,7 @@ switch($azureEnvironmentName)
         $global:docdbSuffix = "documents.microsoftazure.de"
         $global:eventhubSuffix = "servicebus.cloudapi.de​"
         $global:websiteSuffix = "azurewebsites.de"
-        $global:vmEndpointSuffix = ".cloudapp.azure.de"
+        $global:vmEndpointSuffix = "cloudapp.azure.de"
         $global:studioApiUrl = "https://germanycentral.studioapi.azureml.de/"
         $global:mlManagement = "https://germanycentral.management.azureml.de"
         $global:locations = @("Germany Central", "Germany Northeast")
@@ -65,7 +65,7 @@ switch($azureEnvironmentName)
         $global:docdbSuffix = "documents.azure.cn"
         $global:eventhubSuffix = "servicebus.chinacloudapi.cn"
         $global:websiteSuffix = "chinacloudsites.cn"
-        $global:vmEndpointSuffix = ".cloudapp.chinacloudapi.cn"
+        $global:vmEndpointSuffix = "cloudapp.chinacloudapi.cn"
         # currently AML does not land on China cloud, this is just a place holder.
         $global:studioApiUrl = "https://chinanorth.studioapi.azureml.cn/"
         $global:mlManagement = "https://chinanorth.management.azureml.cn"

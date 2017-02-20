@@ -103,9 +103,9 @@
       "type": "string"
     },
     "vmEndpointSuffix": {
-      "defaultValue": ".cloudapp.azure.com",
+      "defaultValue": "cloudapp.azure.com",
       "metadata": {
-        "description": "Suffix added to virtual Machine hostname (examples: .cloudapp.azure.com, cloudapp.chinacloudapi.cn)"
+        "description": "Suffix added to virtual Machine hostname (examples: cloudapp.azure.com, cloudapp.chinacloudapi.cn)"
       },
       "type": "string"
     },
@@ -673,6 +673,6 @@
     "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), 'rnsg')]",
     "rServerPublicIpName": "[concat(parameters('suiteName'), 'rip')]",
     "rServerNetworkName": "[concat(parameters('suiteName'), 'rvnet')]",
-    "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, parameters('vmEndpointSuffix')))]"
+    "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, '.', parameters('vmEndpointSuffix')))]"
   }
 }
