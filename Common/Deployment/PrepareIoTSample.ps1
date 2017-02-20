@@ -137,7 +137,6 @@ $params = @{ `
     storageName=$($storageAccount.StorageAccountName); `
     iotHubName=$iotHubName; `
     ehName=$eventhubName; `
-    vmEndpointSuffix=$($global:vmEndpointSuffix); `
     storageEndpointSuffix=$($global:azureEnvironment.StorageEndpointSuffix)}
 
 Write-Host "Suite name: $suitename"
@@ -168,6 +167,7 @@ if ($cloudDeploy)
         }
         "RServer" {
                 $params += @{ `
+                    vmEndpointSuffix=$($global:vmEndpointSuffix); `
                     packageUri=$webPackage; `
                     webJobPackageUri=$webJobPackage; `
                     simulatorDataFileName=$simulatorDataFileName; `
