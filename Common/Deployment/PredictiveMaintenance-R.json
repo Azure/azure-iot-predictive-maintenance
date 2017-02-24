@@ -627,7 +627,7 @@
         "typeHandlerVersion": "1.8",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": [ "https://iotsuiteshare.blob.core.windows.net/pmtemplate/pmdeploy.ps1" ]
+          "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy" ]
         },
         "protectedSettings": {
           "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'pmdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"

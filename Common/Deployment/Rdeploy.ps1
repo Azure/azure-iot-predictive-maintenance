@@ -8,7 +8,7 @@ $deployrPath="C:\Program Files\Microsoft\R Server\R_SERVER\DeployR"
 $folderName = "pmdeploy"
 $zipfile = $folderName+".zip"
 
-Invoke-WebRequest -Uri https://iotsuiteshare.blob.core.windows.net/pmtemplate/pmdeploy.zip -OutFile $zipfile
+Invoke-WebRequest -Uri https://aka.ms/azureiot/predictivemaintenance-r/rdeployzip -OutFile $zipfile
 Expand-Archive -Path $zipfile -Force
 
 cd $folderName
