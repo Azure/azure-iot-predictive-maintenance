@@ -668,7 +668,7 @@
     "webVersion": "2015-04-01",
     "webWorkerCount": "2",
     "webWorkerSize": "0",
-    "rServerVMName": "[concat(substring(parameters('suiteName'),0,11), 'rvm')]",
+    "rServerVMName": "[concat(take(parameters('suiteName'),11), 'rvm')]",
     "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), 'rnic')]",
     "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), 'rnsg')]",
     "rServerPublicIpName": "[concat(parameters('suiteName'), 'rip')]",
