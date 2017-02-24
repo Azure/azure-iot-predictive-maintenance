@@ -117,11 +117,11 @@
       "type": "string"
     },
     "packageUri": {
-      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/Web.zip",
+      "defaultValue": "https://aka.ms/azureiot/predictivemaintenance-r/web",
       "type": "string"
     },
     "webJobPackageUri": {
-      "defaultValue": "https://iotsuiteshare.blob.core.windows.net/pmtemplate/WebJobHost.zip",
+      "defaultValue": "https://aka.ms/azureiot/predictivemaintenance-r/webjob",
       "type": "string"
     },
     "analyticsType": {
