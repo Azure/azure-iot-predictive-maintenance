@@ -617,7 +617,7 @@
       "dependsOn": [ ]
     },
     {
-      "name": "[concat(variables('rServerVMName'),'/pmdeploy')]",
+      "name": "[concat(variables('rServerVMName'),'/rdeploy')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[variables('location')]",
       "apiVersion": "2015-06-15",
@@ -630,7 +630,7 @@
           "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy" ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'pmdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'Rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
         }
       },
       "dependsOn": [
