@@ -627,10 +627,10 @@
         "typeHandlerVersion": "1.8",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy" ]
+          "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy.ps1" ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'Rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
         }
       },
       "dependsOn": [
