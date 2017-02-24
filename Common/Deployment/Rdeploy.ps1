@@ -14,8 +14,7 @@ Expand-Archive -Path $zipfile -Force
 cd $folderName
 $args = ("ConfigMRS.dll", "-setpassword", $password, "-deployrpath", "`"$deployrPath`"")
 
-#Start-Process -FilePath "dotnet" -ArgumentList $args -WindowStyle Hidden
-Start-Process -FilePath "dotnet" -ArgumentList $args -WindowStyle Hidden -RedirectStandardOutput "out.log"  
+Start-Process -FilePath "dotnet" -ArgumentList $args -WindowStyle Hidden
 cd ..
 
 exit 0
