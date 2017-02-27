@@ -630,7 +630,7 @@
           "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy.ps1" ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' \"', parameters('rServerAdminPassword'), '\"')]"
         }
       },
       "dependsOn": [
