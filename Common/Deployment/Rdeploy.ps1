@@ -1,7 +1,7 @@
 Param(
-    [parameter()]
-    [string]
-    $password="Passw0rd!"
+    [parameter()]
+    [string]
+    $password="Passw0rd!"
 )
 
 $deployrPath="C:\Program Files\Microsoft\R Server\R_SERVER\DeployR"
