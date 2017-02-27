@@ -368,7 +368,7 @@
                         "ida.AADClientId": "[parameters('aadClientId')]",
                         "iotHub.HostName": "[reference(variables('iotHubResourceId')).hostName]",
                         "iotHub.ConnectionString": "[concat('HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey)]",
-                        "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+                        "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
                         "device.TableName": "DeviceList",
                         "ObjectTypePrefix": "",
                         "SolutionName": "[variables('webSiteName')]"
@@ -418,11 +418,11 @@
                     "properties": {
                         "iotHub.HostName": "[reference(variables('iotHubResourceId')).hostName]",
                         "iotHub.ConnectionString": "[concat('HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey)]",
-                        "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+                        "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
                         "device.TableName": "DeviceList",
                         "eventHub.HubName": "[variables('ehDataName')]",
                         "eventHub.ConnectionString": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]",
-                        "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+                        "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
                         "ObjectTypePrefix": "",
                         "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
                         "MLApiUrl": "[parameters('mlApiUrl')]",

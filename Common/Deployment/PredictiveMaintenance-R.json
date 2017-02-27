@@ -1,0 +1,678 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "outputs": {
+    "ehConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+    },
+    "ehDataName": {
+      "type": "string",
+      "value": "[variables('ehDataName')]"
+    },
+    "iotHubConnectionString": {
+      "type": "string",
+      "value": "[concat('HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey)]"
+    },
+    "iotHubHostName": {
+      "type": "string",
+      "value": "[reference(variables('iotHubResourceId')).hostName]"
+    },
+    "storageConnectionString": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]"
+    },
+    "mrsApiUrl": {
+      "type": "string",
+      "value": "[concat('http://', variables('rServerVMFQDN'), ':12800')]"
+    },
+    "mrsPassword": {
+      "type": "string",
+      "value": "[parameters('rServerAdminPassword')]"
+    }
+  },
+  "parameters": {
+    "aadClientId": {
+      "defaultValue": "e5555555-5555-5555-5555-5555",
+      "metadata": {
+        "description": "AAD application identifier (GUID)"
+      },
+      "type": "string"
+    },
+    "aadInstance": {
+      "defaultValue": "https://login.microsoftonline.com/{0}",
+      "metadata": {
+        "description": "Url of the AAD login page (example: https://login.microsoftonline.de/{0})"
+      },
+      "type": "string"
+    },
+    "aadTenant": {
+      "defaultValue": "iotpmmrsaadTenant",
+      "metadata": {
+        "description": "The name of the service Tenant"
+      },
+      "type": "string"
+    },
+    "asaStartBehavior": {
+      "defaultValue": "JobStartTime",
+      "metadata": {
+        "description": "The start behavior for Stream Analytics jobs [LastStopTime | JobStartTime (default)]"
+      },
+      "type": "string"
+    },
+    "asaStartTime": {
+      "defaultValue": "notused",
+      "metadata": {
+        "description": "The start time for Stream Analytics jobs"
+      },
+      "type": "string"
+    },
+    "iotHubName": {
+      "defaultValue": "iotpmmrs-hub",
+      "metadata": {
+        "description": "The name of the iotHub (cloud environment unique)"
+      },
+      "type": "string"
+    },
+    "ehName": {
+      "defaultValue": "iotpmmrssb",
+      "metadata": {
+        "description": "The name of the serviceBus"
+      },
+      "type": "string"
+    },
+    "simulatorDataFileName": {
+      "defaultValue": "testSimulatorDataFile.zip",
+      "metadata": {
+        "description": "The file name for the simulator data"
+      },
+      "type": "string"
+    },
+    "storageEndpointSuffix": {
+      "defaultValue": "core.windows.net",
+      "metadata": {
+        "description": "Suffix added to Azure Storage hostname (examples: core.windows.net, core.cloudapi.de)"
+      },
+      "type": "string"
+    },
+    "storageName": {
+      "defaultValue": "iotpmmrssa",
+      "metadata": {
+        "description": "The name of the storageAccount (cloud environment unique)"
+      },
+      "type": "string"
+    },
+    "vmEndpointSuffix": {
+      "defaultValue": "cloudapp.azure.com",
+      "metadata": {
+        "description": "Suffix added to virtual Machine hostname (examples: cloudapp.azure.com, cloudapp.chinacloudapi.cn)"
+      },
+      "type": "string"
+    },
+    "suiteName": {
+      "defaultValue": "iotpmmrs",
+      "metadata": {
+        "description": "The name of the suite"
+      },
+      "type": "string"
+    },
+    "packageUri": {
+      "defaultValue": "https://aka.ms/azureiot/predictivemaintenance-r/web",
+      "type": "string"
+    },
+    "webJobPackageUri": {
+      "defaultValue": "https://aka.ms/azureiot/predictivemaintenance-r/webjob",
+      "type": "string"
+    },
+    "analyticsType": {
+      "defaultValue": "MRS",
+      "type": "string"
+    },
+    "rServerVMAdminUserName": {
+      "defaultValue": "rsadmin",
+      "type": "string"
+    },
+    "rServerVMAdminPassword": {
+      "defaultValue": "MRSPassw0rd!",
+      "type": "string"
+    },
+    "rServerAdminPassword": {
+      "defaultValue": "MRSPassw0rd!",
+      "type": "string"
+    },
+    "rServerVMSize": {
+      "defaultValue": "Standard_D12_v2",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('storageVersion')]",
+      "kind": "Storage",
+      "location": "[variables('location')]",
+      "name": "[parameters('storageName')]",
+      "sku": {
+        "name": "[variables('storageAccountType')]"
+      },
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "apiVersion": "[variables('iotHubVersion')]",
+      "location": "[variables('location')]",
+      "name": "[parameters('iotHubName')]",
+      "properties": {
+        "location": "[variables('location')]"
+      },
+      "sku": {
+        "capacity": 1,
+        "name": "[variables('iotHubSku')]",
+        "tier": "[variables('iotHubTier')]"
+      },
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Devices/Iothubs"
+    },
+    {
+      "apiVersion": "[variables('iotHubVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
+      ],
+      "name": "[concat(parameters('iotHubName'), '/events/', variables('telemetryCGName'))]",
+      "type": "Microsoft.Devices/Iothubs/eventhubEndpoints/ConsumerGroups"
+    },
+    {
+      "apiVersion": "[variables('sbVersion')]",
+      "location": "[variables('location')]",
+      "name": "[parameters('ehName')]",
+      "properties": {
+        "messagingSku": 1,
+        "region": "[variables('location')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "[variables('sbVersion')]",
+          "dependsOn": [
+            "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'))]"
+          ],
+          "location": "[variables('location')]",
+          "name": "[variables('ehDataName')]",
+          "properties": {
+            "MessageRetentionInDays": 1,
+            "path": "[variables('ehDataName')]"
+          },
+          "type": "eventHubs"
+        }
+      ],
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Servicebus/namespaces"
+    },
+    {
+      "apiVersion": "[variables('saVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
+        "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
+      ],
+      "location": "[variables('location')]",
+      "name": "[concat(parameters('suiteName'), '-Telemetry')]",
+      "properties": {
+        "EventsOutOfOrderMaxDelayInSeconds": 10,
+        "EventsOutOfOrderPolicy": "adjust",
+        "Inputs": [
+          {
+            "Name": "IoTHubStream",
+            "Properties": {
+              "DataSource": {
+                "Properties": {
+                  "consumerGroupName": "[variables('telemetryCGName')]",
+                  "iotHubNamespace": "[parameters('iotHubName')]",
+                  "sharedAccessPolicyKey": "[listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey]",
+                  "sharedAccessPolicyName": "[variables('iotHubKeyName')]"
+                },
+                "Type": "Microsoft.Devices/IotHubs"
+              },
+              "Serialization": {
+                "Properties": {
+                  "Encoding": "UTF8"
+                },
+                "Type": "Json"
+              },
+              "Type": "Stream"
+            }
+          }
+        ],
+        "OutputStartMode": "[parameters('asaStartBehavior')]",
+        "Outputs": [
+          {
+            "Name": "Telemetry",
+            "Properties": {
+              "DataSource": {
+                "Properties": {
+                  "AccountKey": "[listkeys(variables('storageId'), variables('storageVersion')).keys[0].value]",
+                  "AccountName": "[parameters('storageName')]",
+                  "BatchSize": 1,
+                  "ColumnsToRemove": [
+                    "DeviceId",
+                    "Counter"
+                  ],
+                  "PartitionKey": "DeviceId",
+                  "RowKey": "Counter",
+                  "Table": "devicetelemetry"
+                },
+                "Type": "Microsoft.Storage/Table"
+              }
+            }
+          },
+          {
+            "Name": "TelemetrySummary",
+            "Properties": {
+              "DataSource": {
+                "Properties": {
+                  "EventHubName": "[variables('ehDataName')]",
+                  "PartitionKey": "DeviceId",
+                  "ServiceBusNamespace": "[parameters('ehName')]",
+                  "SharedAccessPolicyKey": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryKey]",
+                  "SharedAccessPolicyName": "[variables('sbKeyName')]"
+                },
+                "Type": "Microsoft.ServiceBus/EventHub"
+              },
+              "Serialization": {
+                "Properties": {
+                  "Encoding": "UTF8",
+                  "Format": "Array"
+                },
+                "Type": "Json"
+              }
+            }
+          }
+        ],
+        "Transformation": {
+          "Name": "AllToBlob",
+          "Properties": {
+            "Query": "WITH\r\n    [StreamData] AS (\r\n        SELECT\r\n            *\r\n        FROM\r\n            [IoTHubStream]\r\n        WHERE\r\n            [ObjectType] IS NULL -- Filter out device info and command responses\r\n    )\r\n\r\nSELECT\r\n    DeviceId,\r\n    Counter,\r\n    Cycle,\r\n    Sensor9,\r\n    Sensor11,\r\n    Sensor14,\r\n    Sensor15\r\nINTO\r\n    [Telemetry]\r\nFROM\r\n    [StreamData]\r\n\r\nSELECT\r\n    DeviceId,\r\n    Cycle,\r\n    AVG(Sensor9) AS Sensor9,\r\n    AVG(Sensor11) AS Sensor11,\r\n    AVG(Sensor14) AS Sensor14,\r\n    AVG(Sensor15) AS Sensor15\r\nINTO\r\n    [TelemetrySummary]\r\nFROM\r\n    [StreamData]\r\nGROUP BY\r\n    DeviceId,\r\n    Cycle,\r\n    SLIDINGWINDOW(minute, 2) -- Duration must cover the longest possible cycle\r\nHAVING\r\n    SUM(EndOfCycle) = 2 -- Sum when EndOfCycle contains both start and end events",
+            "StreamingUnits": 1
+          }
+        },
+        "sku": {
+          "name": "standard"
+        }
+      },
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.StreamAnalytics/streamingjobs"
+    },
+    {
+      "apiVersion": "[variables('webVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+        "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]"
+      ],
+      "location": "[variables('location')]",
+      "name": "[variables('webPlanName')]",
+      "properties": {
+        "name": "[variables('webPlanName')]",
+        "numberOfWorkers": "[variables('webWorkerCount')]",
+        "sku": "[variables('webSku')]",
+        "workerSize": "[variables('webWorkerSize')]"
+      },
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Web/serverfarms"
+    },
+    {
+      "apiVersion": "[variables('webVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('webPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+        "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
+        "[resourceId('Microsoft.StreamAnalytics/streamingjobs', concat(parameters('suiteName'), '-Telemetry'))]"
+      ],
+      "location": "[variables('location')]",
+      "name": "[variables('webJobPlanName')]",
+      "properties": {
+        "name": "[variables('webJobPlanName')]",
+        "numberOfWorkers": "[variables('webJobWorkerCount')]",
+        "sku": "[variables('webJobSku')]",
+        "workerSize": "[variables('webJobWorkerSize')]"
+      },
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Web/serverfarms"
+    },
+    {
+      "apiVersion": "[variables('webVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('webPlanName'))]"
+      ],
+      "location": "[variables('location')]",
+      "name": "[variables('webSiteName')]",
+      "properties": {
+        "serverFarmId": "[variables('webPlanName')]",
+        "siteConfig": {
+          "AlwaysOn": true
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "[variables('webVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+          ],
+          "name": "MSDeploy",
+          "properties": {
+            "connectionString": "",
+            "dbType": "",
+            "packageUri": "[parameters('packageUri')]"
+          },
+          "type": "extensions"
+        },
+        {
+          "apiVersion": "[variables('webVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]",
+            "[concat('Microsoft.Web/Sites/', variables('webSiteName'), '/Extensions/MSDeploy')]"
+          ],
+          "name": "Appsettings",
+          "properties": {
+            "ida.AADTenant": "[parameters('aadTenant')]",
+            "ida.AADInstance": "[parameters('aadInstance')]",
+            "ida.AADClientId": "[parameters('aadClientId')]",
+            "iotHub.HostName": "[reference(variables('iotHubResourceId')).hostName]",
+            "iotHub.ConnectionString": "[concat('HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey)]",
+            "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+            "device.TableName": "DeviceList",
+            "ObjectTypePrefix": "",
+            "SolutionName": "[variables('webSiteName')]"
+          },
+          "type": "config"
+        }
+      ],
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Web/sites"
+    },
+    {
+      "apiVersion": "[variables('webVersion')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('webJobPlanName'))]"
+      ],
+      "location": "[variables('location')]",
+      "name": "[variables('webJobSiteName')]",
+      "properties": {
+        "serverFarmId": "[variables('webJobPlanName')]",
+        "siteConfig": {
+          "AlwaysOn": true
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "[variables('webVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webJobSiteName'))]"
+          ],
+          "name": "MSDeploy",
+          "properties": {
+            "connectionString": "",
+            "dbType": "",
+            "packageUri": "[parameters('webJobPackageUri')]"
+          },
+          "type": "extensions"
+        },
+        {
+          "apiVersion": "[variables('webVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webJobSiteName'))]",
+            "[concat('Microsoft.Web/Sites/', variables('webJobSiteName'), '/Extensions/MSDeploy')]"
+          ],
+          "name": "Appsettings",
+          "properties": {
+            "iotHub.HostName": "[reference(variables('iotHubResourceId')).hostName]",
+            "iotHub.ConnectionString": "[concat('HostName=', reference(variables('iotHubResourceId')).hostName, ';SharedAccessKeyName=', variables('iotHubKeyName'), ';SharedAccessKey=', listkeys(variables('iotHubKeyResource'), variables('iotHubVersion')).primaryKey)]",
+            "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+            "device.TableName": "DeviceList",
+            "eventHub.HubName": "[variables('ehDataName')]",
+            "eventHub.ConnectionString": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]",
+            "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
+            "ObjectTypePrefix": "",
+            "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
+            "MRSApiUrl": "[concat('http://', variables('rServerVMFQDN'), ':12800')]",
+            "MRSPassword": "[parameters('rServerAdminPassword')]",
+            "AnalyticsType": "[parameters('analyticsType')]"
+          },
+          "type": "config"
+        }
+      ],
+      "tags": {
+        "IotSuiteType": "[variables('suiteType')]"
+      },
+      "type": "Microsoft.Web/sites"
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('rServerVMName')]",
+      "apiVersion": "2015-06-15",
+      "location": "[variables('location')]",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('rServerVMSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftRServer",
+            "offer": "RServer-WS2016",
+            "sku": "Enterprise",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('rServerVMName')]",
+            "createOption": "FromImage",
+            "vhd": {
+              "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), uniqueString(variables('rServerVMName')), '.vhd')]"
+            },
+            "caching": "ReadWrite"
+          },
+          "dataDisks": [ ]
+        },
+        "osProfile": {
+          "computerName": "[variables('rServerVMName')]",
+          "adminUsername": "[parameters('rServerVMAdminUserName')]",
+          "adminPassword": "[parameters('rServerVMAdminPassword')]",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": true
+          },
+          "secrets": [ ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('rServerNetworkInterfaceName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [ ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('rServerNetworkInterfaceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('rServerNetworkInterfaceName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "10.0.0.4",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('rServerPublicIpName'))]"
+              },
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('rServerNetworkName')), '/subnets/default')]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": { },
+        "enableIPForwarding": false,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('rServerNetworkSecurityGroupName'))]"
+        }
+      },
+      "resources": [ ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('rServerPublicIpName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('rServerNetworkName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('rServerNetworkSecurityGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('rServerNetworkSecurityGroupName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1000,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "MRS",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "12800",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1010,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('rServerPublicIpName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[toLower(variables('rServerVMName'))]"
+        },
+        "idleTimeoutInMinutes": 4
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('rServerNetworkName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[variables('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.0.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.0.0.0/24"
+            }
+          }
+        ]
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "name": "[concat(variables('rServerVMName'),'/rdeploy')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "location": "[variables('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.8",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy.ps1" ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('rServerVMName'))]"
+      ]
+    }
+  ],
+  "variables": {
+    "ehDataName": "[concat(parameters('suiteName'), '-ehdata')]",
+    "iotHubKeyName": "iothubowner",
+    "iotHubKeyResource": "[resourceId('Microsoft.Devices/Iothubs/Iothubkeys', parameters('iotHubName'), variables('iotHubKeyName'))]",
+    "iotHubResourceId": "[resourceId('Microsoft.Devices/Iothubs', parameters('iotHubName'))]",
+    "iotHubSku": "S2",
+    "iotHubTier": "Standard",
+    "iotHubVersion": "2016-02-03",
+    "location": "[resourceGroup().location]",
+    "saVersion": "2015-10-01",
+    "sbKeyName": "RootManageSharedAccessKey",
+    "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
+    "sbVersion": "2014-09-01",
+    "storageAccountType": "Standard_GRS",
+    "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
+    "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+    "storageVersion": "2016-01-01",
+    "suiteType": "PredictiveMaintenance",
+    "telemetryCGName": "telemetrycg",
+    "webJobPlanName": "[concat(parameters('suiteName'), '-jobsplan')]",
+    "webJobSiteName": "[concat(parameters('suiteName'), '-jobhost')]",
+    "webJobSku": "Standard",
+    "webJobWorkerCount": "2",
+    "webJobWorkerSize": "0",
+    "webPlanName": "[concat(parameters('suiteName'), '-plan')]",
+    "webSiteName": "[parameters('suiteName')]",
+    "webSku": "Premium",
+    "webVersion": "2015-04-01",
+    "webWorkerCount": "2",
+    "webWorkerSize": "0",
+    "rServerVMName": "[concat(take(parameters('suiteName'),11), 'rvm')]",
+    "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), 'rnic')]",
+    "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), 'rnsg')]",
+    "rServerPublicIpName": "[concat(parameters('suiteName'), 'rip')]",
+    "rServerNetworkName": "[concat(parameters('suiteName'), 'rvnet')]",
+    "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, '.', parameters('vmEndpointSuffix')))]"
+  }
+}
