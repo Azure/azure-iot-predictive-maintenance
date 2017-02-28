@@ -144,6 +144,7 @@ Write-Host "Storage Name: $($storageAccount.StorageAccountName)"
 Write-Host "IotHub Name: $iotHubName"
 Write-Host "Servicebus Name: $eventhubName"
 Write-Host "AAD Tenant: $($global:AADTenant)"
+Write-Host "AAD Client Id: $($global:AADClientId)"
 Write-Host "ResourceGroup Name: $resourceGroupName"
 Write-Host "Deployment template path: $deploymentTemplatePath"
 
@@ -166,7 +167,9 @@ if ($cloudDeploy)
                     aadClientId=$($global:AADClientId)}
         }
         "RServer" {
+                $rServerVMName = GetAzureVMName $suitename $resourceGroupName
                 $params += @{ `
+                    rServerVMName=$rServerVMName; `
                     vmEndpointSuffix=$($global:vmEndpointSuffix); `
                     packageUri=$webPackage; `
                     webJobPackageUri=$webJobPackage; `
@@ -176,7 +179,6 @@ if ($cloudDeploy)
                     aadClientId=$($global:AADClientId)}
         }
     }
-
 }
 
 # Upload simulator data

@@ -262,6 +262,11 @@ function ValidateResourceName()
         {
             $resourceUrl = $global:websiteSuffix
         }
+		"microsoft.compute/virtualmachines"
+		{
+			$resourceUrl = $global:vmEndpointSuffix
+			$resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(10, $resourceBaseName.Length))
+		}
         default {}
     }
     
@@ -345,6 +350,23 @@ function GetAzureEventhubName()
     )
     return ValidateResourceName ($baseName.PadRight(6,"x")) Microsoft.Eventhub/namespaces $resourceGroupName
 }
+
+function GetAzureVMName()
+{
+    Param(
+        [Parameter(Mandatory=$true,Position=0)] [string] $baseName,
+        [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName
+    )
+	if(-Not (HostEntryExists ("{0}.{1}.{2}" -f $baseName.Substring(0, [System.Math]::Min(15, $baseName.Length)), $global:AllocationRegion.Replace(' ', '').ToLowerInvariant(), $global:vmEndpointSuffix)))
+	{
+        return  $baseName.Substring(0, [System.Math]::Min(15, $baseName.Length))
+	}
+	else
+	{
+	    return ValidateResourceName $baseName Microsoft.Compute/virtualMachines $resourceGroupName
+	}
+}
+
 
 function StopExistingStreamAnalyticsJobs()
 {
