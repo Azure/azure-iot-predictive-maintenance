@@ -167,7 +167,7 @@ if ($cloudDeploy)
                     aadClientId=$($global:AADClientId)}
         }
         "RServer" {
-                $rServerVMName = GetAzureVMName $suitename $resourceGroupName
+                $rServerVMName = GetAzureVMName $suitename
                 $params += @{ `
                     rServerVMName=$rServerVMName; `
                     vmEndpointSuffix=$($global:vmEndpointSuffix); `

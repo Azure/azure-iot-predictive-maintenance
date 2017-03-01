@@ -262,11 +262,6 @@ function ValidateResourceName()
         {
             $resourceUrl = $global:websiteSuffix
         }
-		"microsoft.compute/virtualmachines"
-		{
-			$resourceUrl = $global:vmEndpointSuffix
-			$resourceBaseName = $resourceBaseName.Substring(0, [System.Math]::Min(10, $resourceBaseName.Length))
-		}
         default {}
     }
     
@@ -354,16 +349,18 @@ function GetAzureEventhubName()
 function GetAzureVMName()
 {
     Param(
-        [Parameter(Mandatory=$true,Position=0)] [string] $baseName,
-        [Parameter(Mandatory=$true,Position=1)] [string] $resourceGroupName
+        [Parameter(Mandatory=$true,Position=0)] [string] $baseName
     )
-	if(-Not (HostEntryExists ("{0}.{1}.{2}" -f $baseName.Substring(0, [System.Math]::Min(15, $baseName.Length)), $global:AllocationRegion.Replace(' ', '').ToLowerInvariant(), $global:vmEndpointSuffix)))
+	$location = $global:AllocationRegion.Replace(' ', '').ToLowerInvariant()
+	if(-Not (HostEntryExists ("{0}.{1}.{2}" -f $baseName.Substring(0, [System.Math]::Min(15, $baseName.Length)), $location, $global:vmEndpointSuffix)))
 	{
         return  $baseName.Substring(0, [System.Math]::Min(15, $baseName.Length))
 	}
 	else
 	{
-	    return ValidateResourceName $baseName Microsoft.Compute/virtualMachines $resourceGroupName
+        $resourceUrl = $location + '.' + $global:vmEndpointSuffix
+        $resourceBaseName = $baseName.Substring(0, [System.Math]::Min(10, $baseName.Length))
+        return GetUniqueResourceName $resourceBaseName $resourceUrl
 	}
 }
 
