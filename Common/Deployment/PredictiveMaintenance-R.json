@@ -4,7 +4,7 @@
   "outputs": {
     "ehConnectionString": {
       "type": "string",
-      "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+      "value": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]"
     },
     "ehDataName": {
       "type": "string",
@@ -75,9 +75,9 @@
       "type": "string"
     },
     "ehName": {
-      "defaultValue": "iotpmmrssb",
+      "defaultValue": "iotpmmrseh",
       "metadata": {
-        "description": "The name of the serviceBus"
+        "description": "The name of the eventHub"
       },
       "type": "string"
     },
@@ -189,7 +189,7 @@
       "type": "Microsoft.Devices/Iothubs/eventhubEndpoints/ConsumerGroups"
     },
     {
-      "apiVersion": "[variables('sbVersion')]",
+      "apiVersion": "[variables('ehVersion')]",
       "location": "[variables('location')]",
       "name": "[parameters('ehName')]",
       "properties": {
@@ -198,9 +198,9 @@
       },
       "resources": [
         {
-          "apiVersion": "[variables('sbVersion')]",
+          "apiVersion": "[variables('ehVersion')]",
           "dependsOn": [
-            "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'))]"
+            "[concat('Microsoft.EventHub/namespaces/', parameters('ehName'))]"
           ],
           "location": "[variables('location')]",
           "name": "[variables('ehDataName')]",
@@ -214,12 +214,12 @@
       "tags": {
         "IotSuiteType": "[variables('suiteType')]"
       },
-      "type": "Microsoft.Servicebus/namespaces"
+      "type": "Microsoft.EventHub/namespaces"
     },
     {
       "apiVersion": "[variables('saVersion')]",
       "dependsOn": [
-        "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
+        "[concat('Microsoft.EventHub/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
         "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
         "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
       ],
@@ -281,7 +281,7 @@
                   "EventHubName": "[variables('ehDataName')]",
                   "PartitionKey": "DeviceId",
                   "ServiceBusNamespace": "[parameters('ehName')]",
-                  "SharedAccessPolicyKey": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryKey]",
+                  "SharedAccessPolicyKey": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryKey]",
                   "SharedAccessPolicyName": "[variables('sbKeyName')]"
                 },
                 "Type": "Microsoft.ServiceBus/EventHub"
@@ -445,7 +445,7 @@
             "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
             "device.TableName": "DeviceList",
             "eventHub.HubName": "[variables('ehDataName')]",
-            "eventHub.ConnectionString": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]",
+            "eventHub.ConnectionString": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]",
             "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
             "ObjectTypePrefix": "",
             "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
@@ -653,8 +653,8 @@
     "location": "[resourceGroup().location]",
     "saVersion": "2015-10-01",
     "sbKeyName": "RootManageSharedAccessKey",
-    "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
-    "sbVersion": "2014-09-01",
+    "ehResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
+    "ehVersion": "[providers('Microsoft.Eventhub', 'namespaces').apiVersions[0]]",
     "storageAccountType": "Standard_GRS",
     "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
     "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
