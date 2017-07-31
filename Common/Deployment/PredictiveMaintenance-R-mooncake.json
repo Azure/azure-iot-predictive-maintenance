@@ -475,7 +475,7 @@
             "publisher": "MicrosoftRServer",
             "offer": "RServer-WS2016",
             "sku": "Enterprise",
-            "version": "9.0.100013"
+            "version": "9.0.100014"
           },
           "osDisk": {
             "name": "[parameters('rServerVMName')]",
