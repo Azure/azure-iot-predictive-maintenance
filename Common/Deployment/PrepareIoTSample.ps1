@@ -103,7 +103,11 @@ if ($environmentName -ne "local")
             $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance.json"
         }
         "RServer" {
-            $deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance-R.json"
+			if ($azureEnvironmentName -eq "AzureChinaCloud" ) {
+				$deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance-R-mooncake.json"
+			} else {
+				$deploymentTemplatePath = "$(Split-Path $MyInvocation.MyCommand.Path)\PredictiveMaintenance-R.json"
+			}
         }
     }
     $global:site = "https://{0}.{1}/" -f $environmentName, $global:websiteSuffix
