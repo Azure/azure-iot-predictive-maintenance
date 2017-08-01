@@ -860,14 +860,14 @@ function ValidateLoginCredentials()
 
     if (test-path $profilePath) {
         Write-Host "Trying to use saved profile $($profilePath)"
-        $rmProfile = Select-AzureRmProfile -Path $profilePath
+        $rmProfile = Import-AzureRmContext -Path $profilePath
         $rmProfileLoaded = ($rmProfile -ne $null) -and ($rmProfile.Context -ne $null) -and ((Get-AzureRmSubscription) -ne $null)
     }
     
     if ($rmProfileLoaded -ne $true) {
         Write-Host "Logging in"
         Login-AzureRmAccount -EnvironmentName $global:azureEnvironment.Name | Out-Null
-        Save-AzureRmProfile -Path $profilePath
+        Save-AzureRmContext -Path $profilePath
     }
 }
 
@@ -948,7 +948,7 @@ function GetAADTenant()
     }
     if ($tenants.Count -eq 1)
     {
-        [string]$tenantId = $tenants[0].TenantId
+        [string]$tenantId = $tenants[0].Id
     }
     else
     {
@@ -958,7 +958,7 @@ function GetAADTenant()
         $index = 1
         foreach ($tenantObj in $tenants)
         {
-            $tenant = $tenantObj.TenantId
+            $tenant = $tenantObj.Id
             $uri = "{0}{1}/me?api-version=1.6" -f $global:azureEnvironment.GraphUrl, $tenant
             $authResult = GetAuthenticationResult $tenant $global:azureEnvironment.ActiveDirectoryAuthority $global:azureEnvironment.GraphUrl $global:AzureAccountName -Prompt "Auto"
             $header = $authResult.CreateAuthorizationHeader()
@@ -987,7 +987,7 @@ function GetAADTenant()
                 Write-Host "Must be a number"
             }
         }
-        $tenantId = $tenants[$selectedIndex - 1].TenantId
+        $tenantId = $tenants[$selectedIndex - 1].Id
     }
     
     # Configure Application
@@ -1173,9 +1173,9 @@ function InitializeEnvironment()
             Write-Host "Available subscriptions:"
                 $global:index = 0
                 $selectedIndex = -1
-                $subscriptions | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}},SubscriptionName, SubscriptionId -au
+                $subscriptions | Format-Table -Property @{name="Option";expression={$global:index;$global:index+=1}},Name, Id -au
             
-            while (!$subscriptions.SubscriptionId.Contains($global:SubscriptionId))
+            while (!$subscriptions.Id.Contains($global:SubscriptionId))
             {
                 try
                 {
@@ -1192,7 +1192,7 @@ function InitializeEnvironment()
                     continue
                 }
                 
-                $global:SubscriptionId = $subscriptions[$selectedIndex - 1].SubscriptionId
+                $global:SubscriptionId = $subscriptions[$selectedIndex - 1].Id
             }
             UpdateEnvSetting "SubscriptionId" $global:SubscriptionId
         }
@@ -1279,6 +1279,10 @@ $global:mlRegionFallback = @{
 # Check version
 $module = Get-Module -ListAvailable | Where-Object{ $_.Name -eq 'Azure' }
 $expected = New-Object System.Version($global:azureVersion)
+if($module -is [System.Array])
+{
+    $module = ($module | Sort-Object Version -Descending)[0]
+}
 $comparison = $expected.CompareTo($module.Version)
 
 if ($comparison -eq 1)
