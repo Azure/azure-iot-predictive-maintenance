@@ -4,7 +4,7 @@
   "outputs": {
     "ehConnectionString": {
       "type": "string",
-      "value": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]"
+      "value": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]"
     },
     "ehDataName": {
       "type": "string",
@@ -75,9 +75,9 @@
       "type": "string"
     },
     "ehName": {
-      "defaultValue": "iotpmmrssb",
+      "defaultValue": "iotpmmrseh",
       "metadata": {
-        "description": "The name of the serviceBus"
+        "description": "The name of the eventHub"
       },
       "type": "string"
     },
@@ -128,6 +128,10 @@
       "defaultValue": "MRS",
       "type": "string"
     },
+    "rServerVMName": {
+      "defaultValue": "iotpmmrsvm",
+      "type": "string"
+    },
     "rServerVMAdminUserName": {
       "defaultValue": "rsadmin",
       "type": "string"
@@ -142,7 +146,7 @@
     },
     "rServerVMSize": {
       "defaultValue": "Standard_D12_v2",
-      "type": "String"
+      "type": "string"
     }
   },
   "resources": [
@@ -185,7 +189,7 @@
       "type": "Microsoft.Devices/Iothubs/eventhubEndpoints/ConsumerGroups"
     },
     {
-      "apiVersion": "[variables('sbVersion')]",
+      "apiVersion": "[variables('ehVersion')]",
       "location": "[variables('location')]",
       "name": "[parameters('ehName')]",
       "properties": {
@@ -194,9 +198,9 @@
       },
       "resources": [
         {
-          "apiVersion": "[variables('sbVersion')]",
+          "apiVersion": "[variables('ehVersion')]",
           "dependsOn": [
-            "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'))]"
+            "[concat('Microsoft.EventHub/namespaces/', parameters('ehName'))]"
           ],
           "location": "[variables('location')]",
           "name": "[variables('ehDataName')]",
@@ -210,12 +214,12 @@
       "tags": {
         "IotSuiteType": "[variables('suiteType')]"
       },
-      "type": "Microsoft.Servicebus/namespaces"
+      "type": "Microsoft.EventHub/namespaces"
     },
     {
       "apiVersion": "[variables('saVersion')]",
       "dependsOn": [
-        "[concat('Microsoft.Servicebus/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
+        "[concat('Microsoft.EventHub/namespaces/', parameters('ehName'), '/eventHubs/', variables('ehDataName'))]",
         "[concat('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
         "[concat('Microsoft.Devices/Iothubs/', parameters('iotHubName'))]"
       ],
@@ -277,7 +281,7 @@
                   "EventHubName": "[variables('ehDataName')]",
                   "PartitionKey": "DeviceId",
                   "ServiceBusNamespace": "[parameters('ehName')]",
-                  "SharedAccessPolicyKey": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryKey]",
+                  "SharedAccessPolicyKey": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryKey]",
                   "SharedAccessPolicyName": "[variables('sbKeyName')]"
                 },
                 "Type": "Microsoft.ServiceBus/EventHub"
@@ -441,7 +445,7 @@
             "device.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
             "device.TableName": "DeviceList",
             "eventHub.HubName": "[variables('ehDataName')]",
-            "eventHub.ConnectionString": "[listkeys(variables('sbResourceId'), variables('sbVersion')).primaryConnectionString]",
+            "eventHub.ConnectionString": "[listkeys(variables('ehResourceId'), variables('ehVersion')).primaryConnectionString]",
             "eventHub.StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', parameters('storageEndpointSuffix'), ';AccountName=', parameters('storageName'), ';AccountKey=', listkeys(variables('storageId'), variables('storageVersion')).keys[0].value)]",
             "ObjectTypePrefix": "",
             "SimulatorDataFileName": "[parameters('simulatorDataFileName')]",
@@ -459,7 +463,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[variables('rServerVMName')]",
+      "name": "[parameters('rServerVMName')]",
       "apiVersion": "2015-06-15",
       "location": "[variables('location')]",
       "properties": {
@@ -471,20 +475,20 @@
             "publisher": "MicrosoftRServer",
             "offer": "RServer-WS2016",
             "sku": "Enterprise",
-            "version": "latest"
+            "version": "9.0.100013"
           },
           "osDisk": {
-            "name": "[variables('rServerVMName')]",
+            "name": "[parameters('rServerVMName')]",
             "createOption": "FromImage",
             "vhd": {
-              "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), uniqueString(variables('rServerVMName')), '.vhd')]"
+              "uri": "[concat(concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-06-15').primaryEndpoints['blob'], 'vhds/'), uniqueString(parameters('rServerVMName')), '.vhd')]"
             },
             "caching": "ReadWrite"
           },
           "dataDisks": [ ]
         },
         "osProfile": {
-          "computerName": "[variables('rServerVMName')]",
+          "computerName": "[parameters('rServerVMName')]",
           "adminUsername": "[parameters('rServerVMAdminUserName')]",
           "adminPassword": "[parameters('rServerVMAdminPassword')]",
           "windowsConfiguration": {
@@ -586,7 +590,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[toLower(variables('rServerVMName'))]"
+          "domainNameLabel": "[toLower(parameters('rServerVMName'))]"
         },
         "idleTimeoutInMinutes": 4
       },
@@ -617,7 +621,7 @@
       "dependsOn": [ ]
     },
     {
-      "name": "[concat(variables('rServerVMName'),'/rdeploy')]",
+      "name": "[concat(parameters('rServerVMName'),'/rdeploy')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[variables('location')]",
       "apiVersion": "2015-06-15",
@@ -625,16 +629,16 @@
         "publisher": "Microsoft.Compute",
         "type": "CustomScriptExtension",
         "typeHandlerVersion": "1.8",
-        "autoUpgradeMinorVersion": true,
+        "autoUpgradeMinorVersion": false,
         "settings": {
           "fileUris": [ "https://aka.ms/azureiot/predictivemaintenance-r/rdeploy.ps1" ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' ', parameters('rServerAdminPassword'))]"
+          "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', 'rdeploy.ps1', ' \"', parameters('rServerAdminPassword'), '\"')]"
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', variables('rServerVMName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('rServerVMName'))]"
       ]
     }
   ],
@@ -649,8 +653,8 @@
     "location": "[resourceGroup().location]",
     "saVersion": "2015-10-01",
     "sbKeyName": "RootManageSharedAccessKey",
-    "sbResourceId": "[resourceId('Microsoft.Servicebus/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
-    "sbVersion": "2014-09-01",
+    "ehResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
+    "ehVersion": "[providers('Microsoft.Eventhub', 'namespaces').apiVersions[0]]",
     "storageAccountType": "Standard_GRS",
     "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
     "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
@@ -668,11 +672,10 @@
     "webVersion": "2015-04-01",
     "webWorkerCount": "2",
     "webWorkerSize": "0",
-    "rServerVMName": "[concat(take(parameters('suiteName'),11), 'rvm')]",
-    "rServerNetworkInterfaceName": "[concat(parameters('suiteName'), 'rnic')]",
-    "rServerNetworkSecurityGroupName": "[concat(parameters('suiteName'), 'rnsg')]",
-    "rServerPublicIpName": "[concat(parameters('suiteName'), 'rip')]",
-    "rServerNetworkName": "[concat(parameters('suiteName'), 'rvnet')]",
-    "rServerVMFQDN": "[toLower(concat(variables('rServerVMName'), '.', resourceGroup().location, '.', parameters('vmEndpointSuffix')))]"
+    "rServerNetworkInterfaceName": "[concat(parameters('rServerVMName'), 'nic')]",
+    "rServerNetworkSecurityGroupName": "[concat(parameters('rServerVMName'), 'nsg')]",
+    "rServerPublicIpName": "[concat(parameters('rServerVMName'), 'ip')]",
+    "rServerNetworkName": "[concat(parameters('rServerVMName'), 'vnet')]",
+    "rServerVMFQDN": "[toLower(concat(parameters('rServerVMName'), '.', resourceGroup().location, '.', parameters('vmEndpointSuffix')))]"
   }
 }
