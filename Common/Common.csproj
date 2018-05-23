@@ -205,7 +205,7 @@
     <None Include="Deployment\PrepareIoTSample.ps1" />
     <None Include="Deployment\LocalPredictiveMaintenance.json" />
     <None Include="Deployment\PredictiveMaintenance.json" />
-    <None Include="Deployment\rdeploly.ps1" />
+    <None Include="Deployment\rdeploy.ps1" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
