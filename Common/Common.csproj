@@ -200,10 +200,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Deployment\DeploymentLib.ps1" />
+    <None Include="Deployment\PredictiveMaintenance-R-mooncake.json" />
     <None Include="Deployment\PredictiveMaintenance-R.json" />
     <None Include="Deployment\PrepareIoTSample.ps1" />
     <None Include="Deployment\LocalPredictiveMaintenance.json" />
     <None Include="Deployment\PredictiveMaintenance.json" />
+    <None Include="Deployment\rdeploly.ps1" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
