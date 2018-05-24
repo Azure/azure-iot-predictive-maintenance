@@ -407,7 +407,7 @@ function UploadFile()
     $file = Get-Item -Path $filePath
     $fileName = $file.Name.ToLowerInvariant()
     $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $storageAccountName -ResourceGroupName $resourceGroupName).Value[0]
-    $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
+    $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey -Environment $global:azureEnvironment.Name
     if (!(HostEntryExists $context.StorageAccount.BlobEndpoint.Host))
     {
         Write-Host "$(Get-Date –f $timeStampFormat) - Waiting for storage account $($context.StorageAccount.BlobEndpoint.Host) url to resolve." -NoNewline

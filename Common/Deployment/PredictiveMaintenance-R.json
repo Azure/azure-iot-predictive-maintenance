@@ -145,7 +145,7 @@
       "type": "string"
     },
     "rServerVMSize": {
-      "defaultValue": "Standard_D12_v2",
+      "defaultValue": "Standard_DS2",
       "type": "string"
     }
   },
