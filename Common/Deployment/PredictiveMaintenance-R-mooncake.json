@@ -654,7 +654,7 @@
     "saVersion": "2015-10-01",
     "sbKeyName": "RootManageSharedAccessKey",
     "ehResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('ehName'), variables('sbKeyName'))]",
-    "ehVersion": "[providers('Microsoft.Eventhub', 'namespaces').apiVersions[0]]",
+    "ehVersion": "2017-04-01",
     "storageAccountType": "Standard_GRS",
     "storageEndpointSuffix": "[parameters('storageEndpointSuffix')]",
     "storageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
