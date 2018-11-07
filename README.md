@@ -29,7 +29,7 @@ Other useful [IoT Suite documentation](https://azure.microsoft.com/documentation
 
 ## Feedback 
 
-Have ideas for how we can improve Azure IoT? Give us [Feedback](http://feedback.azure.com/forums/321918-azure-iot).
+Have ideas for how we can improve Azure IoT? Give us [Feedback](https://feedback.azure.com/forums/916438-azure-iot-solution-accelerators).
 
 ## Code of Conduct
 
