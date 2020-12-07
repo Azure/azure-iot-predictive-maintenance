@@ -1,3 +1,5 @@
+### **Note:** As of December 10th 2020, Predictive Maintenance solution accelerator is no longer supported. All supporting repositories have been archived. Check the [FAQ](https://docs.microsoft.com/en-us/azure/iot-accelerators/iot-accelerators-faq) to learn more.
+
 # Microsoft Azure IoT Suite 
 You can deploy preconfigured solutions that implement common Internet of Things (IoT) scenarios to Microsoft Azure using your Azure subscrption. You can use preconfigured solutions: 
 - as a starting point for your own IoT solution. 
