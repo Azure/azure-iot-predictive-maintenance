@@ -10,7 +10,7 @@ Each preconfigured solution implements a common IoT scenario and is a complete, 
 ## Predictive Maintenance pre-configured solution
 The predictive maintenance pre-configured solution illustrates how you can predict the point when failure is likely to occur. The solution combines key Azure IoT Suite services, including an ML workspace complete with experiments for predicting the Remaining Useful Life (RUL) of an aircraft engine, based on a public sample data set. 
 
-## Contents of this repository
+## Contents of this repository.
 
 ### Docs folder:
 
